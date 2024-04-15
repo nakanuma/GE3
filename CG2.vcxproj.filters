@@ -28,6 +28,9 @@
     <Filter Include="Engine\Windows">
       <UniqueIdentifier>{864fbcee-4d61-4b8e-8267-7cd5197a6170}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\DirectXBase">
+      <UniqueIdentifier>{6b40f206-9fc1-4a5c-ae3a-c4f4fdc9c28e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -42,6 +45,9 @@
     <ClCompile Include="MyWindow.cpp">
       <Filter>Engine\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXBase.cpp">
+      <Filter>Engine\DirectXBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StringUtil.h">
@@ -52,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="MyWindow.h">
       <Filter>Engine\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXBase.h">
+      <Filter>Engine\DirectXBase</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

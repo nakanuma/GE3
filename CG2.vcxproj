@@ -11,12 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXBase.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="StringUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXBase.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="StringUtil.h" />
