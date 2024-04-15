@@ -28,7 +28,7 @@
     <Filter Include="Engine\Windows">
       <UniqueIdentifier>{864fbcee-4d61-4b8e-8267-7cd5197a6170}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\DirectXBase">
+    <Filter Include="Engine\DirectX">
       <UniqueIdentifier>{6b40f206-9fc1-4a5c-ae3a-c4f4fdc9c28e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -46,7 +46,10 @@
       <Filter>Engine\Windows</Filter>
     </ClCompile>
     <ClCompile Include="DirectXBase.cpp">
-      <Filter>Engine\DirectXBase</Filter>
+      <Filter>Engine\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorHeap.cpp">
+      <Filter>Engine\DirectX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +63,10 @@
       <Filter>Engine\Windows</Filter>
     </ClInclude>
     <ClInclude Include="DirectXBase.h">
-      <Filter>Engine\DirectXBase</Filter>
+      <Filter>Engine\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorHeap.h">
+      <Filter>Engine\DirectX</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

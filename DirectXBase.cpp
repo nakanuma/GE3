@@ -9,6 +9,13 @@ DirectXBase* DirectXBase::GetInstance()
 	return &instance;
 }
 
+void DirectXBase::Initialize()
+{
+	InitializeDXGIDevice();
+	InitializeCommand();
+	CreateSwapChain();
+}
+
 void DirectXBase::InitializeDXGIDevice([[maybe_unused]]bool enableDebugLayer)
 {
 	HRESULT result = S_FALSE;
@@ -65,4 +72,45 @@ void DirectXBase::InitializeDXGIDevice([[maybe_unused]]bool enableDebugLayer)
 	// デバイスの生成がうまくいかなかったので起動できない
 	assert(device_ != nullptr);
 	Log("Complete create D3D12Device!!!\n"); // 初期化完了のログを出す
+}
+
+void DirectXBase::InitializeCommand()
+{
+	HRESULT result = S_FALSE;
+
+	// コマンドキューを生成する
+	commandQueue_ = nullptr;
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	result = device_->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue_));
+	assert(SUCCEEDED(result));
+
+	// コマンドアロケータを生成する
+	commandAllocator_ = nullptr;
+	result = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator_));
+	assert(SUCCEEDED(result));
+
+	// コマンドリストを生成する
+	commandList_ = nullptr;
+	result = device_->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator_.Get(), nullptr, IID_PPV_ARGS(&commandList_));
+	assert(SUCCEEDED(result));
+}
+
+void DirectXBase::CreateSwapChain()
+{
+	HRESULT result = S_FALSE;
+
+	// スワップチェーンを生成する
+	swapChain_ = nullptr;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.Width = Window::GetWidth(); // 画面の幅(クライアント領域と同じにする)
+	swapChainDesc.Height = Window::GetHeight(); // 画面の高さ(クライアント領域と同じにする)
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 色の形式
+	swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画のターゲットとして利用する
+	swapChainDesc.BufferCount = 2; // ダブルバッファ
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; //モニタに写したら中身を破棄
+	// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
+	result = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), Window::GetHandle(), &swapChainDesc,
+		nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
+	assert(SUCCEEDED(result));
 }
