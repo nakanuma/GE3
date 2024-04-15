@@ -1,30 +1,57 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{954240ff-e3bf-4988-9955-8fd6c65317d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル">
+    <Filter Include="Engine\Util">
+      <UniqueIdentifier>{3fa5e876-976a-4f41-b83e-70b6aa29b238}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="未分類">
+      <UniqueIdentifier>{09276838-7e89-4448-9986-1e98210de79f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="未分類\ヘッダー ファイル">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="リソース ファイル">
+    <Filter Include="未分類\リソース ファイル">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="未分類\ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Engine\Debug">
+      <UniqueIdentifier>{60e730cf-9996-4711-95b2-af4933c5641a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Windows">
+      <UniqueIdentifier>{864fbcee-4d61-4b8e-8267-7cd5197a6170}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>未分類\ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtil.cpp">
+      <Filter>Engine\Util</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>Engine\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="MyWindow.cpp">
+      <Filter>Engine\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="StringUtil.h">
+      <Filter>Engine\Util</Filter>
+    </ClInclude>
     <ClInclude Include="Logger.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>Engine\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="MyWindow.h">
+      <Filter>Engine\Windows</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
