@@ -1,6 +1,13 @@
 #include <Windows.h>
 #include <cstdint>
 
+// MyClass
+#include "Logger.h"
+
+void Log(const std::string& message) {
+	OutputDebugStringA(message.c_str());
+}
+
 // ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	// メッセージに応じてゲーム固有の処理を行う
@@ -59,6 +66,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ウィンドウを表示する
 	ShowWindow(hwnd, SW_SHOW);
 
+	// ログの出力
+	Log(Logger::ConvertString(L"test\n"));
+
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
@@ -68,6 +78,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				DispatchMessage(&msg);
 		} else {
 			// ゲームの処理
+			
 		}
 	}
 
