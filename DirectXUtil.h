@@ -1,9 +1,12 @@
 #pragma once
-#pragma once
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include <dxcapi.h>
+
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dxcompiler.lib")
 
 // MyClass
 #include "StringUtil.h"
