@@ -31,6 +31,15 @@
     <Filter Include="Engine\DirectX">
       <UniqueIdentifier>{6b40f206-9fc1-4a5c-ae3a-c4f4fdc9c28e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{0fa1cd22-d735-4e90-97dc-58bd0dea33e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\DirectX\Util">
+      <UniqueIdentifier>{3e4f7ead-5e4a-4993-a224-dccf1618f5e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math">
+      <UniqueIdentifier>{080c8074-6341-4e23-9e92-6558338474c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -49,7 +58,16 @@
       <Filter>Engine\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="DescriptorHeap.cpp">
-      <Filter>Engine\DirectX</Filter>
+      <Filter>Engine\DirectX\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXUtil.cpp">
+      <Filter>Engine\DirectX\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Engine\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -66,7 +84,36 @@
       <Filter>Engine\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorHeap.h">
-      <Filter>Engine\DirectX</Filter>
+      <Filter>Engine\DirectX\Util</Filter>
     </ClInclude>
+    <ClInclude Include="DirectXUtil.h">
+      <Filter>Engine\DirectX\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMath.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Float2.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Float3.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Float4.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Object3d.VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Object3d.PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

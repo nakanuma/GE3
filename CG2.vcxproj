@@ -13,17 +13,41 @@
   <ItemGroup>
     <ClCompile Include="DescriptorHeap.cpp" />
     <ClCompile Include="DirectXBase.cpp" />
+    <ClCompile Include="DirectXUtil.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="StringUtil.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DescriptorHeap.h" />
     <ClInclude Include="DirectXBase.h" />
+    <ClInclude Include="DirectXUtil.h" />
+    <ClInclude Include="Float2.h" />
+    <ClInclude Include="Float3.h" />
+    <ClInclude Include="Float4.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MyMath.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="StringUtil.h" />
+    <ClInclude Include="Transform.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Object3d.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Object3d.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

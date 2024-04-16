@@ -1,7 +1,10 @@
 #include "DirectXBase.h"
 #include <cassert>
+
+// MyClass
 #include "Logger.h"
 #include "StringUtil.h"
+#include "DirectXUtil.h"
 
 DirectXBase* DirectXBase::GetInstance()
 {
@@ -25,6 +28,33 @@ void DirectXBase::Initialize()
 
 	// フェンス生成
 	CreateFence();
+
+	// DXC初期化
+	InitializeDXC();
+
+	// RootSignature生成
+	CreateRootSignature();
+
+	// InputLayoutの設定
+	SetInputLayout();
+
+	// BlendStateの設定
+	SetBlendState();
+
+	// RasterizerStateの設定
+	SetRasterizerState();
+
+	// Shaderをコンパイル
+	ShaderCompile();
+
+	// PipelineStateObjectの生成
+	CreatePipelineStateObject();
+
+	// Viewportの設定
+	SetViewport();
+
+	// Scissorの設定
+	SetScissor();
 }
 
 void DirectXBase::InitializeDXGIDevice([[maybe_unused]]bool enableDebugLayer)
@@ -205,6 +235,128 @@ void DirectXBase::CreateFence()
 	assert(fenceEvent_ != nullptr);
 }
 
+void DirectXBase::InitializeDXC()
+{
+	HRESULT result = S_FALSE;
+
+	// dxcCompilerを初期化
+	dxcUtils_ = nullptr;
+	dxcCompiler_ = nullptr;
+	result = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
+	assert(SUCCEEDED(result));
+	result = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
+	assert(SUCCEEDED(result));
+
+	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
+	includeHandler_ = nullptr;
+	result = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
+	assert(SUCCEEDED(result));
+}
+
+void DirectXBase::CreateRootSignature()
+{
+	HRESULT result = S_FALSE;
+	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
+	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	// シリアライズしてバイナリにする
+	signatureBlob_ = nullptr;
+	errorBlob_ = nullptr;
+	result = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob_);
+	if (FAILED(result)) {
+		Log(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
+		assert(false);
+	}
+	// バイナリを元に生成
+	rootSignature_ = nullptr;
+	result = device_->CreateRootSignature(0, signatureBlob_->GetBufferPointer(), signatureBlob_->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
+	assert(SUCCEEDED(result));
+}
+
+void DirectXBase::SetInputLayout()
+{
+	// InputLayout
+	inputElementDescs_[0].SemanticName = "POSITION";
+	inputElementDescs_[0].SemanticIndex = 0;
+	inputElementDescs_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	inputLayoutDesc_.pInputElementDescs = inputElementDescs_;
+	inputLayoutDesc_.NumElements = _countof(inputElementDescs_);
+}
+
+D3D12_BLEND_DESC DirectXBase::SetBlendState()
+{
+	// BlendStateの設定
+	// すべての色要素を書き込む
+	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	return blendDesc_;
+}
+
+D3D12_RASTERIZER_DESC DirectXBase::SetRasterizerState()
+{
+	// 裏面（時計回り）を表示しない
+	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;
+	// 三角形の中を塗りつぶす
+	rasterizerDesc_.FillMode = D3D12_FILL_MODE_SOLID;
+
+	return rasterizerDesc_;
+}
+
+void DirectXBase::ShaderCompile()
+{
+	// Shaderをコンパイルする
+	vertexShaderBlob_ = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils_, dxcCompiler_, includeHandler_);
+	assert(vertexShaderBlob_ != nullptr);
+
+	pixelShaderBlob_ = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils_, dxcCompiler_, includeHandler_);
+	assert(pixelShaderBlob_ != nullptr);
+}
+
+void DirectXBase::CreatePipelineStateObject()
+{
+	HRESULT result = S_FALSE;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get(); // RootSignature
+	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_; // InputLayout
+	graphicsPipelineStateDesc.VS = { vertexShaderBlob_->GetBufferPointer(), vertexShaderBlob_->GetBufferSize() }; // VertexShader
+	graphicsPipelineStateDesc.PS = { pixelShaderBlob_->GetBufferPointer(), pixelShaderBlob_->GetBufferSize() }; // PixelShader
+	graphicsPipelineStateDesc.BlendState = blendDesc_; // BlendState
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc_; // RasterizerState
+	// 書き込むRTVの情報
+	graphicsPipelineStateDesc.NumRenderTargets = 1;
+	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	// 利用するトポロジ（形状）のタイプ。三角形
+	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	// どのように画面に色を打ち込むかの設定
+	graphicsPipelineStateDesc.SampleDesc.Count = 1;
+	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	// 実際に生成
+	graphicsPipelineState_ = nullptr;
+	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
+	assert(SUCCEEDED(result));
+}
+
+void DirectXBase::SetViewport()
+{
+	// クライアント領域のサイズと一緒にして画面全体に表示
+	viewport_.Width = static_cast<float>(Window::GetWidth());
+	viewport_.Height = static_cast<float>(Window::GetHeight());
+	viewport_.TopLeftX = 0;
+	viewport_.TopLeftY = 0;
+	viewport_.MinDepth = 0.0f;
+	viewport_.MaxDepth = 1.0f;
+}
+
+void DirectXBase::SetScissor()
+{
+	// 基本的にビューポートと同じ矩形が構成されるようにする
+	scissorRect_.left = 0;
+	scissorRect_.right = static_cast<LONG>(Window::GetWidth());
+	scissorRect_.top = 0;
+	scissorRect_.bottom = static_cast<LONG>(Window::GetHeight());
+}
+
 void DirectXBase::BeginFrame()
 {
 	HRESULT result = S_FALSE;
@@ -231,6 +383,17 @@ void DirectXBase::BeginFrame()
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
+
+	// 描画に必要な情報をコマンドリストに積む
+	commandList_->RSSetViewports(1, &viewport_); // Viewportを設定
+	commandList_->RSSetScissorRects(1, &scissorRect_); // Scirssorを設定
+	// RootSignatureを設定。PSOに設定しているけど別途設定が必要
+	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList_->SetPipelineState((graphicsPipelineState_.Get())); // PSOを設定
+	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておければ良い
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// 描画（DrawCall/ドローコール）。3頂点で1つのインスタンス。
+	commandList_->DrawInstanced(3, 1, 0, 0);
 }
 
 void DirectXBase::EndFrame()
@@ -273,4 +436,14 @@ void DirectXBase::EndFrame()
 	assert(SUCCEEDED(result));
 	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(result));
+}
+
+Microsoft::WRL::ComPtr<ID3D12Device> DirectXBase::GetDevice()
+{
+	return device_;
+}
+
+Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> DirectXBase::GetCommandList()
+{
+	return commandList_;
 }
