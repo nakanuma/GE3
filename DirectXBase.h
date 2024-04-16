@@ -26,6 +26,8 @@ public:
 	void CreateSwapChain();
 	// レンダーターゲット生成
 	void CreateFinalRenderTargets();
+	// フェンス生成
+	void CreateFence();
 
 	// フレーム開始処理
 	void BeginFrame();
@@ -44,5 +46,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources_[2];
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+	D3D12_RESOURCE_BARRIER barrier_;
+	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
+	uint64_t fenceValue_;
+	HANDLE fenceEvent_;
 };
 

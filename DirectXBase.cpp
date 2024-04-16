@@ -11,10 +11,20 @@ DirectXBase* DirectXBase::GetInstance()
 
 void DirectXBase::Initialize()
 {
+	// DXGIデバイス初期化
 	InitializeDXGIDevice();
+
+	// コマンド関連初期化
 	InitializeCommand();
+
+	// スワップチェーンの生成
 	CreateSwapChain();
+
+	// レンダーターゲット生成
 	CreateFinalRenderTargets();
+
+	// フェンス生成
+	CreateFence();
 }
 
 void DirectXBase::InitializeDXGIDevice([[maybe_unused]]bool enableDebugLayer)
@@ -181,12 +191,41 @@ void DirectXBase::CreateFinalRenderTargets()
 	device_->CreateRenderTargetView(swapChainResources_[1].Get(), &rtvDesc_, rtvHandles_[1]);
 }
 
+void DirectXBase::CreateFence()
+{
+	HRESULT result = S_FALSE;
+
+	// 初期値0でFenceを作る
+	fence_ = nullptr;
+	fenceValue_ = 0;
+	result = device_->CreateFence(fenceValue_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
+
+	// FenceのSignalを待つためのイベントを作成する
+	fenceEvent_ = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent_ != nullptr);
+}
+
 void DirectXBase::BeginFrame()
 {
 	HRESULT result = S_FALSE;
 
 	// これから書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	// TransitionBarrierの設定
+	// 今回のバリアはTransition
+	barrier_.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrier_.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barrier_.Transition.pResource = swapChainResources_[backBufferIndex].Get();
+	// 遷移前（現在）のResourceState
+	barrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	// 遷移後のResourceState
+	barrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier_);
+
 	// 描画先のRTVを設定する
 	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, nullptr);
 	// 指定した色で画面全体をクリアする
@@ -198,6 +237,13 @@ void DirectXBase::EndFrame()
 {
 	HRESULT result = S_FALSE;
 
+	// 画面に書く処理はすべて終わり、画面に映すので、状態を遷移
+	// 今回はRendertargetからPresentにする
+	barrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	// TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier_);
+
 	// コマンドリストの内容を確定させる
 	result = commandList_->Close();
 	assert(SUCCEEDED(result));
@@ -207,6 +253,21 @@ void DirectXBase::EndFrame()
 	commandQueue_->ExecuteCommandLists(1, commandLists);
 	// GPUとOSに画面の交換を行うよう通知する
 	swapChain_->Present(1, 0);
+
+	// Fenceの値を更新
+	fenceValue_++;
+	// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+	commandQueue_->Signal(fence_.Get(), fenceValue_);
+
+	// Fenceの値が指定したSignal値にたどり着いているか確認する
+	// GetCompletedValueの初期値はFence作成時に渡した初期値
+	if (fence_->GetCompletedValue() < fenceValue_) {
+		// 指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
+		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
+		// イベント待つ
+		WaitForSingleObject(fenceEvent_, INFINITE);
+	}
+
 	// 次のフレーム用のコマンドリストを準備
 	result = commandAllocator_->Reset();
 	assert(SUCCEEDED(result));
