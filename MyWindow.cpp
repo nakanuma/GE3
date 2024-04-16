@@ -58,9 +58,6 @@ void Window::Create(LPCWSTR windowTitle, uint32_t width, uint32_t height)
 
 	// ウィンドウを表示する
 	ShowWindow(hwnd, SW_SHOW);
-
-	// ウィンドウを表示する
-	ShowWindow(hwnd, SW_SHOW);
 }
 
 bool Window::ProcessMessage()
