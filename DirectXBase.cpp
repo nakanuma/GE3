@@ -14,21 +14,18 @@ void DirectXBase::Initialize()
 	InitializeDXGIDevice();
 	InitializeCommand();
 	CreateSwapChain();
+	CreateFinalRenderTargets();
 }
 
 void DirectXBase::InitializeDXGIDevice([[maybe_unused]]bool enableDebugLayer)
 {
 	HRESULT result = S_FALSE;
 
-	///
-	/// DXGIファクトリーの生成
-	/// 
+	// DXGIファクトリーの生成
 	result = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory_));
 	assert(SUCCEEDED(result));
 
-	///
-	/// 使用するアダプタを決定する
-	/// 
+	// 使用するアダプタを決定する
 	useAdapter_ = nullptr;
 	// 良い順にアダプタを積む
 	for (UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_))
@@ -49,9 +46,7 @@ void DirectXBase::InitializeDXGIDevice([[maybe_unused]]bool enableDebugLayer)
 	// 適切なアダプタが見つからなかったので起動できない
 	assert(useAdapter_ != nullptr);
 
-	///
-	/// D3D12Deviceの生成
-	/// 
+	// D3D12Deviceの生成
 	device_ = nullptr;
 	// 機能レベルとログ出力用の文字列
 	D3D_FEATURE_LEVEL featureLevels[] = {
@@ -108,9 +103,76 @@ void DirectXBase::CreateSwapChain()
 	swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画のターゲットとして利用する
 	swapChainDesc.BufferCount = 2; // ダブルバッファ
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; //モニタに写したら中身を破棄
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // モニタに写したら中身を破棄
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
 	result = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), Window::GetHandle(), &swapChainDesc,
 		nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
+	assert(SUCCEEDED(result));
+}
+
+void DirectXBase::CreateFinalRenderTargets()
+{
+	HRESULT result = S_FALSE;
+
+	// ディスクリプタヒープの生成
+	rtvDescriptorHeap_ = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
+	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; // レンダーターゲットビュー用
+	rtvDescriptorHeapDesc.NumDescriptors = 2; // ダブルバッファ用に2つ
+	result = device_->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap_));
+	assert(SUCCEEDED(result));
+
+	// SwapChainからResourceを引っ張ってくる
+	swapChainResources_[0] = nullptr;
+	swapChainResources_[1] = nullptr;
+	result = swapChain_->GetBuffer(0, IID_PPV_ARGS(&swapChainResources_[0]));
+	assert(SUCCEEDED(result));
+	result = swapChain_->GetBuffer(0, IID_PPV_ARGS(&swapChainResources_[1]));
+	assert(SUCCEEDED(result));
+
+	// RTVの設定
+	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
+	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dのテクスチャとして書き込む
+	// ディスクリプタの先頭を取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	// 1つ目を作る
+	rtvHandles_[0] = rtvStartHandle;
+	device_->CreateRenderTargetView(swapChainResources_[0].Get(), &rtvDesc_, rtvHandles_[0]);
+	// 2つ目のディクリプタハンドルを得る
+	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	// 2つ目を作る
+	device_->CreateRenderTargetView(swapChainResources_[1].Get(), &rtvDesc_, rtvHandles_[1]);
+}
+
+void DirectXBase::BeginFrame()
+{
+	HRESULT result = S_FALSE;
+
+	// これから書き込むバックバッファのインデックスを取得
+	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	// 描画先のRTVを設定する
+	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, nullptr);
+	// 指定した色で画面全体をクリアする
+	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };
+	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
+}
+
+void DirectXBase::EndFrame()
+{
+	HRESULT result = S_FALSE;
+
+	// コマンドリストの内容を確定させる
+	result = commandList_->Close();
+	assert(SUCCEEDED(result));
+
+	// GPUにコマンドリストの実行を行わせる
+	ID3D12CommandList* commandLists[] = { commandList_.Get() };
+	commandQueue_->ExecuteCommandLists(1, commandLists);
+	// GPUとOSに画面の交換を行うよう通知する
+	swapChain_->Present(1, 0);
+	// 次のフレーム用のコマンドリストを準備
+	result = commandAllocator_->Reset();
+	assert(SUCCEEDED(result));
+	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(result));
 }

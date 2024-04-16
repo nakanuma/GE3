@@ -20,7 +20,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
+		// フレーム開始処理
+		dxBase->BeginFrame();
 
+		// フレーム終了処理
+		dxBase->EndFrame();
 	}
 
 	return 0;

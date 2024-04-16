@@ -24,6 +24,13 @@ public:
 	void InitializeCommand();
 	// スワップチェーンの生成
 	void CreateSwapChain();
+	// レンダーターゲット生成
+	void CreateFinalRenderTargets();
+
+	// フレーム開始処理
+	void BeginFrame();
+	// フレーム終了処理
+	void EndFrame();
 
 private:
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
@@ -33,5 +40,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources_[2];
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 };
 
