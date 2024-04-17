@@ -54,6 +54,11 @@ public:
 	// フレーム終了処理
 	void EndFrame();
 
+	// 描画前処理
+	void PreDraw();
+	// 描画後処理
+	void PostDraw();
+
 	// アクセッサ
 	Microsoft::WRL::ComPtr <ID3D12Device> GetDevice();
 	Microsoft::WRL::ComPtr <ID3D12GraphicsCommandList> GetCommandList();

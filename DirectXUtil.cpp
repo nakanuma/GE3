@@ -63,29 +63,29 @@ IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, ID
     return shaderBlob;
 }
 
-//Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes)
-//{
-//    // 頂点リソース用のヒープの設定
-//    D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-//    uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD; // UploadHeapを使う
-//    // 頂点リソースの設定
-//    D3D12_RESOURCE_DESC vertexResourcesDesc{};
-//    // バッファリソース。テクスチャの場合はまた別の設定をする
-//    vertexResourcesDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-//    vertexResourcesDesc.Width = sizeInBytes; // リソースのサイズ
-//    // バッファの場合はこれらは1にする決まり
-//    vertexResourcesDesc.Height = 1;
-//    vertexResourcesDesc.DepthOrArraySize = 1;
-//    vertexResourcesDesc.MipLevels = 1;
-//    vertexResourcesDesc.SampleDesc.Count = 1;
-//    // バッファの場合はこれにする決まり
-//    vertexResourcesDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-//    // 実際に頂点リソースを作る
-//    Microsoft::WRL::ComPtr < ID3D12Resource> vertexResource = nullptr;
-//    HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
-//        &vertexResourcesDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-//        IID_PPV_ARGS(&vertexResource));
-//    assert(SUCCEEDED(hr));
-//
-//    return std::move(vertexResource); // デストラクタを呼ばないように返す
-//}
+Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes)
+{
+    // 頂点リソース用のヒープの設定
+    D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+    uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD; // UploadHeapを使う
+    // 頂点リソースの設定
+    D3D12_RESOURCE_DESC vertexResourcesDesc{};
+    // バッファリソース。テクスチャの場合はまた別の設定をする
+    vertexResourcesDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    vertexResourcesDesc.Width = sizeInBytes; // リソースのサイズ
+    // バッファの場合はこれらは1にする決まり
+    vertexResourcesDesc.Height = 1;
+    vertexResourcesDesc.DepthOrArraySize = 1;
+    vertexResourcesDesc.MipLevels = 1;
+    vertexResourcesDesc.SampleDesc.Count = 1;
+    // バッファの場合はこれにする決まり
+    vertexResourcesDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+    // 実際に頂点リソースを作る
+    Microsoft::WRL::ComPtr < ID3D12Resource> vertexResource = nullptr;
+    HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
+        &vertexResourcesDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+        IID_PPV_ARGS(&vertexResource));
+    assert(SUCCEEDED(hr));
+
+    return std::move(vertexResource); // デストラクタを呼ばないように返す
+}

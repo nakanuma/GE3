@@ -256,8 +256,19 @@ void DirectXBase::InitializeDXC()
 void DirectXBase::CreateRootSignature()
 {
 	HRESULT result = S_FALSE;
+
+	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	// RootParameter作成。複数設定できるので配列。今回は結果1つだけなので長さ1の配列
+	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0とバインド
+	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
+
 	// シリアライズしてバイナリにする
 	signatureBlob_ = nullptr;
 	errorBlob_ = nullptr;
@@ -383,37 +394,12 @@ void DirectXBase::BeginFrame()
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
-
-	// 描画に必要な情報をコマンドリストに積む
-	commandList_->RSSetViewports(1, &viewport_); // Viewportを設定
-	commandList_->RSSetScissorRects(1, &scissorRect_); // Scirssorを設定
-	// RootSignatureを設定。PSOに設定しているけど別途設定が必要
-	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList_->SetPipelineState((graphicsPipelineState_.Get())); // PSOを設定
-	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておければ良い
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// 描画（DrawCall/ドローコール）。3頂点で1つのインスタンス。
-	commandList_->DrawInstanced(3, 1, 0, 0);
 }
 
 void DirectXBase::EndFrame()
 {
 	HRESULT result = S_FALSE;
 
-	// 画面に書く処理はすべて終わり、画面に映すので、状態を遷移
-	// 今回はRendertargetからPresentにする
-	barrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	// TransitionBarrierを張る
-	commandList_->ResourceBarrier(1, &barrier_);
-
-	// コマンドリストの内容を確定させる
-	result = commandList_->Close();
-	assert(SUCCEEDED(result));
-
-	// GPUにコマンドリストの実行を行わせる
-	ID3D12CommandList* commandLists[] = { commandList_.Get() };
-	commandQueue_->ExecuteCommandLists(1, commandLists);
 	// GPUとOSに画面の交換を行うよう通知する
 	swapChain_->Present(1, 0);
 
@@ -436,6 +422,38 @@ void DirectXBase::EndFrame()
 	assert(SUCCEEDED(result));
 	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(result));
+}
+
+void DirectXBase::PreDraw()
+{
+	// 描画に必要な情報をコマンドリストに積む
+	commandList_->RSSetViewports(1, &viewport_); // Viewportを設定
+	commandList_->RSSetScissorRects(1, &scissorRect_); // Scirssorを設定
+	// RootSignatureを設定。PSOに設定しているけど別途設定が必要
+	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList_->SetPipelineState((graphicsPipelineState_.Get())); // PSOを設定
+	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておければ良い
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void DirectXBase::PostDraw()
+{
+	HRESULT result = S_FALSE;
+
+	// 画面に書く処理はすべて終わり、画面に映すので、状態を遷移
+	// 今回はRendertargetからPresentにする
+	barrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier_.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	// TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier_);
+
+	// コマンドリストの内容を確定させる
+	result = commandList_->Close();
+	assert(SUCCEEDED(result));
+
+	// GPUにコマンドリストの実行を行わせる
+	ID3D12CommandList* commandLists[] = { commandList_.Get() };
+	commandQueue_->ExecuteCommandLists(1, commandLists);
 }
 
 Microsoft::WRL::ComPtr<ID3D12Device> DirectXBase::GetDevice()
