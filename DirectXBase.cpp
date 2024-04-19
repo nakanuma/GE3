@@ -175,16 +175,15 @@ void DirectXBase::CreateSwapChain()
 
 	// スワップチェーンを生成する
 	swapChain_ = nullptr;
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	swapChainDesc.Width = Window::GetWidth(); // 画面の幅(クライアント領域と同じにする)
-	swapChainDesc.Height = Window::GetHeight(); // 画面の高さ(クライアント領域と同じにする)
-	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 色の形式
-	swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画のターゲットとして利用する
-	swapChainDesc.BufferCount = 2; // ダブルバッファ
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // モニタに写したら中身を破棄
+	swapChainDesc_.Width = Window::GetWidth(); // 画面の幅(クライアント領域と同じにする)
+	swapChainDesc_.Height = Window::GetHeight(); // 画面の高さ(クライアント領域と同じにする)
+	swapChainDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 色の形式
+	swapChainDesc_.SampleDesc.Count = 1; // マルチサンプルしない
+	swapChainDesc_.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画のターゲットとして利用する
+	swapChainDesc_.BufferCount = 2; // ダブルバッファ
+	swapChainDesc_.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // モニタに写したら中身を破棄
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	result = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), Window::GetHandle(), &swapChainDesc,
+	result = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_.Get(), Window::GetHandle(), &swapChainDesc_,
 		nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain_.GetAddressOf()));
 	assert(SUCCEEDED(result));
 }
@@ -194,12 +193,7 @@ void DirectXBase::CreateFinalRenderTargets()
 	HRESULT result = S_FALSE;
 
 	// ディスクリプタヒープの生成
-	rtvDescriptorHeap_ = nullptr;
-	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
-	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; // レンダーターゲットビュー用
-	rtvDescriptorHeapDesc.NumDescriptors = 2; // ダブルバッファ用に2つ
-	result = device_->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap_));
-	assert(SUCCEEDED(result));
+	rtvDescriptorHeap_.Create(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
 	// SwapChainからResourceを引っ張ってくる
 	swapChainResources_[0] = nullptr;
@@ -213,7 +207,7 @@ void DirectXBase::CreateFinalRenderTargets()
 	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 出力結果をSRGBに変換して書き込む
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dのテクスチャとして書き込む
 	// ディスクリプタの先頭を取得する
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_.GetCPUHandle(0);
 	// 1つ目を作る
 	rtvHandles_[0] = rtvStartHandle;
 	device_->CreateRenderTargetView(swapChainResources_[0].Get(), &rtvDesc_, rtvHandles_[0]);
@@ -471,4 +465,14 @@ Microsoft::WRL::ComPtr<ID3D12Device> DirectXBase::GetDevice()
 Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> DirectXBase::GetCommandList()
 {
 	return commandList_;
+}
+
+DXGI_SWAP_CHAIN_DESC1 DirectXBase::GetSwapChainDesc()
+{
+	return swapChainDesc_;
+}
+
+D3D12_RENDER_TARGET_VIEW_DESC DirectXBase::GetRtvDesc()
+{
+	return rtvDesc_;
 }

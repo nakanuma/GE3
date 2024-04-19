@@ -10,6 +10,8 @@
 #include "DirectXUtil.h"
 #include "MyMath.h"
 #include "Camera.h"
+#include "DescriptorHeap.h"
+#include "ImguiWrapper.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -22,6 +24,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dxBase = DirectXBase::GetInstance();
 	dxBase->Initialize();
 
+	//////////////////////////////////////////////////////
+
+	// SRV用のディスクリプタヒープを作成
+	DescriptorHeap srvDescriptorHeap;
+	srvDescriptorHeap.Create(dxBase->GetDevice().Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+
+	//////////////////////////////////////////////////////
+
+	// ImGuiの初期化
+	ImguiWrapper::Initialize(dxBase->GetDevice().Get(), dxBase->GetSwapChainDesc().BufferCount, dxBase->GetRtvDesc().Format, srvDescriptorHeap.heap_.Get());
 
 	//////////////////////////////////////////////////////
 
@@ -81,6 +93,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	while (!Window::ProcessMessage()) {
 		// フレーム開始処理
 		dxBase->BeginFrame();
+		// 描画前処理
+		dxBase->PreDraw();
+
+		// 描画用のDescriptorHeapの設定
+		ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap.heap_.Get() };
+		dxBase->GetCommandList().Get()->SetDescriptorHeaps(1, descriptorHeaps);
+
+		// ImGuiのフレーム開始処理
+		ImguiWrapper::NewFrame();
 
 		///
 		///	更新処理
@@ -97,14 +118,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix worldViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
 		*wvpData = worldViewProjectionMatrix;
 
+		// ImGuiのUIを表示
+		ImGui::ShowDemoWindow();
+
 		//////////////////////////////////////////////////////
 
 		///
 		///	描画処理
 		/// 
-
-		// 描画前処理
-		dxBase->PreDraw();
 
 		//////////////////////////////////////////////////////
 
@@ -120,11 +141,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//////////////////////////////////////////////////////
 
+		// ImGuiの内部コマンドを生成する
+		ImguiWrapper::Render(dxBase->GetCommandList().Get());
 		// 描画後処理
 		dxBase->PostDraw();
 		// フレーム終了処理
 		dxBase->EndFrame();
 	}
+	// ImGuiの終了処理
+	ImguiWrapper::Finalize();
 
 	return 0;
 }

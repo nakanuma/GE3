@@ -25,9 +25,6 @@
     <Filter Include="Engine\Debug">
       <UniqueIdentifier>{60e730cf-9996-4711-95b2-af4933c5641a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Windows">
-      <UniqueIdentifier>{864fbcee-4d61-4b8e-8267-7cd5197a6170}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\DirectX">
       <UniqueIdentifier>{6b40f206-9fc1-4a5c-ae3a-c4f4fdc9c28e}</UniqueIdentifier>
     </Filter>
@@ -43,6 +40,15 @@
     <Filter Include="Engine\3D">
       <UniqueIdentifier>{36b06f1e-83e9-4beb-9918-2ba78f55728d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{070e69ae-c3e4-451c-a38b-288e034f789a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\imgui">
+      <UniqueIdentifier>{9bc13292-5f6e-485e-aa53-ec2c56d62cb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Window">
+      <UniqueIdentifier>{864fbcee-4d61-4b8e-8267-7cd5197a6170}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -55,7 +61,7 @@
       <Filter>Engine\Debug</Filter>
     </ClCompile>
     <ClCompile Include="MyWindow.cpp">
-      <Filter>Engine\Windows</Filter>
+      <Filter>Engine\Window</Filter>
     </ClCompile>
     <ClCompile Include="DirectXBase.cpp">
       <Filter>Engine\DirectX</Filter>
@@ -75,6 +81,30 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Engine\3D</Filter>
     </ClCompile>
+    <ClCompile Include="externals\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImguiWrapper.cpp">
+      <Filter>Engine\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StringUtil.h">
@@ -84,7 +114,7 @@
       <Filter>Engine\Debug</Filter>
     </ClInclude>
     <ClInclude Include="MyWindow.h">
-      <Filter>Engine\Windows</Filter>
+      <Filter>Engine\Window</Filter>
     </ClInclude>
     <ClInclude Include="DirectXBase.h">
       <Filter>Engine\DirectX</Filter>
@@ -116,6 +146,33 @@
     <ClInclude Include="Camera.h">
       <Filter>Engine\3D</Filter>
     </ClInclude>
+    <ClInclude Include="externals\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_impl_win32.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImguiWrapper.h">
+      <Filter>Engine\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl">
@@ -124,5 +181,10 @@
     <FxCompile Include="Object3d.PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="externals\imgui\LICENSE.txt">
+      <Filter>imgui</Filter>
+    </Text>
   </ItemGroup>
 </Project>

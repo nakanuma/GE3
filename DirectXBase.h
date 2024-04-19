@@ -9,7 +9,9 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxcompiler.lib")
 
+// MyClass
 #include "MyWindow.h"
+#include "DescriptorHeap.h"
 
 class DirectXBase
 {
@@ -62,6 +64,8 @@ public:
 	// アクセッサ
 	Microsoft::WRL::ComPtr <ID3D12Device> GetDevice();
 	Microsoft::WRL::ComPtr <ID3D12GraphicsCommandList> GetCommandList();
+	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc();
+	D3D12_RENDER_TARGET_VIEW_DESC GetRtvDesc();
 
 private:
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
@@ -71,7 +75,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
+	DescriptorHeap rtvDescriptorHeap_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources_[2];
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
