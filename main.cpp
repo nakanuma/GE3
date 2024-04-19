@@ -73,7 +73,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Transform変数を作る
 	Transform transform{ {1.0f,1.0f,1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	// カメラのインスタンスを生成
-	Camera camera{ {0.0f, 0.0f, -0.5f}, {0.0f, 0.0f, 0.0f}, 0.45f };
+	Camera camera{ {0.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };
 
 	//////////////////////////////////////////////////////
 

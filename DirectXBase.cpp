@@ -368,9 +368,9 @@ void DirectXBase::SetScissor()
 {
 	// 基本的にビューポートと同じ矩形が構成されるようにする
 	scissorRect_.left = 0;
-	scissorRect_.right = static_cast<LONG>(Window::GetWidth());
+	scissorRect_.right = Window::GetWidth();
 	scissorRect_.top = 0;
-	scissorRect_.bottom = static_cast<LONG>(Window::GetHeight());
+	scissorRect_.bottom = Window::GetHeight();
 }
 
 void DirectXBase::BeginFrame()
