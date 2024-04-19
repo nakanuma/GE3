@@ -58,6 +58,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 今回は赤を書き込んでみる
 	*materialData = Float4(1.0f, 0.0f, 0.0f, 1.0f); 
 
+
+	// WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(Matrix));
+	// データを書き込む
+	Matrix* wvpData = nullptr;
+	// 書き込むためのアドレスを取得
+	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	// 単位行列を書き込んでおく
+	*wvpData = Matrix::Identity();
+
 	//////////////////////////////////////////////////////
 
 	// ウィンドウの×ボタンが押されるまでループ
