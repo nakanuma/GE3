@@ -9,6 +9,7 @@
 #include "DirectXBase.h"
 #include "DirectXUtil.h"
 #include "MyMath.h"
+#include "Camera.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -36,7 +37,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(Float4);
 
-	
+
 	// 頂点リソースにデータを書き込む
 	Float4* vertexData = nullptr;
 	// 書き込むためのアドレスを取得
@@ -56,7 +57,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// 今回は赤を書き込んでみる
-	*materialData = Float4(1.0f, 0.0f, 0.0f, 1.0f); 
+	*materialData = Float4(1.0f, 0.0f, 0.0f, 1.0f);
 
 
 	// WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
@@ -68,12 +69,40 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	*wvpData = Matrix::Identity();
 
+
+	// Transform変数を作る
+	Transform transform{ {1.0f,1.0f,1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	// カメラのインスタンスを生成
+	Camera camera{ {0.0f, 0.0f, -0.5f}, {0.0f, 0.0f, 0.0f}, 0.45f };
+
 	//////////////////////////////////////////////////////
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
 		// フレーム開始処理
 		dxBase->BeginFrame();
+
+		///
+		///	更新処理
+		/// 
+
+		//////////////////////////////////////////////////////
+
+		// 三角形の頂点情報を更新
+		transform.rotate.y += 0.03f;
+
+		Matrix worldMatrix = transform.MakeAffineMatrix();
+		Matrix viewMatrix = camera.MakeViewMatrix();
+		Matrix projectionMatrix = camera.MakePerspectiveFovMatrix();
+		Matrix worldViewProjectionMatrix = worldMatrix * viewMatrix * projectionMatrix;
+		*wvpData = worldViewProjectionMatrix;
+
+		//////////////////////////////////////////////////////
+
+		///
+		///	描画処理
+		/// 
+
 		// 描画前処理
 		dxBase->PreDraw();
 
@@ -83,7 +112,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 		// マテリアルCBufferの場所を設定
 		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-		
+		// wvp用のCBufferの場所を設定
+		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+
 		// 描画を行う（DrawCall/ドローコール）。3頂点で1つのインスタンス。
 		dxBase->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 

@@ -40,6 +40,9 @@
     <Filter Include="Engine\Math">
       <UniqueIdentifier>{080c8074-6341-4e23-9e92-6558338474c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\3D">
+      <UniqueIdentifier>{36b06f1e-83e9-4beb-9918-2ba78f55728d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -68,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Engine\3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Engine\3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

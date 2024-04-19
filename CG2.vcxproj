@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DescriptorHeap.cpp" />
     <ClCompile Include="DirectXBase.cpp" />
     <ClCompile Include="DirectXUtil.cpp" />
@@ -22,6 +23,7 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="DescriptorHeap.h" />
     <ClInclude Include="DirectXBase.h" />
     <ClInclude Include="DirectXUtil.h" />
