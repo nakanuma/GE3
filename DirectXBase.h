@@ -50,6 +50,8 @@ public:
 	void SetViewport();
 	// Scissorの設定
 	void SetScissor();
+	// 深度バッファ生成
+	void CreateDepthBuffer();
 
 	// フレーム開始処理
 	void BeginFrame();
@@ -99,5 +101,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 	D3D12_VIEWPORT viewport_;
 	D3D12_RECT scissorRect_;
+	Microsoft::WRL::ComPtr <ID3D12Resource> depthStencilResource_;
+	DescriptorHeap dsvDescriptorHeap_;
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc_;
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_;
 };
 

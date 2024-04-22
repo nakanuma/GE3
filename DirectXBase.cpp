@@ -28,6 +28,9 @@ void DirectXBase::Initialize()
 	// レンダーターゲット生成
 	CreateFinalRenderTargets();
 
+	// 深度バッファ生成
+	CreateDepthBuffer();
+
 	// フェンス生成
 	CreateFence();
 
@@ -369,6 +372,9 @@ void DirectXBase::CreatePipelineStateObject()
 	// どのように画面に色を打ち込むかの設定
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	// DepthStencilの設定
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc_;
+	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	// 実際に生成
 	graphicsPipelineState_ = nullptr;
 	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
@@ -395,6 +401,29 @@ void DirectXBase::SetScissor()
 	scissorRect_.bottom = Window::GetHeight();
 }
 
+void DirectXBase::CreateDepthBuffer()
+{
+	// DepthStencilTextureをウィンドウのサイズで作成
+	depthStencilResource_ = CreateDepthStencilTextureResource(device_.Get(), Window::GetWidth(), Window::GetHeight());
+
+	// DSVの生成
+	dsvDescriptorHeap_.Create(device_.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+
+	// DSVの設定
+	dsvDesc_.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // Format。基本的にはResourceに合わせる
+	dsvDesc_.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; // 2dTexture;
+	// DSVHeapの先頭にDSVをつくる
+	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc_, dsvDescriptorHeap_.GetCPUHandle(0));
+
+	// DepthStencilStateの設定
+	// Depthの機能を有効化する
+	depthStencilDesc_.DepthEnable = true;
+	// 書き込みします
+	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	// 比較関数はLessEqual。つまり、近ければ描画される
+	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+}
+
 void DirectXBase::BeginFrame()
 {
 	HRESULT result = S_FALSE;
@@ -416,11 +445,14 @@ void DirectXBase::BeginFrame()
 	// TransitionBarrierを張る
 	commandList_->ResourceBarrier(1, &barrier_);
 
-	// 描画先のRTVを設定する
-	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, nullptr);
+	// 描画先のRTVをとDSVを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_.GetCPUHandle(0);
+	commandList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex], false, &dsvHandle);
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearColor, 0, nullptr);
+	// 指定した深度で画面全体をクリアする
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void DirectXBase::EndFrame()
