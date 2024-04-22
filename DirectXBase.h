@@ -90,7 +90,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob_;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[2];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 	D3D12_BLEND_DESC blendDesc_;
 	D3D12_RASTERIZER_DESC rasterizerDesc_;
