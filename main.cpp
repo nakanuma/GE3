@@ -39,7 +39,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ImGuiの初期化
 	ImguiWrapper::Initialize(dxBase->GetDevice().Get(), dxBase->GetSwapChainDesc().BufferCount, dxBase->GetRtvDesc().Format, TextureManager::GetInstance().srvHeap_.heap_.Get());
 
-	//////////////////////////////////////////////////////
+	///
+	///	↓ ここから3Dオブジェクトの設定
+	/// 
 
 	// 頂点リソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(VertexData) * 6);
@@ -98,17 +100,74 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 単位行列を書き込んでおく
 	*wvpData = Matrix::Identity();
 
-
 	// Transform変数を作る
 	Transform transform{ {1.0f,1.0f,1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+
+	///
+	///	↑ ここまで3Dオブジェクトの設定
+	/// 
+
+	///
+	///	↓ ここからスプライトの設定
+	/// 
+
+	// Sprite用のリソースを作る
+	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResourceSprite = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(VertexData) * 6);
+
+	// 頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
+	// リソースの先頭のアドレスから使う
+	vertexBufferViewSprite.BufferLocation = vertexResourceSprite->GetGPUVirtualAddress();
+	// 使用するリソースのサイズは頂点4つ分のサイズ
+	vertexBufferViewSprite.SizeInBytes = sizeof(VertexData) * 6;
+	// 1頂点あたりのサイズ
+	vertexBufferViewSprite.StrideInBytes = sizeof(VertexData);
+
+	// 頂点データを設定
+	VertexData* vertexDataSprite = nullptr;
+	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
+	// 1枚目の三角形
+	// 左下
+	vertexDataSprite[0].position = { 0.0f, 360.0f, 0.0f, 1.0f };
+	vertexDataSprite[0].texcoord = { 0.0f, 1.0f };
+	// 左上
+	vertexDataSprite[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };
+	vertexDataSprite[1].texcoord = { 0.0f, 0.0f };
+	// 右下
+	vertexDataSprite[2].position = { 640.0f, 360.0f, 0.0f, 1.0f };
+	vertexDataSprite[2].texcoord = { 1.0f, 1.0f };
+	// 2枚目の三角形
+	// 左上
+	vertexDataSprite[3].position = { 0.0f, 0.0f, 0.0f, 1.0f };
+	vertexDataSprite[3].texcoord = { 0.0f, 0.0f };
+	// 右上
+	vertexDataSprite[4].position = { 640.0f, 0.0f, 0.0f, 1.0f };
+	vertexDataSprite[4].texcoord = { 1.0f, 0.0f };
+	// 右下
+	vertexDataSprite[5].position = { 640.0f, 360.0f, 0.0f, 1.0f };
+	vertexDataSprite[5].texcoord = { 1.0f, 1.0f };
+
+	// Sprite用のTransformationMatrix用のリソースを作る。Matrix 1つ分のサイズを用意する
+	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResourceSprite = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(Matrix));
+	// データを書き込む
+	Matrix* transformationMatrixDataSprite = nullptr;
+	// 書き込むためのアドレスを取得
+	transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
+	// 単位行列を書き込んでおく
+	*transformationMatrixDataSprite = Matrix::Identity();
+
+	// CPUで動かす用のTransformを作る
+	Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f,0.0f,0.0f}, {0.0f, 0.0f, 0.0f} };
+
+	///
+	///	↑ ここまでスプライトの設定
+	/// 
+
 	// カメラのインスタンスを生成
 	Camera camera{ {0.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };
 
-
 	// Textureを読み込む
 	uint32_t uvCheckerGH = TextureManager::Load("resources/uvChecker.png", dxBase->GetDevice().Get());
-
-	//////////////////////////////////////////////////////
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
@@ -147,14 +206,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::ColorEdit4("TriangleColor", &materialData->x);
 		ImGui::End();
 
+
+
+		// Sprite用のWorldViewProjectionMatrixを作る
+		Matrix worldMatrixSprite = transformSprite.MakeAffineMatrix();
+		Matrix viewMatrixSprite = Matrix::Identity();
+		Matrix projectionMatrixSprite = Matrix::Orthographic(static_cast<float>(Window::GetWidth()), static_cast<float>(Window::GetHeight()), 0.0f, 1000.0f);
+		Matrix worldViewProjectionMatrixSprite = worldMatrixSprite * viewMatrixSprite * projectionMatrixSprite;
+		*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
+
+		// スプライトの位置を変更できるようにする
+		ImGui::Begin("Sprite");
+		ImGui::DragFloat3("SpritePosition", &transformSprite.translate.x);
+		ImGui::End();
+
 		//////////////////////////////////////////////////////
 
 		///
 		///	描画処理
 		/// 
 
-		//////////////////////////////////////////////////////
-
+		///
+		/// ↓ ここから3Dオブジェクトの描画コマンド
+		/// 
+		
 		// commandListにVBVを設定
 		dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 		// マテリアルCBufferの場所を設定
@@ -163,11 +238,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 		// SRVのDescriptorTableの先頭を設定（Textureの設定）
 		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList().Get(), uvCheckerGH);
-
 		// 描画を行う（DrawCall/ドローコール）
 		dxBase->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 
-		//////////////////////////////////////////////////////
+		///
+		/// ↑ ここまで3Dオブジェクトの描画コマンド
+		/// 
+
+		///
+		/// ↓ ここからスプライトの描画コマンド
+		/// 
+		
+		// VBVを設定
+		dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+		// TransformatinMatrixCBufferの場所を設定
+		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+		// 描画
+		dxBase->GetCommandList()->DrawInstanced(6, 1, 0, 0);
+
+		///
+		/// ↑ ここまでスプライトの描画コマンド
+		/// 
 
 		// ImGuiの内部コマンドを生成する
 		ImguiWrapper::Render(dxBase->GetCommandList().Get());
