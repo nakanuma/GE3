@@ -211,6 +211,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// Textureを読み込む
 	uint32_t uvCheckerGH = TextureManager::Load("resources/uvChecker.png", dxBase->GetDevice().Get());
+	// 2枚目のTextureを読み込む
+	uint32_t monsterBallGH = TextureManager::Load("resources/monsterBall.png", dxBase->GetDevice().Get());
+
+	// テクスチャの切り替えを行うための変数
+	bool useMonsterBall = true;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
@@ -233,7 +238,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//////////////////////////////////////////////////////
 
 		// 球体の頂点情報を更新
-		transform.rotate.y += 0.03f;
+		transform.rotate.y += 0.02f;
 
 		Matrix worldMatrix = transform.MakeAffineMatrix();
 		Matrix viewMatrix = camera.MakeViewMatrix();
@@ -252,12 +257,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// ImGui
 		ImGui::Begin("Settings");
+
 		// マテリアルの色を変更できるようにする
 		ImGui::ColorEdit4("MaterialColor", &materialData->x);
 		// スプライトの位置を変更できるようにする
 		ImGui::DragFloat3("SpritePosition", &transformSprite.translate.x);
 		// カメラの操作を行えるようにする
 		ImGui::DragFloat3("CameraTranslate", &camera.transform.translate.x);
+		// テクスチャの切り替えを行う
+		ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+
 		ImGui::End();
 
 		//////////////////////////////////////////////////////
@@ -277,7 +286,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// wvp用のCBufferの場所を設定
 		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 		// SRVのDescriptorTableの先頭を設定（Textureの設定）
-		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList().Get(), uvCheckerGH);
+		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList().Get(), useMonsterBall ? monsterBallGH : uvCheckerGH);
 		// 描画を行う（DrawCall/ドローコール）
 		dxBase->GetCommandList()->DrawInstanced(vertexNum, 1, 0, 0);
 
@@ -293,6 +302,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
 		// TransformatinMatrixCBufferの場所を設定
 		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+		// SRVのDescriptorTableの先頭を設定
+		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList().Get(), uvCheckerGH);
 		// 描画
 		dxBase->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 

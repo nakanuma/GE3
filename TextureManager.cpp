@@ -32,7 +32,7 @@ int TextureManager::Load(const std::string& filePath, ID3D12Device* device)
 	// SRVを作成するDescriptorHeapの場所を決める
 	GetInstance().index_++;
 
-
+	// 実際に返すのはインクリメントする前の値なので1引いて返す
 	return GetInstance().index_ - 1;
 }
 
