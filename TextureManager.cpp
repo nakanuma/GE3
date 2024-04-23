@@ -1,6 +1,53 @@
 #include "TextureManager.h"
 #include <cassert>
 
+void TextureManager::Initialize(ID3D12Device* device)
+{
+	GetInstance().srvHeap_.Create(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+}
+
+int TextureManager::Load(const std::string& filePath, ID3D12Device* device)
+{
+	if (GetInstance().index_ >= 128) {
+		Log(std::format("Maximum texture loading has been reached. Texture:{}\n", filePath));
+		assert(0);
+	}
+
+	// Textureを読んで転送する
+	DirectX::ScratchImage mipImages = GetInstance().LoadTexture(filePath);
+	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+	ID3D12Resource* textureResource = TextureManager::GetInstance().CreateTextureResource(device, metadata);
+	TextureManager::GetInstance().UploadTextureData(textureResource, mipImages);
+
+	// metaDataを基にSRVの設定
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = metadata.format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
+	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+
+	// SRVの生成
+	device->CreateShaderResourceView(textureResource, &srvDesc, GetInstance().srvHeap_.GetCPUHandle(GetInstance().index_));
+
+	// SRVを作成するDescriptorHeapの場所を決める
+	GetInstance().index_++;
+
+
+	return GetInstance().index_ - 1;
+}
+
+TextureManager& TextureManager::GetInstance()
+{
+	static TextureManager instance;
+
+	return instance;
+}
+
+void TextureManager::SetDescriptorTable(UINT rootParamIndex, ID3D12GraphicsCommandList* commandList, uint32_t textureHandle)
+{
+	commandList->SetGraphicsRootDescriptorTable(rootParamIndex, GetInstance().srvHeap_.GetGPUHandle(textureHandle));
+}
+
 DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath)
 {
 	HRESULT result = S_FALSE;
