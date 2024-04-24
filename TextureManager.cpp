@@ -8,6 +8,7 @@ void TextureManager::Initialize(ID3D12Device* device)
 
 int TextureManager::Load(const std::string& filePath, ID3D12Device* device)
 {
+	// テクスチャ読み込みの最大値に達した場合、ログを出力
 	if (GetInstance().index_ >= 128) {
 		Log(std::format("Maximum texture loading has been reached. Texture:{}\n", filePath));
 		assert(0);
