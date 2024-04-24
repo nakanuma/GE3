@@ -65,7 +65,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	const float kLonEvery = (PIf * 2.0f) / float(kSubdivision); // 経度分割1つ分の角度 φ
 	const float kLatEvery = PIf / float(kSubdivision); // 緯度分割1つ分の角度 θ
 	// 必要な頂点数を計算
-	const uint32_t vertexNum = kSubdivision * kSubdivision * 6;
+	const uint32_t vertexNum = kSubdivision * kSubdivision * 4; // 頂点の総数
+
+	const uint32_t vertexIndexNum = kSubdivision * kSubdivision * 6; // 頂点インデックスの総数
 
 	// 頂点リソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(VertexData) * vertexNum);
@@ -86,15 +88,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
 
+	// 頂点インデックスの作成
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(uint32_t) * vertexIndexNum);
+
+	// IndexBufferViewの作成
+	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+	// リソースの先頭のアドレスから使う
+	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
+	// 使用するリソースのサイズはインデックスのサイズ
+	indexBufferView.SizeInBytes = sizeof(uint32_t) * vertexIndexNum;
+	// インデックスはuint32_tとする
+	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+
+	// 頂点データの生成
+	uint32_t* indexData = nullptr;
+	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+
 	// 経度の方向に分割
 	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
 		float lat = -PIf / 2.0f + kLatEvery * latIndex; // 現在の緯度
 		// 経度の方向に分割しながら線を描く
 		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-			uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
+			uint32_t start = (latIndex * kSubdivision + lonIndex) * 4;
 			float lon = lonIndex * kLonEvery; // 現在の経度
 			// 頂点にデータを入力する
-			// 1枚目の三角形
 			// 左下（基準点a）
 			vertexData[start].position.x = cosf(lat) * cosf(lon);
 			vertexData[start].position.y = sinf(lat);
@@ -105,7 +122,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			vertexData[start].normal.x = vertexData[start].position.x;
 			vertexData[start].normal.y = vertexData[start].position.y;
 			vertexData[start].normal.z = vertexData[start].position.z;
-			// 上（基準点b）
+			// 左上（基準点b）
 			vertexData[start + 1].position.x = cosf(lat + kLatEvery) * cosf(lon);
 			vertexData[start + 1].position.y = sinf(lat + kLatEvery);
 			vertexData[start + 1].position.z = cosf(lat + kLatEvery) * sinf(lon);
@@ -125,39 +142,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			vertexData[start + 2].normal.x = vertexData[start + 2].position.x;
 			vertexData[start + 2].normal.y = vertexData[start + 2].position.y;
 			vertexData[start + 2].normal.z = vertexData[start + 2].position.z;
-			// 2枚目の三角形
-			// 左上（基準点b）
-			vertexData[start + 3].position.x = cosf(lat + kLatEvery) * cosf(lon);
+			// 右上（基準点d）
+			vertexData[start + 3].position.x = cosf(lat + kLatEvery) * cosf(lon + kLonEvery);
 			vertexData[start + 3].position.y = sinf(lat + kLatEvery);
-			vertexData[start + 3].position.z = cosf(lat + kLatEvery) * sinf(lon);
+			vertexData[start + 3].position.z = cosf(lat + kLatEvery) * sinf(lon + kLonEvery);
 			vertexData[start + 3].position.w = 1.0f;
-			vertexData[start + 3].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[start + 3].texcoord.x = float(lonIndex + 1) / float(kSubdivision);
 			vertexData[start + 3].texcoord.y = 1.0f - float(latIndex + 1) / float(kSubdivision);
 			vertexData[start + 3].normal.x = vertexData[start + 3].position.x;
 			vertexData[start + 3].normal.y = vertexData[start + 3].position.y;
 			vertexData[start + 3].normal.z = vertexData[start + 3].position.z;
-			// 右上（基準点d）
-			vertexData[start + 4].position.x = cosf(lat + kLatEvery) * cosf(lon + kLonEvery);
-			vertexData[start + 4].position.y = sinf(lat + kLatEvery);
-			vertexData[start + 4].position.z = cosf(lat + kLatEvery) * sinf(lon + kLonEvery);
-			vertexData[start + 4].position.w = 1.0f;
-			vertexData[start + 4].texcoord.x = float(lonIndex + 1) / float(kSubdivision);
-			vertexData[start + 4].texcoord.y = 1.0f - float(latIndex + 1) / float(kSubdivision);
-			vertexData[start + 4].normal.x = vertexData[start + 4].position.x;
-			vertexData[start + 4].normal.y = vertexData[start + 4].position.y;
-			vertexData[start + 4].normal.z = vertexData[start + 4].position.z;
-			// 右下（基準点c）
-			vertexData[start + 5].position.x = cosf(lat) * cosf(lon + kLonEvery);
-			vertexData[start + 5].position.y = sinf(lat);
-			vertexData[start + 5].position.z = cosf(lat) * sinf(lon + kLonEvery);
-			vertexData[start + 5].position.w = 1.0f;
-			vertexData[start + 5].texcoord.x = float(lonIndex + 1) / float(kSubdivision);
-			vertexData[start + 5].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-			vertexData[start + 5].normal.x = vertexData[start + 5].position.x;
-			vertexData[start + 5].normal.y = vertexData[start + 5].position.y;
-			vertexData[start + 5].normal.z = vertexData[start + 5].position.z;
+
+			// インデックスリソースにデータを書き込む
+			uint32_t index = (latIndex * kSubdivision + lonIndex) * 6; // 経度のインデックスを加算して、その緯度内での頂点の位置を計算
+			indexData[index + 0] = start + 0; indexData[index + 1] = start + 1; indexData[index + 2] = start + 2;
+			indexData[index + 3] = start + 1; indexData[index + 4] = start + 3; indexData[index + 5] = start + 2;
 		}
 	}
+
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(Material));
@@ -374,6 +376,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// commandListにVBVを設定
 		dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+		// IBVを設定
+		dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		// マテリアルCBufferの場所を設定
 		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		// wvp用のCBufferの場所を設定
@@ -381,7 +385,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// SRVのDescriptorTableの先頭を設定（Textureの設定）
 		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList().Get(), useMonsterBall ? monsterBallGH : uvCheckerGH);
 		// 描画を行う（DrawCall/ドローコール）
-		dxBase->GetCommandList()->DrawInstanced(vertexNum, 1, 0, 0);
+		dxBase->GetCommandList()->DrawIndexedInstanced(vertexIndexNum, 1, 0, 0, 0);
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
