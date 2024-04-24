@@ -111,6 +111,9 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Engine\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="Matrix3x3.cpp">
+      <Filter>Engine\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StringUtil.h">
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="TextureManager.h">
       <Filter>Engine\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix3x3.h">
+      <Filter>Engine\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

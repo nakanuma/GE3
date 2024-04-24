@@ -23,6 +23,8 @@ struct VertexData {
 struct Material {
 	Float4 color;
 	int32_t enableLighting;
+	float padding[3];
+	Matrix uvTransform;
 };
 
 struct TransformationMatrix {
@@ -171,6 +173,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialData->color = Float4(1.0f, 1.0f, 1.0f, 1.0f);
 	// Lightingを有効にする
 	materialData->enableLighting = true;
+	// UVTransform行列を単位行列で初期化
+	materialData->uvTransform = Matrix::Identity();
 	
 
 	// WVP用のリソースを作る。Matrix4x4 1つ分のサイズを用意する
@@ -265,6 +269,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialDataSprite->color = Float4(1.0f, 1.0f, 1.0f, 1.0f);
 	// SpriteはLightingしないのでfalseを設定する
 	materialDataSprite->enableLighting = false;
+	// UVTransform行列を単位行列で初期化
+	materialDataSprite->uvTransform = Matrix::Identity();
+
 
 	// CPUで動かす用のTransformを作る
 	Transform transformSprite{ {1.0f, 1.0f, 1.0f}, {0.0f,0.0f,0.0f}, {0.0f, 0.0f, 0.0f} };
@@ -302,6 +309,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// テクスチャの切り替えを行うための変数
 	bool useMonsterBall = true;
+
+	// UVTransform用の変数を用意
+	Transform uvTransformSprite{
+		{1.0f, 1.0f, 1.0f},
+		{0.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f}
+	};
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
@@ -343,6 +357,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		transformationMatrixDataSprite->World = worldMatrixSprite;
 
 
+		// UVTransform用の行列を生成する
+		Matrix uvTransformMatrix = Matrix::Scaling(uvTransformSprite.scale);
+		uvTransformMatrix = uvTransformMatrix * Matrix::RotationZ(uvTransformSprite.rotate.z);
+		uvTransformMatrix = uvTransformMatrix * Matrix::Translation(uvTransformSprite.translate);
+		materialDataSprite->uvTransform = uvTransformMatrix;
+
 		// ImGui
 		ImGui::Begin("Settings");
 
@@ -358,6 +378,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::ColorEdit4("LightColor", &directionalLightData->color.x);
 		ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x);
 		ImGui::DragFloat("Intensity", &directionalLightData->intensity);
+		// スプライトのUVTransformの設定
+		ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
 		ImGui::End();
 
