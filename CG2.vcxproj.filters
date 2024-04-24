@@ -52,6 +52,9 @@
     <Filter Include="Engine\Texture">
       <UniqueIdentifier>{c3ccd947-49ae-4975-b6cc-69cee2035d6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Model">
+      <UniqueIdentifier>{ab3c2586-143c-4c2a-a984-ce21e4772738}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="Matrix3x3.cpp">
       <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelManager.cpp">
+      <Filter>Engine\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="Matrix3x3.h">
       <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManager.h">
+      <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,12 +13,7 @@
 #include "DescriptorHeap.h"
 #include "ImguiWrapper.h"
 #include "TextureManager.h"
-
-struct VertexData {
-	Float4 position;
-	Float2 texcoord;
-	Float3 normal;
-};
+#include "ModelManager.h"
 
 struct Material {
 	Float4 color;
@@ -62,24 +57,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///	↓ ここから3Dオブジェクトの設定
 	/// 
 
-	// 球体の設定を行う
-	const uint32_t kSubdivision = 20; // 分割数
-	const float kLonEvery = (PIf * 2.0f) / float(kSubdivision); // 経度分割1つ分の角度 φ
-	const float kLatEvery = PIf / float(kSubdivision); // 緯度分割1つ分の角度 θ
-	// 必要な頂点数を計算
-	const uint32_t vertexNum = kSubdivision * kSubdivision * 4; // 頂点の総数
-
-	const uint32_t vertexIndexNum = kSubdivision * kSubdivision * 6; // 頂点インデックスの総数
+	// モデル読み込み
+	ModelData modelData = ModelManager::LoadObjFile("resources", "axis.obj", dxBase->GetDevice().Get());
 
 	// 頂点リソースを作る
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(VertexData) * vertexNum);
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(VertexData) * modelData.vertices.size());
 
 	// 頂点バッファビューを作成する
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	// リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	// 使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * vertexNum;
+	// 使用するリソースのサイズは頂点のサイズ
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -88,79 +77,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	VertexData* vertexData = nullptr;
 	// 書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-
-	// 頂点インデックスの作成
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(uint32_t) * vertexIndexNum);
-
-	// IndexBufferViewの作成
-	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
-	// リソースの先頭のアドレスから使う
-	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
-	// 使用するリソースのサイズはインデックスのサイズ
-	indexBufferView.SizeInBytes = sizeof(uint32_t) * vertexIndexNum;
-	// インデックスはuint32_tとする
-	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-
-	// 頂点データの生成
-	uint32_t* indexData = nullptr;
-	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
-
-	// 経度の方向に分割
-	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-		float lat = -PIf / 2.0f + kLatEvery * latIndex; // 現在の緯度
-		// 経度の方向に分割しながら線を描く
-		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-			uint32_t start = (latIndex * kSubdivision + lonIndex) * 4;
-			float lon = lonIndex * kLonEvery; // 現在の経度
-			// 頂点にデータを入力する
-			// 左下（基準点a）
-			vertexData[start].position.x = cosf(lat) * cosf(lon);
-			vertexData[start].position.y = sinf(lat);
-			vertexData[start].position.z = cosf(lat) * sinf(lon);
-			vertexData[start].position.w = 1.0f;
-			vertexData[start].texcoord.x = float(lonIndex) / float(kSubdivision);
-			vertexData[start].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-			vertexData[start].normal.x = vertexData[start].position.x;
-			vertexData[start].normal.y = vertexData[start].position.y;
-			vertexData[start].normal.z = vertexData[start].position.z;
-			// 左上（基準点b）
-			vertexData[start + 1].position.x = cosf(lat + kLatEvery) * cosf(lon);
-			vertexData[start + 1].position.y = sinf(lat + kLatEvery);
-			vertexData[start + 1].position.z = cosf(lat + kLatEvery) * sinf(lon);
-			vertexData[start + 1].position.w = 1.0f;
-			vertexData[start + 1].texcoord.x = float(lonIndex) / float(kSubdivision);
-			vertexData[start + 1].texcoord.y = 1.0f - float(latIndex + 1) / float(kSubdivision);
-			vertexData[start + 1].normal.x = vertexData[start + 1].position.x;
-			vertexData[start + 1].normal.y = vertexData[start + 1].position.y;
-			vertexData[start + 1].normal.z = vertexData[start + 1].position.z;
-			// 右下（基準点c）
-			vertexData[start + 2].position.x = cosf(lat) * cosf(lon + kLonEvery);
-			vertexData[start + 2].position.y = sinf(lat);
-			vertexData[start + 2].position.z = cosf(lat) * sinf(lon + kLonEvery);
-			vertexData[start + 2].position.w = 1.0f;
-			vertexData[start + 2].texcoord.x = float(lonIndex + 1) / float(kSubdivision);
-			vertexData[start + 2].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-			vertexData[start + 2].normal.x = vertexData[start + 2].position.x;
-			vertexData[start + 2].normal.y = vertexData[start + 2].position.y;
-			vertexData[start + 2].normal.z = vertexData[start + 2].position.z;
-			// 右上（基準点d）
-			vertexData[start + 3].position.x = cosf(lat + kLatEvery) * cosf(lon + kLonEvery);
-			vertexData[start + 3].position.y = sinf(lat + kLatEvery);
-			vertexData[start + 3].position.z = cosf(lat + kLatEvery) * sinf(lon + kLonEvery);
-			vertexData[start + 3].position.w = 1.0f;
-			vertexData[start + 3].texcoord.x = float(lonIndex + 1) / float(kSubdivision);
-			vertexData[start + 3].texcoord.y = 1.0f - float(latIndex + 1) / float(kSubdivision);
-			vertexData[start + 3].normal.x = vertexData[start + 3].position.x;
-			vertexData[start + 3].normal.y = vertexData[start + 3].position.y;
-			vertexData[start + 3].normal.z = vertexData[start + 3].position.z;
-
-			// インデックスリソースにデータを書き込む
-			uint32_t index = (latIndex * kSubdivision + lonIndex) * 6; // 経度のインデックスを加算して、その緯度内での頂点の位置を計算
-			indexData[index + 0] = start + 0; indexData[index + 1] = start + 1; indexData[index + 2] = start + 2;
-			indexData[index + 3] = start + 1; indexData[index + 4] = start + 3; indexData[index + 5] = start + 2;
-		}
-	}
+	// 頂点データをリソースにコピー
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
@@ -338,7 +256,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//////////////////////////////////////////////////////
 
 		// 球体の頂点情報を更新
-		transform.rotate.y += 0.02f;
+		/*transform.rotate.y += 0.02f;*/
 
 		Matrix worldMatrix = transform.MakeAffineMatrix();
 		Matrix viewMatrix = camera.MakeViewMatrix();
@@ -372,6 +290,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("SpritePosition", &transformSprite.translate.x);
 		// カメラの操作を行えるようにする
 		ImGui::DragFloat3("CameraTranslate", &camera.transform.translate.x);
+		ImGui::SliderAngle("CameraRotateX", &camera.transform.rotate.x);
+		ImGui::SliderAngle("CameraRotateY", &camera.transform.rotate.y);
+		ImGui::SliderAngle("CameraRotateZ", &camera.transform.rotate.z);
+		// 3Dオブジェクトの回転
+		ImGui::SliderAngle("ModelRotateX", &transform.rotate.x);
+		ImGui::SliderAngle("ModelRotateY", &transform.rotate.y);
+		ImGui::SliderAngle("ModelRotateZ", &transform.rotate.z);
 		// テクスチャの切り替えを行う
 		ImGui::Checkbox("useMonsterBall", &useMonsterBall);
 		// 平行光源の設定
@@ -400,16 +325,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// commandListにVBVを設定
 		dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-		// IBVを設定
-		dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		// マテリアルCBufferの場所を設定
 		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 		// wvp用のCBufferの場所を設定
 		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 		// SRVのDescriptorTableの先頭を設定（Textureの設定）
-		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList().Get(), useMonsterBall ? monsterBallGH : uvCheckerGH);
+		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList().Get(), modelData.material.textureHandle); // モデルデータに格納されたテクスチャを使用する
 		// 描画を行う（DrawCall/ドローコール）
-		dxBase->GetCommandList()->DrawIndexedInstanced(vertexIndexNum, 1, 0, 0, 0);
+		dxBase->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
@@ -430,7 +353,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// SRVのDescriptorTableの先頭を設定
 		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList().Get(), uvCheckerGH);
 		// 描画（DrawCall/ドローコール）6個のインデックスを使用し1つのインスタンスを描画
-		dxBase->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+		/*dxBase->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);*/
 
 		///
 		/// ↑ ここまでスプライトの描画コマンド
