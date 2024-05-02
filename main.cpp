@@ -59,7 +59,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 
 
 	// モデル読み込み
-	ModelData modelData = ModelManager::LoadObjFile("resources", "axis.obj", dxBase->GetDevice().Get());
+	ModelData modelData = ModelManager::LoadObjFile("resources", "teapot.obj", dxBase->GetDevice().Get());
 
 	// 頂点リソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(dxBase->GetDevice().Get(), sizeof(VertexData) * modelData.vertices.size());
@@ -294,7 +294,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::SliderAngle("CameraRotateX", &camera.transform.rotate.x);
 		ImGui::SliderAngle("CameraRotateY", &camera.transform.rotate.y);
 		ImGui::SliderAngle("CameraRotateZ", &camera.transform.rotate.z);
-		// 3Dオブジェクトの回転
+		// 3Dオブジェクトの移動と回転
+		ImGui::SliderAngle("ModelTranslateX", &transform.translate.x);
+		ImGui::SliderAngle("ModelTranslateY", &transform.translate.y);
+		ImGui::SliderAngle("ModelTranslateZ", &transform.translate.z);
 		ImGui::SliderAngle("ModelRotateX", &transform.rotate.x);
 		ImGui::SliderAngle("ModelRotateY", &transform.rotate.y);
 		ImGui::SliderAngle("ModelRotateZ", &transform.rotate.z);
