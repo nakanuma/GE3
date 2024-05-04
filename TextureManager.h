@@ -4,6 +4,7 @@
 #include "StringUtil.h"
 #include "Logger.h"
 #include "DescriptorHeap.h"
+#include <array>
 
 class TextureManager final
 {
@@ -21,10 +22,13 @@ private:
 	// TextureデータをCPUで読む
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
 	// DirectX12のTextureResourceを作る
-	static ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata);
+	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata);
 	// TextureResourceにデータを転送する
 	static void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
 
+	static const uint32_t kMaxTextureValue_ = 128;
 	uint32_t index_ = 1;
+
+	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, kMaxTextureValue_> texResources;
 };
 

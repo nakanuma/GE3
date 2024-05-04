@@ -17,19 +17,20 @@
 
 // リソースリークチェック
 struct D3DResourceLeakChecker {
-	~D3DResourceLeakChecker() {
-		Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
-		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
-			debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-			debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-			debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-		}
+	~D3DResourceLeakChecker();
+public:
+	static D3DResourceLeakChecker* GetInstance() {
+		static D3DResourceLeakChecker ins;
+		return &ins;
 	}
 };
 
 class DirectXBase
 {
 public:
+	// デストラクタ
+	~DirectXBase();
+
 	// シングルトンインスタンスの取得
 	static DirectXBase* GetInstance();
 
@@ -77,9 +78,15 @@ public:
 	// 描画後処理
 	void PostDraw();
 
-	// アクセッサ
-	Microsoft::WRL::ComPtr <ID3D12Device> GetDevice();
-	Microsoft::WRL::ComPtr <ID3D12GraphicsCommandList> GetCommandList();
+	///
+	/// アクセッサ
+	/// 
+	
+	// デバイスの取得
+	ID3D12Device* GetDevice();
+	// コマンドリストの取得
+	ID3D12GraphicsCommandList* GetCommandList();
+
 	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc();
 	D3D12_RENDER_TARGET_VIEW_DESC GetRtvDesc();
 
