@@ -59,7 +59,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 
 
 	// モデル読み込み
-	ModelData modelData = ModelManager::LoadObjFile("resources", "teapot.obj", dxBase->GetDevice());
+	ModelData modelData = ModelManager::LoadObjFile("resources/Models", "teapot.obj", dxBase->GetDevice());
 
 	// 頂点リソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = CreateBufferResource(dxBase->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
@@ -222,9 +222,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Camera camera{ {0.0f, 0.0f, -10.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };
 
 	// Textureを読み込む
-	uint32_t uvCheckerGH = TextureManager::Load("resources/uvChecker.png", dxBase->GetDevice());
+	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
 	// 2枚目のTextureを読み込む
-	uint32_t monsterBallGH = TextureManager::Load("resources/monsterBall.png", dxBase->GetDevice());
+	uint32_t monsterBallGH = TextureManager::Load("resources/Images/monsterBall.png", dxBase->GetDevice());
 
 	// テクスチャの切り替えを行うための変数
 	bool useMonsterBall = true;

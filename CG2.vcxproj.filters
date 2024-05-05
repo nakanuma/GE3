@@ -60,31 +60,31 @@
     <ClCompile Include="main.cpp">
       <Filter>未分類\ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="StringUtil.cpp">
+    <ClCompile Include="Engine\Util\StringUtil.cpp">
       <Filter>Engine\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
+    <ClCompile Include="Engine\Debugger\Logger.cpp">
       <Filter>Engine\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="MyWindow.cpp">
+    <ClCompile Include="Engine\Window\MyWindow.cpp">
       <Filter>Engine\Window</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXBase.cpp">
+    <ClCompile Include="Engine\DirectX\DirectXBase.cpp">
       <Filter>Engine\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="DescriptorHeap.cpp">
+    <ClCompile Include="Engine\DirectX\DescriptorHeap.cpp">
       <Filter>Engine\DirectX\Util</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXUtil.cpp">
+    <ClCompile Include="Engine\DirectX\DirectXUtil.cpp">
       <Filter>Engine\DirectX\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix.cpp">
+    <ClCompile Include="Engine\Math\Matrix.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
+    <ClCompile Include="Engine\Math\Transform.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="Engine\3D\Camera.cpp">
       <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -108,57 +108,57 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ImguiWrapper.cpp">
+    <ClCompile Include="Engine\Wrapper\ImguiWrapper.cpp">
       <Filter>Engine\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
+    <ClCompile Include="Engine\Texture\TextureManager.cpp">
       <Filter>Engine\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix3x3.cpp">
+    <ClCompile Include="Engine\Math\Matrix3x3.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="ModelManager.cpp">
+    <ClCompile Include="Engine\Model\ModelManager.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="StringUtil.h">
+    <ClInclude Include="Engine\Util\StringUtil.h">
       <Filter>Engine\Util</Filter>
     </ClInclude>
-    <ClInclude Include="Logger.h">
+    <ClInclude Include="Engine\Debugger\Logger.h">
       <Filter>Engine\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="MyWindow.h">
+    <ClInclude Include="Engine\Window\MyWindow.h">
       <Filter>Engine\Window</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXBase.h">
+    <ClInclude Include="Engine\DirectX\DirectXBase.h">
       <Filter>Engine\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="DescriptorHeap.h">
+    <ClInclude Include="Engine\DirectX\DescriptorHeap.h">
       <Filter>Engine\DirectX\Util</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXUtil.h">
+    <ClInclude Include="Engine\DirectX\DirectXUtil.h">
       <Filter>Engine\DirectX\Util</Filter>
     </ClInclude>
-    <ClInclude Include="MyMath.h">
+    <ClInclude Include="Engine\Math\MyMath.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Float2.h">
+    <ClInclude Include="Engine\Math\Float2.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Float3.h">
+    <ClInclude Include="Engine\Math\Float3.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Float4.h">
+    <ClInclude Include="Engine\Math\Float4.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix.h">
+    <ClInclude Include="Engine\Math\Matrix.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
+    <ClInclude Include="Engine\Math\Transform.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Engine\3D\Camera.h">
       <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -185,24 +185,24 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="ImguiWrapper.h">
+    <ClInclude Include="Engine\Wrapper\ImguiWrapper.h">
       <Filter>Engine\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
+    <ClInclude Include="Engine\Texture\TextureManager.h">
       <Filter>Engine\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix3x3.h">
+    <ClInclude Include="Engine\Math\Matrix3x3.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="ModelManager.h">
+    <ClInclude Include="Engine\Model\ModelManager.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Object3d.VS.hlsl">
+    <FxCompile Include="resources\Shaders\Object3d.VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Object3d.PS.hlsl">
+    <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -212,7 +212,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Object3d.hlsli">
+    <None Include="resources\Shaders\Object3d.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

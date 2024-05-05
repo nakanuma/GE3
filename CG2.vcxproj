@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="DescriptorHeap.cpp" />
-    <ClCompile Include="DirectXBase.cpp" />
-    <ClCompile Include="DirectXUtil.cpp" />
+    <ClCompile Include="Engine\3D\Camera.cpp" />
+    <ClCompile Include="Engine\DirectX\DescriptorHeap.cpp" />
+    <ClCompile Include="Engine\DirectX\DirectXBase.cpp" />
+    <ClCompile Include="Engine\DirectX\DirectXUtil.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -22,22 +22,22 @@
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="ImguiWrapper.cpp" />
-    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Engine\Wrapper\ImguiWrapper.cpp" />
+    <ClCompile Include="Engine\Debugger\Logger.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Matrix.cpp" />
-    <ClCompile Include="Matrix3x3.cpp" />
-    <ClCompile Include="ModelManager.cpp" />
-    <ClCompile Include="MyWindow.cpp" />
-    <ClCompile Include="StringUtil.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Engine\Math\Matrix.cpp" />
+    <ClCompile Include="Engine\Math\Matrix3x3.cpp" />
+    <ClCompile Include="Engine\Model\ModelManager.cpp" />
+    <ClCompile Include="Engine\Window\MyWindow.cpp" />
+    <ClCompile Include="Engine\Util\StringUtil.cpp" />
+    <ClCompile Include="Engine\Texture\TextureManager.cpp" />
+    <ClCompile Include="Engine\Math\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="DescriptorHeap.h" />
-    <ClInclude Include="DirectXBase.h" />
-    <ClInclude Include="DirectXUtil.h" />
+    <ClInclude Include="Engine\3D\Camera.h" />
+    <ClInclude Include="Engine\DirectX\DescriptorHeap.h" />
+    <ClInclude Include="Engine\DirectX\DirectXBase.h" />
+    <ClInclude Include="Engine\DirectX\DirectXUtil.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -46,28 +46,28 @@
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="Float2.h" />
-    <ClInclude Include="Float3.h" />
-    <ClInclude Include="Float4.h" />
-    <ClInclude Include="ImguiWrapper.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="Matrix.h" />
-    <ClInclude Include="Matrix3x3.h" />
-    <ClInclude Include="ModelManager.h" />
-    <ClInclude Include="MyMath.h" />
-    <ClInclude Include="MyWindow.h" />
-    <ClInclude Include="StringUtil.h" />
-    <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Transform.h" />
+    <ClInclude Include="Engine\Math\Float2.h" />
+    <ClInclude Include="Engine\Math\Float3.h" />
+    <ClInclude Include="Engine\Math\Float4.h" />
+    <ClInclude Include="Engine\Wrapper\ImguiWrapper.h" />
+    <ClInclude Include="Engine\Debugger\Logger.h" />
+    <ClInclude Include="Engine\Math\Matrix.h" />
+    <ClInclude Include="Engine\Math\Matrix3x3.h" />
+    <ClInclude Include="Engine\Model\ModelManager.h" />
+    <ClInclude Include="Engine\Math\MyMath.h" />
+    <ClInclude Include="Engine\Window\MyWindow.h" />
+    <ClInclude Include="Engine\Util\StringUtil.h" />
+    <ClInclude Include="Engine\Texture\TextureManager.h" />
+    <ClInclude Include="Engine\Math\Transform.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Object3d.PS.hlsl">
+    <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Object3d.VS.hlsl">
+    <FxCompile Include="resources\Shaders\Object3d.VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -83,7 +83,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Object3d.hlsli" />
+    <None Include="resources\Shaders\Object3d.hlsli" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -120,9 +120,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Debugger;$(ProjectDir)Engine\DirectX;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Model;$(ProjectDir)Engine\Texture;$(ProjectDir)Engine\Util;$(ProjectDir)Engine\Window;$(ProjectDir)Engine\Wrapper;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Engine;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Debugger;$(ProjectDir)Engine\DirectX;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Model;$(ProjectDir)Engine\Texture;$(ProjectDir)Engine\Util;$(ProjectDir)Engine\Window;$(ProjectDir)Engine\Wrapper;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
