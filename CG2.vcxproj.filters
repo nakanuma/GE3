@@ -205,10 +205,10 @@
     <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Toon.VS.hlsl">
+    <FxCompile Include="resources\Shaders\Toon.VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Toon.PS.hlsl">
+    <FxCompile Include="resources\Shaders\Toon.PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -221,7 +221,7 @@
     <None Include="resources\Shaders\Object3d.hlsli">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Toon.hlsli">
+    <None Include="resources\Shaders\Toon.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

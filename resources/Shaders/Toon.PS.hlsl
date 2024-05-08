@@ -31,13 +31,21 @@ PixelShaderOutput main(VertexShaderOutput input)
     PixelShaderOutput output;
     float4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
-    if (gMaterial.enableLighting != 0) { // Lightingする場合
-        // half lambert
+
+    // ライティングの計算
+    float lightingFactor = 1.0f;
+    if (gMaterial.enableLighting != 0)
+    {
         float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-        output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
-    } else  {
-        output.color = gMaterial.color * textureColor;
+        lightingFactor = saturate(pow(NdotL * 0.5f + 0.5f, 2.0f));
     }
+
+    // トゥーンシェーディングの適用
+    float toonStep = 4; // エッジの急峻さを調整するためのパラメータ
+    float toon = round(lightingFactor * toonStep) / toonStep;
+
+    // 最終的な出力色
+    output.color = gMaterial.color * textureColor * toon;
+
     return output;
 }
