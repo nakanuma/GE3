@@ -205,6 +205,12 @@
     <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Toon.VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Toon.PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -213,6 +219,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shaders\Object3d.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Toon.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
