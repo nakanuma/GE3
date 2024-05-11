@@ -35,7 +35,53 @@ public:
 	static DirectXBase* GetInstance();
 
 	// 初期化
-	void Initialize();
+	void Initialize()
+	{
+		// DXGIデバイス初期化
+		InitializeDXGIDevice();
+
+		// コマンド関連初期化
+		InitializeCommand();
+
+		// スワップチェーンの生成
+		CreateSwapChain();
+
+		// レンダーターゲット生成
+		CreateFinalRenderTargets();
+
+		// 深度バッファ生成
+		CreateDepthBuffer();
+
+		// フェンス生成
+		CreateFence();
+
+		// DXC初期化
+		InitializeDXC();
+
+		// RootSignature生成
+		CreateRootSignature();
+
+		// InputLayoutの設定
+		SetInputLayout();
+
+		// BlendStateの設定
+		SetBlendState();
+
+		// RasterizerStateの設定
+		SetRasterizerState();
+
+		// Shaderをコンパイル
+		ShaderCompile();
+
+		// PipelineStateObjectの生成
+		CreatePipelineStateObject();
+
+		// Viewportの設定
+		SetViewport();
+
+		// Scissorの設定
+		SetScissor();
+	}
 
 	// DXGIデバイス初期化
 	void InitializeDXGIDevice(bool enableDebugLayer = true);
@@ -89,6 +135,8 @@ public:
 
 	DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc();
 	D3D12_RENDER_TARGET_VIEW_DESC GetRtvDesc();
+	ID3D12PipelineState* GetPipelineState();
+	ID3D12PipelineState* GetPipelineStateOutline();
 
 private:
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
@@ -120,6 +168,7 @@ private:
 	IDxcBlob* vertexShaderBlob_;
 	IDxcBlob* pixelShaderBlob_;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateOutline_;
 	D3D12_VIEWPORT viewport_;
 	D3D12_RECT scissorRect_;
 	Microsoft::WRL::ComPtr <ID3D12Resource> depthStencilResource_;

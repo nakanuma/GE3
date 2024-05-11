@@ -21,9 +21,27 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 Texture2D<float32_t4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
+struct CameraData
+{
+    float32_t3 position;
+};
+
+ConstantBuffer<CameraData> gCameraData : register(b2);
+
 struct PixelShaderOutput
 {
     float32_t4 color : SV_TARGET0;
+};
+
+float32_t4 RimLight(VertexShaderOutput input, float32_t4 color)
+{
+    float32_t3 eyeDirection = normalize(gCameraData.position - input.worldPos.xyz);
+    
+    half rim = 1.0f - abs(dot(eyeDirection, input.normal));
+    float32_t3 emission = lerp(color.rgb, float32_t3(1.0f, 0.0f, 0.0f), smoothstep(0.45, 0.5, /*pow(rim, 12.0f) * 12.0f)*/rim * 12.0f));
+    color.rgb = emission;
+    
+    return color;
 };
 
 PixelShaderOutput main(VertexShaderOutput input)
@@ -47,5 +65,8 @@ PixelShaderOutput main(VertexShaderOutput input)
     // 最終的な出力色
     output.color = gMaterial.color * textureColor * toon;
 
+    //output.color = RimLight(input, output.color);
+    
+    // リムライトを適用
     return output;
 }

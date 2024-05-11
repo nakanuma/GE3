@@ -55,6 +55,9 @@
     <Filter Include="Engine\Model">
       <UniqueIdentifier>{ab3c2586-143c-4c2a-a984-ce21e4772738}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Object3D">
+      <UniqueIdentifier>{539e6489-f2a3-4ff6-bf39-f5ca2bda05bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -119,6 +122,12 @@
     </ClCompile>
     <ClCompile Include="Engine\Model\ModelManager.cpp">
       <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Object3D.cpp">
+      <Filter>Engine\Object3D</Filter>
+    </ClCompile>
+    <ClCompile Include="OutlinedObject.cpp">
+      <Filter>Engine\Object3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +205,15 @@
     </ClInclude>
     <ClInclude Include="Engine\Model\ModelManager.h">
       <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Object3D.h">
+      <Filter>Engine\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstBuffer.h">
+      <Filter>Engine\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="OutlinedObject.h">
+      <Filter>Engine\Object3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -26,54 +26,6 @@ DirectXBase* DirectXBase::GetInstance()
 	return &instance;
 }
 
-void DirectXBase::Initialize()
-{
-	// DXGIデバイス初期化
-	InitializeDXGIDevice();
-
-	// コマンド関連初期化
-	InitializeCommand();
-
-	// スワップチェーンの生成
-	CreateSwapChain();
-
-	// レンダーターゲット生成
-	CreateFinalRenderTargets();
-
-	// 深度バッファ生成
-	CreateDepthBuffer();
-
-	// フェンス生成
-	CreateFence();
-
-	// DXC初期化
-	InitializeDXC();
-
-	// RootSignature生成
-	CreateRootSignature();
-
-	// InputLayoutの設定
-	SetInputLayout();
-
-	// BlendStateの設定
-	SetBlendState();
-
-	// RasterizerStateの設定
-	SetRasterizerState();
-
-	// Shaderをコンパイル
-	ShaderCompile();
-
-	// PipelineStateObjectの生成
-	CreatePipelineStateObject();
-
-	// Viewportの設定
-	SetViewport();
-
-	// Scissorの設定
-	SetScissor();
-}
-
 void DirectXBase::InitializeDXGIDevice([[maybe_unused]]bool enableDebugLayer)
 {
 #ifdef _DEBUG
@@ -280,20 +232,28 @@ void DirectXBase::CreateRootSignature()
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
 	// RootParameter作成。複数設定できるので配列。今回は結果1つだけなので長さ1の配列
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	D3D12_ROOT_PARAMETER rootParameters[5] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0とバインド
+
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
 	rootParameters[1].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
+
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange; // Tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); // Tableで利用する数
+
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[3].Descriptor.ShaderRegister = 1; // レジスタ番号1を使う
+
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[4].Descriptor.ShaderRegister = 2;
+
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
 
@@ -398,6 +358,12 @@ void DirectXBase::CreatePipelineStateObject()
 	graphicsPipelineState_ = nullptr;
 	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(result));
+
+	// アウトライン用のCullModeだけが違うPSOを作成
+	graphicsPipelineStateDesc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
+	// 生成
+	graphicsPipelineStateOutline_ = nullptr;
+	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineStateOutline_));
 }
 
 void DirectXBase::SetViewport()
@@ -554,6 +520,16 @@ DXGI_SWAP_CHAIN_DESC1 DirectXBase::GetSwapChainDesc()
 D3D12_RENDER_TARGET_VIEW_DESC DirectXBase::GetRtvDesc()
 {
 	return rtvDesc_;
+}
+
+ID3D12PipelineState* DirectXBase::GetPipelineState()
+{
+	return graphicsPipelineState_.Get();
+}
+
+ID3D12PipelineState* DirectXBase::GetPipelineStateOutline()
+{
+	return graphicsPipelineStateOutline_.Get();
 }
 
 D3DResourceLeakChecker::~D3DResourceLeakChecker()

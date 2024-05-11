@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "MyWindow.h"
+#include "DirectXBase.h"
 
 Camera::Camera(Float3 argTranslate, Float3 argRotate, float argFov)
 {
@@ -8,6 +9,11 @@ Camera::Camera(Float3 argTranslate, Float3 argRotate, float argFov)
 	transform.rotate = argRotate;
 	transform.scale = { 1.0f, 1.0f, 1.0 };
 	fov = argFov;
+}
+
+void Camera::TransferConstantBuffer()
+{
+	DirectXBase::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, current_->cameraCB_.resource_->GetGPUVirtualAddress());
 }
 
 Matrix Camera::MakeViewMatrix()

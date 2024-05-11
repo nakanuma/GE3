@@ -32,8 +32,11 @@
     <ClCompile Include="Engine\Util\StringUtil.cpp" />
     <ClCompile Include="Engine\Texture\TextureManager.cpp" />
     <ClCompile Include="Engine\Math\Transform.cpp" />
+    <ClCompile Include="Object3D.cpp" />
+    <ClCompile Include="OutlinedObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Engine\3D\Camera.h" />
     <ClInclude Include="Engine\DirectX\DescriptorHeap.h" />
     <ClInclude Include="Engine\DirectX\DirectXBase.h" />
@@ -59,6 +62,8 @@
     <ClInclude Include="Engine\Util\StringUtil.h" />
     <ClInclude Include="Engine\Texture\TextureManager.h" />
     <ClInclude Include="Engine\Math\Transform.h" />
+    <ClInclude Include="Object3D.h" />
+    <ClInclude Include="OutlinedObject.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">

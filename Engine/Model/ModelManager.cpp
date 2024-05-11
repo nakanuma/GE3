@@ -1,6 +1,8 @@
 #include "ModelManager.h"
 #include <fstream>
 #include <sstream>
+#include <DirectXUtil.h>
+#include <DirectXBase.h>
 
 ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std::string& filename, ID3D12Device* device)
 {
@@ -70,6 +72,26 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
             modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename, device);
         }
     }
+
+    // vertexResourceの作成
+    modelData.vertexResource = CreateBufferResource(DirectXBase::GetInstance()->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
+
+    // 頂点バッファビューを作成する
+    modelData.vertexBufferView;
+    // リソースの先頭のアドレスから使う
+    modelData.vertexBufferView.BufferLocation = modelData.vertexResource->GetGPUVirtualAddress();
+    // 使用するリソースのサイズは頂点のサイズ
+    modelData.vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+    // 1頂点あたりのサイズ
+    modelData.vertexBufferView.StrideInBytes = sizeof(VertexData);
+
+
+    // 頂点リソースにデータを書き込む
+    VertexData* vertexData = nullptr;
+    // 書き込むためのアドレスを取得
+    modelData.vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+    // 頂点データをリソースにコピー
+    std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
     // 4. ModelDataを返す
     return modelData;
