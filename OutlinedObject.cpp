@@ -14,9 +14,9 @@ void OutlinedObject::UpdateMatrix()
 	// 本体のトランスフォームをコピー
 	outline_.transform_ = this->transform_;
 	// スケールを変更
-	outline_.transform_.scale.x *= 1.1f;
-	outline_.transform_.scale.y *= 1.1f;
-	outline_.transform_.scale.z *= 1.1f;
+	outline_.transform_.scale.x *= kOutlineScale_;
+	outline_.transform_.scale.y *= kOutlineScale_;
+	outline_.transform_.scale.z *= kOutlineScale_;
 	// 行列の更新
 	outline_.UpdateMatrix();
 }

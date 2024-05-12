@@ -59,7 +59,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
 
     // トゥーンシェーディングの適用
-    float toonStep = 6; // エッジの急峻さを調整するためのパラメータ
+    float toonStep = 5; // エッジの急峻さを調整するためのパラメータ
     float toon = round(lightingFactor * toonStep) / toonStep;
 
     // 最終的な出力色
@@ -67,6 +67,5 @@ PixelShaderOutput main(VertexShaderOutput input)
 
     //output.color = RimLight(input, output.color);
     
-    // リムライトを適用
     return output;
 }

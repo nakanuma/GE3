@@ -13,5 +13,7 @@ public:
 	bool enableOutline = true;
 private:
 	Object3D outline_;
+
+	const float kOutlineScale_ = 1.05f;
 };
 
