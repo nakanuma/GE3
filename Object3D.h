@@ -24,7 +24,7 @@ public:
 	// マトリックス情報の更新
 	void UpdateMatrix();
 
-	// 描画関数（モデル内のテクスチャを参照 / テクスチャを指定して描画）
+	// 描画（モデル内のテクスチャを参照 / テクスチャを指定して描画）
 	void Draw();
 
 	void Draw(const int TextureHandle);
@@ -40,7 +40,5 @@ public:
 
 	// トランスフォーム情報
 	Transform transform_;
-protected:
-
 };
 

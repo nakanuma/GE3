@@ -59,7 +59,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
 
     // トゥーンシェーディングの適用
-    float toonStep = 4; // エッジの急峻さを調整するためのパラメータ
+    float toonStep = 6; // エッジの急峻さを調整するためのパラメータ
     float toon = round(lightingFactor * toonStep) / toonStep;
 
     // 最終的な出力色
