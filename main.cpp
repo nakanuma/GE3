@@ -51,13 +51,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// モデル読み込み
 	ModelData teaPotModel = ModelManager::LoadObjFile("resources/Models", "teapot.obj", dxBase->GetDevice());
+	ModelData monkeyModel = ModelManager::LoadObjFile("resources/Models", "monkey.obj", dxBase->GetDevice());
+
+
 	// アウトラインオブジェクトの生成
 	OutlinedObject teaPot;
 	// 読み込んだモデルを設定
 	teaPot.model_ = &teaPotModel;
 
-	// Transform変数を作る
-	Transform transform{ {1.0f,1.0f,1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	bool isVisibleTeapot = true;
+
+	// 2つ目のアウトラインオブジェクトを生成
+	OutlinedObject monkey;
+	// 読み込んだモデルを設定
+	monkey.model_ = &monkeyModel;
+
+	bool isVisibleMonkey = false;
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -210,7 +219,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// モデルの頂点情報を更新
 		teaPot.UpdateMatrix();
-
+		monkey.UpdateMatrix();
 
 		// Sprite用のWorldViewProjectionMatrixを作る
 		Matrix worldMatrixSprite = transformSprite.MakeAffineMatrix();
@@ -230,37 +239,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ImGui
 		ImGui::Begin("Settings");
 
-		// マテリアルの色を変更できるようにする
-		ImGui::ColorEdit4("MaterialColor", &teaPot.materialCB_.data_->color.x);
-		// スプライトの位置を変更できるようにする
-		ImGui::DragFloat3("SpritePosition", &transformSprite.translate.x);
-		// カメラの操作を行えるようにする
-		ImGui::DragFloat3("CameraTranslate", &camera.transform.translate.x);
-		ImGui::SliderAngle("CameraRotateX", &camera.transform.rotate.x);
-		ImGui::SliderAngle("CameraRotateY", &camera.transform.rotate.y);
-		ImGui::SliderAngle("CameraRotateZ", &camera.transform.rotate.z);
-		// 3Dオブジェクトの移動と回転とスケール
-		ImGui::SliderAngle("ModelTranslateX", &teaPot.transform_.translate.x);
-		ImGui::SliderAngle("ModelTranslateY", &teaPot.transform_.translate.y);
-		ImGui::SliderAngle("ModelTranslateZ", &teaPot.transform_.translate.z);
-		ImGui::SliderAngle("ModelRotateX", &teaPot.transform_.rotate.x);
-		ImGui::SliderAngle("ModelRotateY", &teaPot.transform_.rotate.y);
-		ImGui::SliderAngle("ModelRotateZ", &teaPot.transform_.rotate.z);
-		ImGui::SliderAngle("ModelScaleX", &teaPot.transform_.scale.x);
-		ImGui::SliderAngle("ModelScaleY", &teaPot.transform_.scale.y);
-		ImGui::SliderAngle("ModelScaleZ", &teaPot.transform_.scale.z);
-		// アウトラインの切り替えを行う
-		ImGui::Checkbox("enableOutline", &teaPot.enableOutline);
-		// テクスチャの切り替えを行う
-		ImGui::Checkbox("useMonsterBall", &useMonsterBall);
-		// 平行光源の設定
-		ImGui::ColorEdit4("LightColor", &directionalLightData->color.x);
-		ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x);
-		ImGui::DragFloat("Intensity", &directionalLightData->intensity);
-		// スプライトのUVTransformの設定
-		ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+		// モデル
+		if (ImGui::CollapsingHeader("Models")) {
+			ImGui::Indent(16); // ここからのCollapsingHeaderを右にずらす
+			// teapotモデルの設定
+			if (ImGui::CollapsingHeader("Teapot")) {
+				ImGui::DragFloat3("Teapot.Scale", &teaPot.transform_.scale.x, 0.03f); // scale
+				ImGui::DragFloat3("Teapot.Translate", &teaPot.transform_.translate.x, 0.03f); // translate
+				ImGui::DragFloat3("Teapot.Rotate", &teaPot.transform_.rotate.x, 0.03f); // rotate
+
+				ImGui::Checkbox("Teapot.Visible", &isVisibleTeapot); // Drawing
+				ImGui::Checkbox("Teapot.enableOueline", &teaPot.enableOutline); // Outline
+				ImGui::ColorEdit4("Teapot.OutlineColor", &teaPot.materialCB_.data_->color.x); // OutlineColor
+			}
+			// monkeyモデルの設定
+			if (ImGui::CollapsingHeader("Monkey")) {
+				ImGui::DragFloat3("Monkey.Scale", &monkey.transform_.scale.x, 0.03f); // scale
+				ImGui::DragFloat3("Monkey.Translate", &monkey.transform_.translate.x, 0.03f); // translate
+				ImGui::DragFloat3("Monkey.Rotate", &monkey.transform_.rotate.x, 0.03f); // rotate
+
+				ImGui::Checkbox("Monkey.Visible", &isVisibleMonkey); // Drawing
+				ImGui::Checkbox("Monkey.enableOueline", &monkey.enableOutline); // Outline
+				ImGui::ColorEdit4("Monkey.OutlineColor", &monkey.materialCB_.data_->color.x); // OutlineColor
+			}
+			ImGui::Unindent(16); // インデントを戻す
+		}
+		// カメラ
+		if (ImGui::CollapsingHeader("Camera")) {
+			ImGui::DragFloat3("Camera.Translate", &camera.transform.translate.x, 0.03f);
+			ImGui::DragFloat3("Camera.Rotate", &camera.transform.rotate.x, 0.03f);
+		}
+		// ライト
+		if (ImGui::CollapsingHeader("DirectionalLight")) {
+			ImGui::ColorEdit4("Light.Color", &directionalLightData->color.x);
+			ImGui::DragFloat3("Light.Direction", &directionalLightData->direction.x, 0.03f);
+			ImGui::DragFloat("Light.Intensity", &directionalLightData->intensity, 0.03f);
+		}
 
 		ImGui::End();
 
@@ -280,7 +294,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// 
 
 		// モデルの描画
-		teaPot.Draw();
+		if (isVisibleTeapot) {
+			teaPot.Draw();
+		}
+		if (isVisibleMonkey) {
+			monkey.Draw();
+		}
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド

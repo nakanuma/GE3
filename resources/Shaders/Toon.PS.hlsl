@@ -51,7 +51,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 
     // ライティングの計算
-    float lightingFactor = 1.0f;
+    float lightingFactor = 0.0f;
     if (gMaterial.enableLighting != 0)
     {
         float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
