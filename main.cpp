@@ -250,7 +250,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				ImGui::Checkbox("Teapot.Visible", &isVisibleTeapot); // Drawing
 				ImGui::Checkbox("Teapot.enableOueline", &teaPot.enableOutline); // Outline
-				ImGui::ColorEdit4("Teapot.OutlineColor", &teaPot.materialCB_.data_->color.x); // OutlineColor
 			}
 			// monkeyモデルの設定
 			if (ImGui::CollapsingHeader("Monkey")) {
@@ -260,7 +259,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				ImGui::Checkbox("Monkey.Visible", &isVisibleMonkey); // Drawing
 				ImGui::Checkbox("Monkey.enableOueline", &monkey.enableOutline); // Outline
-				ImGui::ColorEdit4("Monkey.OutlineColor", &monkey.materialCB_.data_->color.x); // OutlineColor
 			}
 			ImGui::Unindent(16); // インデントを戻す
 		}

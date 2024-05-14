@@ -63,7 +63,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     float toon = round(lightingFactor * toonStep) / toonStep;
 
     // 最終的な出力色
-    output.color = gMaterial.color * textureColor * toon;
+    output.color = gMaterial.color * textureColor * toon * gDirectionalLight.color * gDirectionalLight.intensity;
 
     //output.color = RimLight(input, output.color);
     
