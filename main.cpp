@@ -61,12 +61,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	bool isVisibleTeapot = true;
 
+	teaPot.enableOutline = false;
+
 	// 2つ目のアウトラインオブジェクトを生成
 	OutlinedObject monkey;
 	// 読み込んだモデルを設定
 	monkey.model_ = &monkeyModel;
 
 	bool isVisibleMonkey = false;
+
+	monkey.enableOutline = false;
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定

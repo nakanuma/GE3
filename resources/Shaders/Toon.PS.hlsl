@@ -51,19 +51,19 @@ PixelShaderOutput main(VertexShaderOutput input)
     float32_t4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
 
     // ライティングの計算
-    float lightingFactor = 0.0f;
+    float cos = 0.0f;
+    float toonStep = 4; // エッジの急峻さを調整するためのパラメータ
     if (gMaterial.enableLighting != 0)
     {
-        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-        lightingFactor = saturate(pow(NdotL * 0.5f + 0.5f, 2.0f));
+        float NdotL = saturate(dot(normalize(input.normal), -gDirectionalLight.direction));
+        float toon = round(NdotL * toonStep) / toonStep;
+        cos = pow(toon * 0.5f + 0.5f, 2.0f);
     }
 
     // トゥーンシェーディングの適用
-    float toonStep = 5; // エッジの急峻さを調整するためのパラメータ
-    float toon = round(lightingFactor * toonStep) / toonStep;
 
     // 最終的な出力色
-    output.color = gMaterial.color * textureColor * toon * gDirectionalLight.color * gDirectionalLight.intensity;
+    output.color = gMaterial.color * textureColor * cos * gDirectionalLight.color * gDirectionalLight.intensity;
 
     //output.color = RimLight(input, output.color);
     
