@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <assert.h>
 
-// MyClass
+// MyClass 
 #include "MyWindow.h"
 #include "Logger.h"
 #include "StringUtil.h"
