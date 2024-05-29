@@ -50,27 +50,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 
 
 	// モデル読み込み
-	ModelData teaPotModel = ModelManager::LoadObjFile("resources/Models", "teapot.obj", dxBase->GetDevice());
-	ModelData monkeyModel = ModelManager::LoadObjFile("resources/Models", "monkey.obj", dxBase->GetDevice());
+	ModelData triangleModel = ModelManager::LoadObjFile("resources/Models", "triangle.obj", dxBase->GetDevice());
 
-
-	// アウトラインオブジェクトの生成
-	OutlinedObject teaPot;
+	// 三角形オブジェクト1の生成
+	Object3D triangle1;
 	// 読み込んだモデルを設定
-	teaPot.model_ = &teaPotModel;
+	triangle1.model_ = &triangleModel;
+	// ライティング無効化
+	triangle1.materialCB_.data_->enableLighting = false;
 
-	bool isVisibleTeapot = true;
 
-	teaPot.enableOutline = false;
-
-	// 2つ目のアウトラインオブジェクトを生成
-	OutlinedObject monkey;
+	// 三角形オブジェクト2の生成
+	Object3D triangle2;
 	// 読み込んだモデルを設定
-	monkey.model_ = &monkeyModel;
+	triangle2.model_ = &triangleModel;
+	// ライティング無効化
+	triangle2.materialCB_.data_->enableLighting = false;
+	// 初期回転角を設定
+	triangle2.transform_.rotate.y = -1.0f;
 
-	bool isVisibleMonkey = false;
-
-	monkey.enableOutline = false;
+	// 三角形オブジェクト2の表示/非表示を切り替える
+	bool isVisible = false;
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -188,11 +188,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// Textureを読み込む
 	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
-	// 2枚目のTextureを読み込む
 	uint32_t monsterBallGH = TextureManager::Load("resources/Images/monsterBall.png", dxBase->GetDevice());
+	uint32_t checkerBoardGH = TextureManager::Load("resources/Images/checkerBoard.png", dxBase->GetDevice());
 
-	// テクスチャの切り替えを行うための変数
-	bool useMonsterBall = true;
+	// ドロップダウンボックスの選択肢
+	const char* textureNames[] = { "uvChecker", "monsterBall", "checkerBoard" };
+	static int currentTextureIndex1 = 0; // triangle1用の選択されたテクスチャのインデックス
+	static int currentTextureIndex2 = 0; // triangle2用の選択されたテクスチャのインデックス
 
 	// UVTransform用の変数を用意
 	Transform uvTransformSprite{
@@ -222,8 +224,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//////////////////////////////////////////////////////
 
 		// モデルの頂点情報を更新
-		teaPot.UpdateMatrix();
-		monkey.UpdateMatrix();
+		triangle1.UpdateMatrix();
+		triangle2.UpdateMatrix();
 
 		// Sprite用のWorldViewProjectionMatrixを作る
 		Matrix worldMatrixSprite = transformSprite.MakeAffineMatrix();
@@ -243,39 +245,66 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ImGui
 		ImGui::Begin("Settings");
 
-		// モデル
-		if (ImGui::CollapsingHeader("Models")) {
-			ImGui::Indent(16); // ここからのCollapsingHeaderを右にずらす
-			// teapotモデルの設定
-			if (ImGui::CollapsingHeader("Teapot")) {
-				ImGui::DragFloat3("Teapot.Scale", &teaPot.transform_.scale.x, 0.03f); // scale
-				ImGui::DragFloat3("Teapot.Translate", &teaPot.transform_.translate.x, 0.03f); // translate
-				ImGui::DragFloat3("Teapot.Rotate", &teaPot.transform_.rotate.x, 0.03f); // rotate
+		// 三角形モデル1の設定
+		ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
 
-				ImGui::Checkbox("Teapot.Visible", &isVisibleTeapot); // Drawing
-				ImGui::Checkbox("Teapot.enableOueline", &teaPot.enableOutline); // Outline
-			}
-			// monkeyモデルの設定
-			if (ImGui::CollapsingHeader("Monkey")) {
-				ImGui::DragFloat3("Monkey.Scale", &monkey.transform_.scale.x, 0.03f); // scale
-				ImGui::DragFloat3("Monkey.Translate", &monkey.transform_.translate.x, 0.03f); // translate
-				ImGui::DragFloat3("Monkey.Rotate", &monkey.transform_.rotate.x, 0.03f); // rotate
+		if (ImGui::CollapsingHeader("triangle1")) {
 
-				ImGui::Checkbox("Monkey.Visible", &isVisibleMonkey); // Drawing
-				ImGui::Checkbox("Monkey.enableOueline", &monkey.enableOutline); // Outline
+			ImGui::DragFloat3("translate1", &triangle1.transform_.translate.x, 0.1f); // translate
+			ImGui::DragFloat3("rotate1", &triangle1.transform_.rotate.x, 0.1f); // rotate
+			ImGui::DragFloat3("scale1", &triangle1.transform_.scale.x, 0.1f); // scale
+
+			ImGui::Indent(16); // 右にずらす
+			ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
+			if (ImGui::CollapsingHeader("Material1")) {
+
+				ImGui::ColorEdit4("color1", &triangle1.materialCB_.data_->color.x); // color
+				// テクスチャ切り替え
+				if (ImGui::BeginCombo("Select a texture for triangle1", textureNames[currentTextureIndex1])) {
+					for (int i = 0; i < IM_ARRAYSIZE(textureNames); i++) {
+						const bool isSelected = (currentTextureIndex1 == i);
+						if (ImGui::Selectable(textureNames[i], isSelected)) {
+							currentTextureIndex1 = i;
+						}
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
 			}
 			ImGui::Unindent(16); // インデントを戻す
 		}
-		// カメラ
-		if (ImGui::CollapsingHeader("Camera")) {
-			ImGui::DragFloat3("Camera.Translate", &camera.transform.translate.x, 0.03f);
-			ImGui::DragFloat3("Camera.Rotate", &camera.transform.rotate.x, 0.03f);
-		}
-		// ライト
-		if (ImGui::CollapsingHeader("DirectionalLight")) {
-			ImGui::ColorEdit4("Light.Color", &directionalLightData->color.x);
-			ImGui::DragFloat3("Light.Direction", &directionalLightData->direction.x, 0.03f);
-			ImGui::DragFloat("Light.Intensity", &directionalLightData->intensity, 0.03f);
+
+		// 三角形モデル2の設定
+		ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
+		if (ImGui::CollapsingHeader("triangle2")) {
+
+			ImGui::Checkbox("isVisible", &isVisible); // 表示切り替え
+			ImGui::DragFloat3("translate2", &triangle2.transform_.translate.x, 0.1f); // translate
+			ImGui::DragFloat3("rotate2", &triangle2.transform_.rotate.x, 0.1f); // rotate
+			ImGui::DragFloat3("scale2", &triangle2.transform_.scale.x, 0.1f); // scale
+
+			ImGui::Indent(16); // 右にずらす
+			ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
+			if (ImGui::CollapsingHeader("Material2")) {
+
+				ImGui::ColorEdit4("color2", &triangle2.materialCB_.data_->color.x); // color
+				// テクスチャ切り替え
+				if (ImGui::BeginCombo("Select a texture for triangle2", textureNames[currentTextureIndex2])) {
+					for (int i = 0; i < IM_ARRAYSIZE(textureNames); i++) {
+						const bool isSelected = (currentTextureIndex2 == i);
+						if (ImGui::Selectable(textureNames[i], isSelected)) {
+							currentTextureIndex2 = i;
+						}
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+			}
+			ImGui::Unindent(16); // インデントを戻す
 		}
 
 		ImGui::End();
@@ -295,12 +324,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓ ここから3Dオブジェクトの描画コマンド
 		/// 
 
-		// モデルの描画
-		if (isVisibleTeapot) {
-			teaPot.Draw();
+		// 選択されたテクスチャを描画する
+		uint32_t selectedTexture1 = 0;
+		uint32_t selectedTexture2 = 0;
+		switch (currentTextureIndex1) {
+		case 0:
+			selectedTexture1 = uvCheckerGH;
+			break;
+		case 1:
+			selectedTexture1 = monsterBallGH;
+			break;
+		case 2:
+			selectedTexture1 = checkerBoardGH;
+			break;
+		default:
+			selectedTexture1 = uvCheckerGH; // デフォルトでUVチェッカーを使用する
+			break;
 		}
-		if (isVisibleMonkey) {
-			monkey.Draw();
+		switch (currentTextureIndex2) {
+		case 0:
+			selectedTexture2 = uvCheckerGH;
+			break;
+		case 1:
+			selectedTexture2 = monsterBallGH;
+			break;
+		case 2:
+			selectedTexture2 = checkerBoardGH;
+			break;
+		default:
+			selectedTexture2 = uvCheckerGH; // デフォルトでUVチェッカーを使用する
+			break;
+		}
+
+		// 三角形を描画
+		triangle1.Draw(selectedTexture1);
+		if (isVisible) {
+			triangle2.Draw(selectedTexture2);
 		}
 
 		///
