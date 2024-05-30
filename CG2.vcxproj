@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Emitter.cpp" />
     <ClCompile Include="Engine\3D\Camera.cpp" />
     <ClCompile Include="Engine\DirectX\DescriptorHeap.cpp" />
     <ClCompile Include="Engine\DirectX\DirectXBase.cpp" />
@@ -34,9 +35,11 @@
     <ClCompile Include="Engine\Math\Transform.cpp" />
     <ClCompile Include="Object3D.cpp" />
     <ClCompile Include="OutlinedObject.cpp" />
+    <ClCompile Include="Particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstBuffer.h" />
+    <ClInclude Include="Emitter.h" />
     <ClInclude Include="Engine\3D\Camera.h" />
     <ClInclude Include="Engine\DirectX\DescriptorHeap.h" />
     <ClInclude Include="Engine\DirectX\DirectXBase.h" />
@@ -64,6 +67,7 @@
     <ClInclude Include="Engine\Math\Transform.h" />
     <ClInclude Include="Object3D.h" />
     <ClInclude Include="OutlinedObject.h" />
+    <ClInclude Include="Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">

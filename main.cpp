@@ -58,7 +58,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	triangle1.model_ = &triangleModel;
 	// ライティング無効化
 	triangle1.materialCB_.data_->enableLighting = false;
-
+	// 三角形オブジェクトの表示/非表示を切り替える
+	bool isTriangleVisible = true;
 
 	// 三角形オブジェクト2の生成
 	Object3D triangle2;
@@ -68,9 +69,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	triangle2.materialCB_.data_->enableLighting = false;
 	// 初期回転角を設定
 	triangle2.transform_.rotate.y = -1.0f;
-
 	// 三角形オブジェクト2の表示/非表示を切り替える
-	bool isVisible = false;
+	bool isTriangle2Visible = false;
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -250,9 +250,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if (ImGui::CollapsingHeader("triangle1")) {
 
-			ImGui::DragFloat3("translate1", &triangle1.transform_.translate.x, 0.1f); // translate
-			ImGui::DragFloat3("rotate1", &triangle1.transform_.rotate.x, 0.1f); // rotate
-			ImGui::DragFloat3("scale1", &triangle1.transform_.scale.x, 0.1f); // scale
+			ImGui::Checkbox("isVisible1", &isTriangleVisible); // 表示切り替え
+			ImGui::DragFloat3("translate1", &triangle1.transform_.translate.x, 0.05f); // translate
+			ImGui::DragFloat3("rotate1", &triangle1.transform_.rotate.x, 0.05f); // rotate
+			ImGui::DragFloat3("scale1", &triangle1.transform_.scale.x, 0.05f); // scale
 
 			ImGui::Indent(16); // 右にずらす
 			ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
@@ -260,7 +261,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				ImGui::ColorEdit4("color1", &triangle1.materialCB_.data_->color.x); // color
 				// テクスチャ切り替え
-				if (ImGui::BeginCombo("Select a texture for triangle1", textureNames[currentTextureIndex1])) {
+				if (ImGui::BeginCombo("Texture1", textureNames[currentTextureIndex1])) {
 					for (int i = 0; i < IM_ARRAYSIZE(textureNames); i++) {
 						const bool isSelected = (currentTextureIndex1 == i);
 						if (ImGui::Selectable(textureNames[i], isSelected)) {
@@ -280,10 +281,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
 		if (ImGui::CollapsingHeader("triangle2")) {
 
-			ImGui::Checkbox("isVisible", &isVisible); // 表示切り替え
-			ImGui::DragFloat3("translate2", &triangle2.transform_.translate.x, 0.1f); // translate
-			ImGui::DragFloat3("rotate2", &triangle2.transform_.rotate.x, 0.1f); // rotate
-			ImGui::DragFloat3("scale2", &triangle2.transform_.scale.x, 0.1f); // scale
+			ImGui::Checkbox("isVisible2", &isTriangle2Visible); // 表示切り替え
+			ImGui::DragFloat3("translate2", &triangle2.transform_.translate.x, 0.05f); // translate
+			ImGui::DragFloat3("rotate2", &triangle2.transform_.rotate.x, 0.05f); // rotate
+			ImGui::DragFloat3("scale2", &triangle2.transform_.scale.x, 0.05f); // scale
 
 			ImGui::Indent(16); // 右にずらす
 			ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
@@ -291,7 +292,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				ImGui::ColorEdit4("color2", &triangle2.materialCB_.data_->color.x); // color
 				// テクスチャ切り替え
-				if (ImGui::BeginCombo("Select a texture for triangle2", textureNames[currentTextureIndex2])) {
+				if (ImGui::BeginCombo("Texture2", textureNames[currentTextureIndex2])) {
 					for (int i = 0; i < IM_ARRAYSIZE(textureNames); i++) {
 						const bool isSelected = (currentTextureIndex2 == i);
 						if (ImGui::Selectable(textureNames[i], isSelected)) {
@@ -357,8 +358,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		// 三角形を描画
-		triangle1.Draw(selectedTexture1);
-		if (isVisible) {
+		if (isTriangleVisible) {
+			triangle1.Draw(selectedTexture1);
+		}
+		if (isTriangle2Visible) {
 			triangle2.Draw(selectedTexture2);
 		}
 
