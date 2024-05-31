@@ -16,7 +16,8 @@
 #include "ModelManager.h"
 #include "ConstBuffer.h"
 #include "Object3D.h"
-#include <OutlinedObject.h>
+#include "OutlinedObject.h"
+#include "Emitter.h"
 
 struct DirectionalLight {
 	Float4 color; // ライトの色
@@ -203,6 +204,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{0.0f, 0.0f, 0.0f}
 	};
 
+	// 三角形を利用した演出
+	Emitter emitter;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
 		// フレーム開始処理
@@ -310,6 +314,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::End();
 
+		// 三角形を利用した演出の更新処理
+		emitter.Update();
+
 		//////////////////////////////////////////////////////
 
 		///
@@ -364,6 +371,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		if (isTriangle2Visible) {
 			triangle2.Draw(selectedTexture2);
 		}
+
+		// 三角形を利用した演出の描画処理
+		emitter.Draw();
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
