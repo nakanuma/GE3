@@ -68,6 +68,7 @@
     <ClInclude Include="Object3D.h" />
     <ClInclude Include="OutlinedObject.h" />
     <ClInclude Include="Particle.h" />
+    <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">

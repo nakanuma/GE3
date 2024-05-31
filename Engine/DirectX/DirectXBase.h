@@ -137,6 +137,7 @@ public:
 	D3D12_RENDER_TARGET_VIEW_DESC GetRtvDesc();
 	ID3D12PipelineState* GetPipelineState();
 	ID3D12PipelineState* GetPipelineStateOutline();
+	ID3D12PipelineState* GetPipelineStateNoCulling();
 
 private:
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
@@ -169,6 +170,7 @@ private:
 	IDxcBlob* pixelShaderBlob_;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateOutline_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateNoCulling_;
 	D3D12_VIEWPORT viewport_;
 	D3D12_RECT scissorRect_;
 	Microsoft::WRL::ComPtr <ID3D12Resource> depthStencilResource_;

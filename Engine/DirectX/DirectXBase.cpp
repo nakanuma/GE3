@@ -364,6 +364,12 @@ void DirectXBase::CreatePipelineStateObject()
 	// 生成
 	graphicsPipelineStateOutline_ = nullptr;
 	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineStateOutline_));
+
+	// カリングを行わないPSOを作成
+	graphicsPipelineStateDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	// 生成
+	graphicsPipelineStateNoCulling_ = nullptr;
+	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineStateNoCulling_));
 }
 
 void DirectXBase::SetViewport()
@@ -530,6 +536,11 @@ ID3D12PipelineState* DirectXBase::GetPipelineState()
 ID3D12PipelineState* DirectXBase::GetPipelineStateOutline()
 {
 	return graphicsPipelineStateOutline_.Get();
+}
+
+ID3D12PipelineState* DirectXBase::GetPipelineStateNoCulling()
+{
+	return graphicsPipelineStateNoCulling_.Get();
 }
 
 D3DResourceLeakChecker::~D3DResourceLeakChecker()

@@ -7,7 +7,7 @@
 class Particle
 {
 public:
-	Particle(Float3 rotation, Float2 velocity, Float3 color);
+	Particle(Float3 position, Float3 rotation, Float2 velocity, Float3 color);
 	~Particle();
 
 	void Update();
@@ -25,8 +25,10 @@ public:
 	//Particle(Particle&&) = delete; // 移動コンストラクターを削除
 	//Particle& operator=(Particle&&) = delete; // 移動代入演算子を削除
 private:
+	// シングルトンインスタンスの作成
 	DirectXBase* dxBase = DirectXBase::GetInstance();
-
+	// 画像
+	uint32_t whiteGH_;
 	// 三角形オブジェクト
 	Object3D triangle_;
 	// 削除フラグ

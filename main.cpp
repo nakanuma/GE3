@@ -206,6 +206,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 三角形を利用した演出
 	Emitter emitter;
+	// 演出を行うかどうかのフラグ
+	bool isActiveParticle = false;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
@@ -312,10 +314,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::Unindent(16); // インデントを戻す
 		}
 
+		// 演出のON/OFF切り替え
+		ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
+		if (ImGui::CollapsingHeader("Particle")) {
+			ImGui::Checkbox("isActiveParticle", &isActiveParticle);
+		}
+
 		ImGui::End();
 
 		// 三角形を利用した演出の更新処理
-		emitter.Update();
+		if (isActiveParticle) {
+			emitter.Update();
+		}
 
 		//////////////////////////////////////////////////////
 
@@ -373,7 +383,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		// 三角形を利用した演出の描画処理
-		emitter.Draw();
+		// カリングを行わないPSOを設定
+		if (isActiveParticle) {
+			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateNoCulling());
+			emitter.Draw();
+		}
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
