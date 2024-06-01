@@ -29,11 +29,11 @@ void Emitter::Update()
 	for (auto itr = particleList_.begin(); itr != particleList_.end();) {
 		(*itr)->Update(); // メソッド呼び出しに->演算子を使用
 
-		// パーティクルの座標を表示
-		ImGui::Begin("Emitter");
-		Float3 position = (*itr)->GetPosition();
-		ImGui::DragFloat3("position", &position.x);
-		ImGui::End();
+		//// パーティクルの座標を表示
+		//ImGui::Begin("Emitter");
+		//Float3 position = (*itr)->GetPosition();
+		//ImGui::DragFloat3("position", &position.x);
+		//ImGui::End();
 
 		// DelFlagがtrueだったら
 		if ((*itr)->GetDelFlag()) {

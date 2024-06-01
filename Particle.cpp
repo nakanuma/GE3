@@ -16,8 +16,6 @@ Particle::Particle(Float3 position, Float3 rotation, Float2 velocity, Float3 col
 	// 引数で受け取った色に設定
 	triangle_.materialCB_.data_->color = { color.x, color.y, color.z, 1.0f };
 
-	// 画像読み込み
-	whiteGH_ = TextureManager::Load("resources/Images/white.png", dxBase->GetDevice());
 	// モデル読み込み
 	static ModelData model = ModelManager::LoadObjFile("resources/Models", "triangle.obj", dxBase->GetDevice());
 	// オブジェクトにモデルを設定
@@ -50,7 +48,7 @@ void Particle::Update()
 
 void Particle::Draw()
 {
-	triangle_.Draw(whiteGH_);
+	triangle_.Draw();
 }
 
 bool Particle::GetDelFlag()

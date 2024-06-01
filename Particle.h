@@ -27,8 +27,6 @@ public:
 private:
 	// シングルトンインスタンスの作成
 	DirectXBase* dxBase = DirectXBase::GetInstance();
-	// 画像
-	uint32_t whiteGH_;
 	// 三角形オブジェクト
 	Object3D triangle_;
 	// 削除フラグ
