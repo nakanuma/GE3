@@ -55,15 +55,15 @@ void Emitter::Draw()
 void Emitter::Emit()
 {
 	// 初期位置をランダムに設定
-	float positionX = RandomNumber(-3.0f, 3.0f);
+	float positionX = RandomNumber(-3.5f, 3.5f);
 	float positionY = 4.0f;
 	// 回転角をランダムに設定
-	float rotationX = 0.02f;
-	float rotationY = 0.02f;
-	float rotationZ = 0.02f;
+	float rotationX = RandomNumber(0.00f, 0.03f);
+	float rotationY = RandomNumber(0.02f, 0.03f);
+	float rotationZ = RandomNumber(0.02f, 0.04f);
 	// 移動量をランダムに設定
-	float velocityX = 0.0f;
-	float velocityY = -0.02f;
+	float velocityX = RandomNumber(-0.005f, 0.005f);
+	float velocityY = RandomNumber(-0.025f, -0.015f);
 	// 色の決定に使用する数字をランダムに生成
 	int colorNumber = RandomNumber(0, 6);
 

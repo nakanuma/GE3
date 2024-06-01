@@ -21,7 +21,7 @@ private:
 	// パーティクル発生のタイマー
 	uint32_t timer_ = 0;
 	// 発生間隔
-	uint32_t interval_ = 20;
+	uint32_t interval_ = 15;
 
 	// 色の配列を定義
 	Float3 colors[7] = {
