@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
-
+	 
 	// ウィンドウの生成
 	Window::Create(L"CG2WindowClass", 1280, 720);
 
