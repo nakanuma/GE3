@@ -50,29 +50,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///	↓ ここから3Dオブジェクトの設定
 	/// 
 
-	// モデル読み込み
-	ModelData triangleModel = ModelManager::LoadObjFile("resources/Models", "triangle.obj", dxBase->GetDevice());
-
-	// 三角形オブジェクト1の生成
-	Object3D triangle1;
-	// 読み込んだモデルを設定
-	triangle1.model_ = &triangleModel;
-	// ライティング無効化
-	triangle1.materialCB_.data_->enableLighting = false;
-	// 三角形オブジェクトの表示/非表示を切り替える
-	bool isTriangleVisible = true;
-
-	// 三角形オブジェクト2の生成
-	Object3D triangle2;
-	// 読み込んだモデルを設定
-	triangle2.model_ = &triangleModel;
-	// ライティング無効化
-	triangle2.materialCB_.data_->enableLighting = false;
-	// 初期回転角を設定
-	triangle2.transform_.rotate.y = -1.0f;
-	// 三角形オブジェクト2の表示/非表示を切り替える
-	bool isTriangle2Visible = false;
-
 	///
 	///	↑ ここまで3Dオブジェクトの設定
 	/// 
@@ -189,13 +166,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// Textureを読み込む
 	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
-	uint32_t monsterBallGH = TextureManager::Load("resources/Images/monsterBall.png", dxBase->GetDevice());
-	uint32_t checkerBoardGH = TextureManager::Load("resources/Images/checkerBoard.png", dxBase->GetDevice());
-
-	// ドロップダウンボックスの選択肢
-	const char* textureNames[] = { "uvChecker", "monsterBall", "checkerBoard" };
-	static int currentTextureIndex1 = 0; // triangle1用の選択されたテクスチャのインデックス
-	static int currentTextureIndex2 = 0; // triangle2用の選択されたテクスチャのインデックス
 
 	// UVTransform用の変数を用意
 	Transform uvTransformSprite{
@@ -229,9 +199,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//////////////////////////////////////////////////////
 
-		// モデルの頂点情報を更新
-		triangle1.UpdateMatrix();
-		triangle2.UpdateMatrix();
 
 		// Sprite用のWorldViewProjectionMatrixを作る
 		Matrix worldMatrixSprite = transformSprite.MakeAffineMatrix();
@@ -251,81 +218,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ImGui
 		ImGui::Begin("Settings");
 
-		// 三角形モデル1の設定
-		ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
-
-		if (ImGui::CollapsingHeader("triangle1")) {
-
-			ImGui::Checkbox("isVisible1", &isTriangleVisible); // 表示切り替え
-			ImGui::DragFloat3("translate1", &triangle1.transform_.translate.x, 0.05f); // translate
-			ImGui::DragFloat3("rotate1", &triangle1.transform_.rotate.x, 0.05f); // rotate
-			ImGui::DragFloat3("scale1", &triangle1.transform_.scale.x, 0.05f); // scale
-
-			ImGui::Indent(16); // 右にずらす
-			ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
-			if (ImGui::CollapsingHeader("Material1")) {
-
-				ImGui::ColorEdit4("color1", &triangle1.materialCB_.data_->color.x); // color
-				// テクスチャ切り替え
-				if (ImGui::BeginCombo("Texture1", textureNames[currentTextureIndex1])) {
-					for (int i = 0; i < IM_ARRAYSIZE(textureNames); i++) {
-						const bool isSelected = (currentTextureIndex1 == i);
-						if (ImGui::Selectable(textureNames[i], isSelected)) {
-							currentTextureIndex1 = i;
-						}
-						if (isSelected) {
-							ImGui::SetItemDefaultFocus();
-						}
-					}
-					ImGui::EndCombo();
-				}
-			}
-			ImGui::Unindent(16); // インデントを戻す
-		}
-
-		// 三角形モデル2の設定
-		ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
-		if (ImGui::CollapsingHeader("triangle2")) {
-
-			ImGui::Checkbox("isVisible2", &isTriangle2Visible); // 表示切り替え
-			ImGui::DragFloat3("translate2", &triangle2.transform_.translate.x, 0.05f); // translate
-			ImGui::DragFloat3("rotate2", &triangle2.transform_.rotate.x, 0.05f); // rotate
-			ImGui::DragFloat3("scale2", &triangle2.transform_.scale.x, 0.05f); // scale
-
-			ImGui::Indent(16); // 右にずらす
-			ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
-			if (ImGui::CollapsingHeader("Material2")) {
-
-				ImGui::ColorEdit4("color2", &triangle2.materialCB_.data_->color.x); // color
-				// テクスチャ切り替え
-				if (ImGui::BeginCombo("Texture2", textureNames[currentTextureIndex2])) {
-					for (int i = 0; i < IM_ARRAYSIZE(textureNames); i++) {
-						const bool isSelected = (currentTextureIndex2 == i);
-						if (ImGui::Selectable(textureNames[i], isSelected)) {
-							currentTextureIndex2 = i;
-						}
-						if (isSelected) {
-							ImGui::SetItemDefaultFocus();
-						}
-					}
-					ImGui::EndCombo();
-				}
-			}
-			ImGui::Unindent(16); // インデントを戻す
-		}
-
-		// 演出のON/OFF切り替え
-		ImGui::SetNextItemOpen(true, ImGuiCond_Appearing); // 最初から開いた状態にする
-		if (ImGui::CollapsingHeader("Particle")) {
-			ImGui::Checkbox("isActiveParticle", &isActiveParticle);
-		}
-
 		ImGui::End();
-
-		// 三角形を利用した演出の更新処理
-		if (isActiveParticle) {
-			emitter.Update();
-		}
 
 		//////////////////////////////////////////////////////
 
@@ -342,52 +235,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓ ここから3Dオブジェクトの描画コマンド
 		/// 
 
-		// 選択されたテクスチャを描画する
-		uint32_t selectedTexture1 = 0;
-		uint32_t selectedTexture2 = 0;
-		switch (currentTextureIndex1) {
-		case 0:
-			selectedTexture1 = uvCheckerGH;
-			break;
-		case 1:
-			selectedTexture1 = monsterBallGH;
-			break;
-		case 2:
-			selectedTexture1 = checkerBoardGH;
-			break;
-		default:
-			selectedTexture1 = uvCheckerGH; // デフォルトでUVチェッカーを使用する
-			break;
-		}
-		switch (currentTextureIndex2) {
-		case 0:
-			selectedTexture2 = uvCheckerGH;
-			break;
-		case 1:
-			selectedTexture2 = monsterBallGH;
-			break;
-		case 2:
-			selectedTexture2 = checkerBoardGH;
-			break;
-		default:
-			selectedTexture2 = uvCheckerGH; // デフォルトでUVチェッカーを使用する
-			break;
-		}
-
-		// 三角形を描画
-		if (isTriangleVisible) {
-			triangle1.Draw(selectedTexture1);
-		}
-		if (isTriangle2Visible) {
-			triangle2.Draw(selectedTexture2);
-		}
-
-		// 三角形を利用した演出の描画処理
-		// カリングを行わないPSOを設定
-		if (isActiveParticle) {
-			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateNoCulling());
-			emitter.Draw();
-		}
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
