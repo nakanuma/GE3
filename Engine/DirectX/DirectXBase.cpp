@@ -329,7 +329,7 @@ void DirectXBase::ShaderCompile()
 	assert(vertexShaderBlob_ != nullptr);
 
 	pixelShaderBlob_ = CompileShader(L"resources/Shaders/Object3D.PS.hlsl", L"ps_6_0", dxcUtils_, dxcCompiler_, includeHandler_);
-	assert(pixelShaderBlob_ != nullptr);
+	assert(pixelShaderBlob_ != nullptr); 
 }
 
 void DirectXBase::CreatePipelineStateObject()
