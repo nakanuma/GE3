@@ -1,4 +1,4 @@
-#include <Windows.h>
+#include <Windows.h> 
 #include <cstdint>
 #include <assert.h>
 
@@ -173,11 +173,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{0.0f, 0.0f, 0.0f},
 		{0.0f, 0.0f, 0.0f}
 	};
-
-	// 三角形を利用した演出
-	Emitter emitter;
-	// 演出を行うかどうかのフラグ
-	bool isActiveParticle = false;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
