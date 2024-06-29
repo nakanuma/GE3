@@ -77,12 +77,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	dxBase = DirectXBase::GetInstance();
 	dxBase->Initialize();
 
-	/////////////////// ↓入力デバイス初期化処理↓ ///////////////////
-
+	// 入力デバイスの生成と初期化
 	input = new Input();
 	input->Initialize(hInstance, Window::GetHandle());
-
-	/////////////////// ↑入力デバイス初期化処理↑ ///////////////////
 
 	// TextureManagerの初期化（srvHeapの生成）
 	TextureManager::Initialize(dxBase->GetDevice());
@@ -233,18 +230,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
-		/////////////////// ↓入力デバイス更新処理↓ ///////////////////
+		// 入力の更新
+		input->Update();
 
-		// キーボード情報の取得開始
-		keyboard->Acquire();
-		// 全キーの入力状態を取得する
-		BYTE key[256] = {};
-		keyboard->GetDeviceState(sizeof(key), key);
-
-		// preKeysにkeysをコピー
-		memcpy(preKeys, keys, sizeof(keys));
-		// keysに最新のキー状態をコピー
-		memcpy(keys, key, sizeof(keys));
+		//// preKeysにkeysをコピー
+		//memcpy(preKeys, keys, sizeof(keys));
+		//// keysに最新のキー状態をコピー
+		//memcpy(keys, key, sizeof(keys));
 
 		/////////////////// ↑入力デバイス更新処理↑ ///////////////////
 
@@ -284,20 +276,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		uvTransformMatrix = uvTransformMatrix * Matrix::Translation(uvTransformSprite.translate);
 		materialDataSprite->uvTransform = uvTransformMatrix;
 
-		// キー入力でplaneを移動
-		if (key[DIK_W]) {
-			plane.transform_.translate.y += 0.01f;
-		}
-		if (key[DIK_S]) {
-			plane.transform_.translate.y -= 0.01f;
-		}
+		//// キー入力でplaneを移動
+		//if (key[DIK_W]) {
+		//	plane.transform_.translate.y += 0.01f;
+		//}
+		//if (key[DIK_S]) {
+		//	plane.transform_.translate.y -= 0.01f;
+		//}
 
-		if (isKeyPressed(DIK_A)) { // 押された瞬間
-			plane.transform_.translate.x -= 0.1f;
-		}
-		if (isKeyReleased(DIK_D)) { // 離された瞬間
-			plane.transform_.translate.x += 0.1f;
-		}
+		//if (isKeyPressed(DIK_A)) { // 押された瞬間
+		//	plane.transform_.translate.x -= 0.1f;
+		//}
+		//if (isKeyReleased(DIK_D)) { // 離された瞬間
+		//	plane.transform_.translate.x += 0.1f;
+		//}
 
 		// ImGui
 		ImGui::Begin("Settings");
