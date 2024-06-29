@@ -1,4 +1,4 @@
-#include "DirectXBase.h" 
+#include "DirectXBase.h"
 #include <cassert>
 #include <thread>
 #include <chrono>
@@ -305,11 +305,85 @@ void DirectXBase::SetInputLayout()
 
 D3D12_BLEND_DESC DirectXBase::SetBlendState()
 {
+	///
+	///	kBlendModeNormal
+	/// 
+
 	// BlendStateの設定
 	// すべての色要素を書き込む
 	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc_.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc_.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc_.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
 	return blendDesc_;
+}
+
+D3D12_BLEND_DESC DirectXBase::SetBlendStateNone()
+{
+	blendDescNone_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	return blendDescNone_;
+}
+
+D3D12_BLEND_DESC DirectXBase::SetBlendStateAdd()
+{
+	blendDescAdd_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDescAdd_.RenderTarget[0].BlendEnable = TRUE;
+	blendDescAdd_.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDescAdd_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDescAdd_.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blendDescAdd_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDescAdd_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDescAdd_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	return blendDescAdd_;
+}
+
+D3D12_BLEND_DESC DirectXBase::SetBlendStateSubtract()
+{
+	blendDescSubtract_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDescSubtract_.RenderTarget[0].BlendEnable = TRUE;
+	blendDescSubtract_.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDescSubtract_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+	blendDescSubtract_.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blendDescSubtract_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDescSubtract_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDescSubtract_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	return blendDescSubtract_;
+}
+
+D3D12_BLEND_DESC DirectXBase::SetBlendStateMultiply()
+{
+	blendDescMultiply_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDescMultiply_.RenderTarget[0].BlendEnable = TRUE;
+	blendDescMultiply_.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+	blendDescMultiply_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDescMultiply_.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+	blendDescMultiply_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDescMultiply_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDescMultiply_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	return blendDescMultiply_;
+}
+
+D3D12_BLEND_DESC DirectXBase::SetBlendStateScreen()
+{
+	blendDescScreen_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDescScreen_.RenderTarget[0].BlendEnable = TRUE;
+	blendDescScreen_.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+	blendDescScreen_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDescScreen_.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blendDescScreen_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDescScreen_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDescScreen_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	return blendDescScreen_;
 }
 
 D3D12_RASTERIZER_DESC DirectXBase::SetRasterizerState()
@@ -329,7 +403,7 @@ void DirectXBase::ShaderCompile()
 	assert(vertexShaderBlob_ != nullptr);
 
 	pixelShaderBlob_ = CompileShader(L"resources/Shaders/Object3D.PS.hlsl", L"ps_6_0", dxcUtils_, dxcCompiler_, includeHandler_);
-	assert(pixelShaderBlob_ != nullptr); 
+	assert(pixelShaderBlob_ != nullptr);
 }
 
 void DirectXBase::CreatePipelineStateObject()
@@ -358,6 +432,33 @@ void DirectXBase::CreatePipelineStateObject()
 	graphicsPipelineState_ = nullptr;
 	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
 	assert(SUCCEEDED(result));
+
+	///
+	/// BlendMode変更用のPSOを生成
+	/// 
+
+	//　無し
+	graphicsPipelineStateDesc.BlendState = blendDescNone_;
+	graphicsPipelineStateBlendModeNone_ = nullptr;
+	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineStateBlendModeNone_));
+	//　加算
+	graphicsPipelineStateDesc.BlendState = blendDescAdd_;
+	graphicsPipelineStateBlendModeAdd_ = nullptr;
+	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineStateBlendModeAdd_));
+	//　減算
+	graphicsPipelineStateDesc.BlendState = blendDescSubtract_;
+	graphicsPipelineStateBlendModeSubtract_ = nullptr;
+	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineStateBlendModeSubtract_));
+	//　乗算
+	graphicsPipelineStateDesc.BlendState = blendDescMultiply_;
+	graphicsPipelineStateBlendModeMultiply_ = nullptr;
+	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineStateBlendModeMultiply_));
+	//　スクリーン
+	graphicsPipelineStateDesc.BlendState = blendDescScreen_;
+	graphicsPipelineStateBlendModeScreen_ = nullptr;
+	result = device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineStateBlendModeScreen_));
+
+
 
 	// アウトライン用のCullModeだけが違うPSOを作成
 	graphicsPipelineStateDesc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;

@@ -66,6 +66,11 @@ public:
 
 		// BlendStateの設定
 		SetBlendState();
+		SetBlendStateNone();
+		SetBlendStateAdd();
+		SetBlendStateSubtract();
+		SetBlendStateMultiply();
+		SetBlendStateScreen();
 
 		// RasterizerStateの設定
 		SetRasterizerState();
@@ -101,6 +106,11 @@ public:
 	void SetInputLayout();
 	// BlendStateの設定
 	D3D12_BLEND_DESC SetBlendState();
+	D3D12_BLEND_DESC SetBlendStateNone();
+	D3D12_BLEND_DESC SetBlendStateAdd();
+	D3D12_BLEND_DESC SetBlendStateSubtract();
+	D3D12_BLEND_DESC SetBlendStateMultiply();
+	D3D12_BLEND_DESC SetBlendStateScreen();
 	// RasterizerStateの設定
 	D3D12_RASTERIZER_DESC SetRasterizerState();
 	// Shaderのコンパイル
@@ -139,6 +149,13 @@ public:
 	ID3D12PipelineState* GetPipelineStateOutline();
 	ID3D12PipelineState* GetPipelineStateNoCulling();
 
+	// BlendMode変更用PSOのgetter
+	ID3D12PipelineState* GetPipelineStateBlendModeNone() { return graphicsPipelineStateBlendModeNone_.Get(); };
+	ID3D12PipelineState* GetPipelineStateBlendModeAdd() { return graphicsPipelineStateBlendModeAdd_.Get(); };
+	ID3D12PipelineState* GetPipelineStateBlendModeSubtract() { return graphicsPipelineStateBlendModeSubtract_.Get(); };
+	ID3D12PipelineState* GetPipelineStateBlendModeMultiply() { return graphicsPipelineStateBlendModeMultiply_.Get(); };
+	ID3D12PipelineState* GetPipelineStateBlendModeScreen() { return graphicsPipelineStateBlendModeScreen_.Get(); };
+
 private:
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
 	Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter_;
@@ -164,7 +181,20 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[3];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
-	D3D12_BLEND_DESC blendDesc_;
+
+	D3D12_BLEND_DESC blendDesc_; // kBlendModeNormal
+	D3D12_BLEND_DESC blendDescNone_; // kBlendModeNone
+	D3D12_BLEND_DESC blendDescAdd_; // kBlendModeAdd
+	D3D12_BLEND_DESC blendDescSubtract_; // kBlendModeSubtract
+	D3D12_BLEND_DESC blendDescMultiply_; // kBlendModeMultiply
+	D3D12_BLEND_DESC blendDescScreen_; // kBlendModeScreen
+	// BlendMode変更用のPSO
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateBlendModeNone_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateBlendModeAdd_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateBlendModeSubtract_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateBlendModeMultiply_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateBlendModeScreen_;
+
 	D3D12_RASTERIZER_DESC rasterizerDesc_;
 	IDxcBlob* vertexShaderBlob_;
 	IDxcBlob* pixelShaderBlob_;
