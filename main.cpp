@@ -45,19 +45,6 @@ const char* BlendModeNames[6] = {
 
 /////////////////// ↓入力デバイス関連↓ ///////////////////
 
-char keys[256] = { 0 };
-char preKeys[256] = { 0 };
-
-// キーが押された場合を判定
-bool isKeyPressed(char key) {
-	return keys[key] && !preKeys[key];
-}
-
-// キーが離された場合を判定
-bool isKeyReleased(char key) {
-	return !keys[key] && preKeys[key];
-}
-
 /////////////////// ↑入力デバイス関連↑ ///////////////////
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -233,11 +220,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		// 入力の更新
 		input->Update();
 
-		//// preKeysにkeysをコピー
-		//memcpy(preKeys, keys, sizeof(keys));
-		//// keysに最新のキー状態をコピー
-		//memcpy(keys, key, sizeof(keys)); 
-
 		/////////////////// ↑入力デバイス更新処理↑ ///////////////////
 
 		// フレーム開始処理
@@ -276,20 +258,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		uvTransformMatrix = uvTransformMatrix * Matrix::Translation(uvTransformSprite.translate);
 		materialDataSprite->uvTransform = uvTransformMatrix;
 
-		//// キー入力でplaneを移動
-		//if (key[DIK_W]) {
-		//	plane.transform_.translate.y += 0.01f;
-		//}
-		//if (key[DIK_S]) {
-		//	plane.transform_.translate.y -= 0.01f;
-		//}
+		// キー入力でplaneを移動
+		if (input->PushKey(DIK_W)) {
+			plane.transform_.translate.y += 0.01f;
+		}
+		if (input->PushKey(DIK_S)) {
+			plane.transform_.translate.y -= 0.01f;
+		}
 
-		//if (isKeyPressed(DIK_A)) { // 押された瞬間
-		//	plane.transform_.translate.x -= 0.1f;
-		//}
-		//if (isKeyReleased(DIK_D)) { // 離された瞬間
-		//	plane.transform_.translate.x += 0.1f;
-		//}
+		if (input->TriggerKey(DIK_A)) {
+			plane.transform_.translate.x -= 0.1f;
+		}
+		if (input->ReleaseKey(DIK_D)) {
+			plane.transform_.translate.x += 0.1f;
+		}
 
 		// ImGui
 		ImGui::Begin("Settings");
