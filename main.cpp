@@ -236,7 +236,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		//// preKeysにkeysをコピー
 		//memcpy(preKeys, keys, sizeof(keys));
 		//// keysに最新のキー状態をコピー
-		//memcpy(keys, key, sizeof(keys));
+		//memcpy(keys, key, sizeof(keys)); 
 
 		/////////////////// ↑入力デバイス更新処理↑ ///////////////////
 
