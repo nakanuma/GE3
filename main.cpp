@@ -1,11 +1,6 @@
 #include <Windows.h>
 #include <cstdint>
 #include <assert.h>
-#define DIRECTINPUT_VERSON 0x0800 // DirectInputのバージョン指定
-#include <dinput.h>
-
-#pragma comment(lib, "dinput8.lib")
-#pragma comment(lib, "dxguid.lib")
  
 // MyClass 
 #include "MyWindow.h"
@@ -22,7 +17,7 @@
 #include "ConstBuffer.h"
 #include "Object3D.h"
 #include "OutlinedObject.h"
-#include "Emitter.h"
+#include "Input.h"
 
 struct DirectionalLight {
 	Float4 color; // ライトの色
@@ -69,6 +64,8 @@ bool isKeyReleased(char key) {
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker::GetInstance();
 	DirectXBase* dxBase = nullptr;
+	// ポインタ
+	Input* input = nullptr;
 
 	// COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -82,26 +79,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 	/////////////////// ↓入力デバイス初期化処理↓ ///////////////////
 
-	// DirectInputの初期化
-	IDirectInput8* directInput = nullptr;
-	HRESULT result = DirectInput8Create(
-		hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8,
-		(void**)&directInput, nullptr);
-	assert(SUCCEEDED(result));
-
-	// キーボードデバイスの生成
-	IDirectInputDevice8* keyboard = nullptr;
-	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-	assert(SUCCEEDED(result));
-	
-	// 入力データ形式のセット
-	result = keyboard->SetDataFormat(&c_dfDIKeyboard); // 標準形式
-	assert(SUCCEEDED(result));
-
-	// 排他制御レベルのセット
-	result = keyboard->SetCooperativeLevel(
-		Window::GetHandle(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-	assert(SUCCEEDED(result));
+	input = new Input();
+	input->Initialize(hInstance, Window::GetHandle());
 
 	/////////////////// ↑入力デバイス初期化処理↑ ///////////////////
 
