@@ -49,12 +49,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectXBase* dxBase = nullptr;
 	// ポインタ
 	Input* input = nullptr;
+	Window* window = nullptr;
 
 	// COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 	 
 	// ウィンドウの生成
-	Window::Create(L"CG2WindowClass", 1280, 720);
+	window = new Window;
+	window->Create(L"CG2WindowClass", 1280, 720);
 
 	// DirectX初期化処理
 	dxBase = DirectXBase::GetInstance();
