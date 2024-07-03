@@ -1,26 +1,6 @@
 #include "MyWindow.h"
 #include "ImguiWrapper.h"
 
-LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-	// ImGuiでのマウスの操作を可能にする
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
-		return true;
-	}
-
-	// メッセージに応じてゲーム固有の処理を行う
-	switch (msg) {
-		// ウィンドウが破壊された
-	case WM_DESTROY:
-		// OSに対して、アプリの終了を伝える
-		PostQuitMessage(0);
-		return 0;
-	}
-
-	// 標準のメッセージ処理を行う
-	return DefWindowProc(hwnd, msg, wparam, lparam);
-}
-
 void Window::Create(LPCWSTR windowTitle, uint32_t width, uint32_t height)
 {
 	WNDCLASS wc{};
@@ -93,4 +73,24 @@ uint32_t Window::GetHeight()
 HWND Window::GetHandle()
 {
 	return hwnd;
+}
+
+LRESULT Window::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	// ImGuiでのマウスの操作を可能にする
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+		return true;
+	}
+
+	// メッセージに応じてゲーム固有の処理を行う
+	switch (msg) {
+		// ウィンドウが破壊された
+	case WM_DESTROY:
+		// OSに対して、アプリの終了を伝える
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	// 標準のメッセージ処理を行う
+	return DefWindowProc(hwnd, msg, wparam, lparam);
 }

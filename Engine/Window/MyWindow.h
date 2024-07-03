@@ -2,9 +2,6 @@
 #include <windows.h>
 #include <cstdint>
 
-// ウィンドウプロシージャ
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-
 class Window
 {
 public:
@@ -16,6 +13,9 @@ public:
 	static uint32_t GetWidth();
 	static uint32_t GetHeight();
 	static HWND GetHandle();
+
+	// ウィンドウプロシージャ
+	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 private:
 	inline static uint32_t winWidth;
