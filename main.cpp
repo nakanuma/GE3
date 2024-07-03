@@ -44,7 +44,7 @@ const char* BlendModeNames[6] = {
 };
 
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker::GetInstance();
 	DirectXBase* dxBase = nullptr;
 	// ポインタ
@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 
 	// 入力デバイスの生成と初期化
 	input = new Input();
-	input->Initialize(hInstance, Window::GetHandle());
+	input->Initialize(Window::GetHInstance(), Window::GetHandle());
 
 	// TextureManagerの初期化（srvHeapの生成）
 	TextureManager::Initialize(dxBase->GetDevice());

@@ -3,8 +3,6 @@
 
 void Window::Create(LPCWSTR windowTitle, uint32_t width, uint32_t height)
 {
-	WNDCLASS wc{};
-
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
 	// ウィンドウクラス名
@@ -60,12 +58,12 @@ bool Window::ProcessMessage()
 	return msg.message == WM_QUIT;
 }
 
-uint32_t Window::GetWidth()
+uint32_t const Window::GetWidth()
 {
 	return winWidth;
 }
 
-uint32_t Window::GetHeight()
+uint32_t const Window::GetHeight()
 {
 	return winHeight;
 }
@@ -73,6 +71,11 @@ uint32_t Window::GetHeight()
 HWND Window::GetHandle()
 {
 	return hwnd;
+}
+
+HINSTANCE Window::GetHInstance()
+{
+	return wc.hInstance;
 }
 
 LRESULT Window::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
