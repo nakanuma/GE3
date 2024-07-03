@@ -43,10 +43,6 @@ const char* BlendModeNames[6] = {
 	"kBlendModeScreen"
 };
 
-/////////////////// ↓入力デバイス関連↓ ///////////////////
-
-/////////////////// ↑入力デバイス関連↑ ///////////////////
-
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker::GetInstance();
@@ -219,8 +215,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	while (!Window::ProcessMessage()) {
 		// 入力の更新
 		input->Update();
-
-		/////////////////// ↑入力デバイス更新処理↑ ///////////////////
 
 		// フレーム開始処理
 		dxBase->BeginFrame();
