@@ -46,7 +46,7 @@ void Window::Create(LPCWSTR windowTitle, uint32_t width, uint32_t height)
 
 bool Window::ProcessMessage()
 {
-	MSG msg{};
+	MSG msg{}; 
 
 	// ウィンドウの×ボタンが押されるまでループ
 	// Windowにメッセージが来てたら最優先で処理させる
