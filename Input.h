@@ -4,6 +4,8 @@
 #define DIRECTINPUT_VERSON 0x0800 // DirectInputのバージョン指定
 #include <dinput.h>
 
+#include "MyWindow.h"
+
 // 入力
 class Input
 {
@@ -15,7 +17,7 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(HINSTANCE hInstance, HWND hwnd);
+	void Initialize(Window* window);
 
 	/// <summary>
 	/// 更新
@@ -55,5 +57,8 @@ private: // メンバ変数
 	
 	// 前回の全キーの状態
 	BYTE keyPre[256] = {};
+
+	// WindowsAPI
+	Window* window = nullptr;
 };
 

@@ -64,7 +64,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 入力デバイスの生成と初期化
 	input = new Input();
-	input->Initialize(Window::GetHInstance(), Window::GetHandle());
+	input->Initialize(window);
 
 	// TextureManagerの初期化（srvHeapの生成）
 	TextureManager::Initialize(dxBase->GetDevice());
