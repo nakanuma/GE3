@@ -564,8 +564,6 @@ void DirectXBase::EndFrame()
 	if (fence_->GetCompletedValue() < fenceValue_) {
 		// 指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
 		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
-		// 約60fpsに制限
-		std::this_thread::sleep_for(std::chrono::microseconds(16000)); // 60fpsに制限
 		// イベント待つ
 		WaitForSingleObject(fenceEvent_, INFINITE);
 	}
