@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <dxcapi.h>
 #include <dxgidebug.h>
+#include <chrono>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -37,6 +38,9 @@ public:
 	// 初期化
 	void Initialize()
 	{
+		// FPS固定初期化
+		InitializeFixFPS();
+
 		// DXGIデバイス初期化
 		InitializeDXGIDevice();
 
@@ -207,5 +211,13 @@ private:
 	DescriptorHeap dsvDescriptorHeap_;
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc_;
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_;
+
+	// FPS固定初期化
+	void InitializeFixFPS();
+	// FPS固定更新
+	void UpdateFixFPS();
+
+	// 記録時間(FPS固定用)
+	std::chrono::steady_clock::time_point reference_;
 };
 

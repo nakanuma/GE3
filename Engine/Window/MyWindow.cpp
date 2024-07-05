@@ -1,8 +1,13 @@
 #include "MyWindow.h"
 #include "ImguiWrapper.h"
 
+#pragma comment(lib, "winmm.lib")
+
 void Window::Create(LPCWSTR windowTitle, uint32_t width, uint32_t height)
 {
+	// システムタイマーの分解能を上げる
+	timeBeginPeriod(1);
+
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
 	// ウィンドウクラス名
