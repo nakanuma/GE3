@@ -18,6 +18,8 @@
 #include "Object3D.h"
 #include "OutlinedObject.h"
 #include "Input.h"
+#include "SpriteCommon.h"
+#include "Sprite.h"
 
 struct DirectionalLight {
 	Float4 color; // ライトの色
@@ -46,15 +48,16 @@ const char* BlendModeNames[6] = {
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker::GetInstance();
-	DirectXBase* dxBase = nullptr;
-	// ポインタ
-	Input* input = nullptr;
 	Window* window = nullptr;
+	DirectXBase* dxBase = nullptr;
+	// 汎用機能
+	Input* input = nullptr;
+	SpriteCommon* spriteCommon = nullptr;
 
 	// COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 	 
-	// ウィンドウの生成
+	// ゲームウィンドウの生成
 	window = new Window;
 	window->Create(L"CG2WindowClass", 1280, 720);
 
@@ -62,15 +65,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dxBase = DirectXBase::GetInstance();
 	dxBase->Initialize();
 
+#pragma region 汎用機能初期化
 	// 入力デバイスの生成と初期化
 	input = new Input();
 	input->Initialize(window);
 
-	// TextureManagerの初期化（srvHeapの生成）
+	// スプライト共通部の初期化
+	spriteCommon = new SpriteCommon;
+	spriteCommon->Initialize();
+
+	// TextureManagerの初期化
 	TextureManager::Initialize(dxBase->GetDevice());
 
 	// ImGuiの初期化
 	ImguiWrapper::Initialize(dxBase->GetDevice(), dxBase->GetSwapChainDesc().BufferCount, dxBase->GetRtvDesc().Format, TextureManager::GetInstance().srvHeap_.heap_.Get());
+#pragma endregion
 
 	///
 	///	↓ ここから3Dオブジェクトの設定
@@ -93,6 +102,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///
 	///	↓ ここからスプライトの設定
 	/// 
+
+	// スプライトの生成と初期化
+	Sprite* sprite = new Sprite();
+	sprite->Initialize();
+
 
 	// Sprite用のリソースを作る
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResourceSprite = CreateBufferResource(dxBase->GetDevice(), sizeof(VertexData) * 4);
@@ -365,9 +379,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// フレーム終了処理
 		dxBase->EndFrame();
 	}
+
+	///
+	/// 各種開放処理
+	/// 
+
+	// スプライト共通処理開放
+	delete spriteCommon;
+	// スプライト開放
+	delete sprite;
+
 	// ImGuiの終了処理
 	ImguiWrapper::Finalize();
-
 	// COMの終了処理
 	CoUninitialize();
 
