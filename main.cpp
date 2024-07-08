@@ -72,7 +72,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スプライト共通部の初期化
 	spriteCommon = new SpriteCommon;
-	spriteCommon->Initialize();
+	spriteCommon->Initialize(dxBase);
 
 	// TextureManagerの初期化
 	TextureManager::Initialize(dxBase->GetDevice());
@@ -355,16 +355,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓ ここからスプライトの描画コマンド
 		/// 
 
+		// Spriteの描画準備。全ての描画に共通のグラフィックスコマンドを積む
+		spriteCommon->PreDraw();
+
 		// VBVを設定
-		dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
-		// IBVを設定
-		dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);
-		// マテリアルCBufferの場所を設定
-		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
-		// TransformatinMatrixCBufferの場所を設定
-		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-		// SRVのDescriptorTableの先頭を設定
-		TextureManager::SetDescriptorTable(2, dxBase->GetCommandList(), uvCheckerGH);
+		//dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);
+		//// IBVを設定
+		//dxBase->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);
+		//// マテリアルCBufferの場所を設定
+		//dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResourceSprite->GetGPUVirtualAddress());
+		//// TransformatinMatrixCBufferの場所を設定
+		//dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
+		//// SRVのDescriptorTableの先頭を設定
+		//TextureManager::SetDescriptorTable(2, dxBase->GetCommandList(), uvCheckerGH);
 		// 描画（DrawCall/ドローコール）6個のインデックスを使用し1つのインスタンスを描画
 		/*dxBase->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);*/
 
