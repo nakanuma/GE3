@@ -4,21 +4,21 @@
 #include "TextureManager.h"
 #include "ConstBuffer.h"
 
-struct Material {
-	Float4 color;
-	int32_t enableLighting;
-	float padding[3];
-	Matrix uvTransform;
-};
-
-struct TransformationMatrix {
-	Matrix WVP;
-	Matrix World;
-};
-
 class Object3D
 {
 public:
+	struct Material {
+		Float4 color;
+		int32_t enableLighting;
+		float padding[3];
+		Matrix uvTransform;
+	};
+
+	struct TransformationMatrix {
+		Matrix WVP;
+		Matrix World;
+	};
+
 	Object3D();
 
 	// マトリックス情報の更新
@@ -36,7 +36,7 @@ public:
 	ConstBuffer<TransformationMatrix>wvpCB_;
 
 	// モデル情報
-	ModelData* model_ = nullptr;
+	ModelManager::ModelData* model_ = nullptr;
 
 	// トランスフォーム情報
 	Transform transform_;

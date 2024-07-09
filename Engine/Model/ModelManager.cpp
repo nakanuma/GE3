@@ -4,7 +4,7 @@
 #include <DirectXUtil.h>
 #include <DirectXBase.h>
 
-ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std::string& filename, ID3D12Device* device)
+ModelManager::ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std::string& filename, ID3D12Device* device)
 {
     // 1. 中で必要となる変数の宣言
     ModelData modelData; // 構築するModelData
@@ -97,7 +97,7 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
     return modelData;
 }
 
-MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename, ID3D12Device* device)
+ModelManager::MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename, ID3D12Device* device)
 {
     // 1. 中で必要となる変数の宣言
     MaterialData materialData; // 構築するMaterialData
