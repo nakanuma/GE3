@@ -17,6 +17,8 @@ public:
 
 	static void SetDescriptorTable(UINT rootParamIndex, ID3D12GraphicsCommandList* commandList, uint32_t textureHandle);
 
+	static const DirectX::TexMetadata& GetMetaData(uint32_t textureHandle);
+
 	DescriptorHeap srvHeap_;
 
 	TextureManager() = default;
@@ -35,5 +37,7 @@ private:
 	uint32_t index_ = 1;
 
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, kMaxTextureValue_> texResources;
+
+	std::array<DirectX::TexMetadata, kMaxTextureValue_> texMetadata;
 };
 

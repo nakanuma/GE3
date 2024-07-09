@@ -18,6 +18,9 @@ int TextureManager::Load(const std::string& filePath, ID3D12Device* device)
 	DirectX::ScratchImage mipImages = GetInstance().LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 
+	// メタデータの配列に保存
+	GetInstance().texMetadata[GetInstance().index_] = mipImages.GetMetadata();
+
 	// リソースの配列に保存
 	Microsoft::WRL::ComPtr<ID3D12Resource>& targetResource = GetInstance().texResources[GetInstance().index_];
 	targetResource = TextureManager::CreateTextureResource(device, metadata);
@@ -51,6 +54,11 @@ TextureManager& TextureManager::GetInstance()
 void TextureManager::SetDescriptorTable(UINT rootParamIndex, ID3D12GraphicsCommandList* commandList, uint32_t textureHandle)
 {
 	commandList->SetGraphicsRootDescriptorTable(rootParamIndex, GetInstance().srvHeap_.GetGPUHandle(textureHandle));
+}
+
+const DirectX::TexMetadata& TextureManager::GetMetaData(uint32_t textureHandle)
+{
+	return GetInstance().texMetadata[textureHandle];
 }
 
 DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath)

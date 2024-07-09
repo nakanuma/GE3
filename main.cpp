@@ -103,15 +103,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///	↓ ここからスプライトの設定
 	/// 
 
+	// Textureを読み込む
+	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
+	uint32_t monsterBallGH = TextureManager::Load("resources/Images/monsterBall.png", dxBase->GetDevice());
+	uint32_t checkerBoardGH = TextureManager::Load("resources/Images/checkerBoard.png", dxBase->GetDevice());
+	uint32_t whiteGH = TextureManager::Load("resources/Images/white.png", dxBase->GetDevice());
+
 	// スプライトの生成と初期化
-	std::vector<Sprite*> sprites;
-	for (uint32_t i = 0; i < 5; ++i) {
-		Sprite* sprite = new Sprite();
-		sprite->Initialize(spriteCommon);
-		sprite->SetPosition({ 0.0f + (i * 150.0f), 0.0f });
-		sprite->SetSize({ 80.0f, 80.0f });
-		sprites.push_back(sprite);
-	}
+	Sprite* sprite = new Sprite();
+	sprite->Initialize(spriteCommon, uvCheckerGH);
 
 	///
 	///	↑ ここまでスプライトの設定
@@ -139,12 +139,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// カメラのインスタンスを生成
 	Camera camera{ {0.0f, 0.0f, -10.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };
 	Camera::Set(&camera);
-
-	// Textureを読み込む
-	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
-	uint32_t monsterBallGH = TextureManager::Load("resources/Images/monsterBall.png", dxBase->GetDevice());
-	uint32_t checkerBoardGH = TextureManager::Load("resources/Images/checkerBoard.png", dxBase->GetDevice());
-	uint32_t whiteGH = TextureManager::Load("resources/Images/white.png", dxBase->GetDevice());
 
 	// UVTransform用の変数を用意
 	Transform uvTransformSprite{
@@ -183,10 +177,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		plane.UpdateMatrix();
 
 		// Spriteの更新処理
-		for (Sprite* sprite : sprites) {
-			sprite->Update();
-		}
-
+		sprite->Update();
 
 		//// UVTransform用の行列を生成する
 		//Matrix uvTransformMatrix = Matrix::Scaling(uvTransformSprite.scale);
@@ -285,11 +276,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		spriteCommon->PreDraw();
 
 		// Spriteの描画処理
-		sprites[0]->Draw(uvCheckerGH);
-		sprites[1]->Draw(monsterBallGH);
-		sprites[2]->Draw(checkerBoardGH);
-		sprites[3]->Draw(whiteGH);
-		sprites[4]->Draw(uvCheckerGH);
+		sprite->Draw();
 
 		///
 		/// ↑ ここまでスプライトの描画コマンド
@@ -311,9 +298,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete spriteCommon;
 	// スプライト開放
 	// Spriteの更新処理
-	for (Sprite* sprite : sprites) {
-		delete sprite;
-	}
+	delete sprite;
 
 	// ImGuiの終了処理
 	ImguiWrapper::Finalize();
