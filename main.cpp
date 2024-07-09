@@ -104,8 +104,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 
 
 	// スプライトの生成と初期化
-	Sprite* sprite = new Sprite();
-	sprite->Initialize(spriteCommon);
+	std::vector<Sprite*> sprites;
+	for (uint32_t i = 0; i < 5; ++i) {
+		Sprite* sprite = new Sprite();
+		sprite->Initialize(spriteCommon);
+		sprite->SetPosition({ 0.0f + (i * 150.0f), 0.0f });
+		sprite->SetSize({ 80.0f, 80.0f });
+		sprites.push_back(sprite);
+	}
 
 	///
 	///	↑ ここまでスプライトの設定
@@ -174,7 +180,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		plane.UpdateMatrix();
 
 		// Spriteの更新処理
-		sprite->Update();
+		for (Sprite* sprite : sprites) {
+			sprite->Update();
+		}
+
 
 		//// UVTransform用の行列を生成する
 		//Matrix uvTransformMatrix = Matrix::Scaling(uvTransformSprite.scale);
@@ -273,7 +282,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		spriteCommon->PreDraw();
 
 		// Spriteの描画処理
-		sprite->Draw(uvCheckerGH);
+		// Spriteの更新処理
+		for (Sprite* sprite : sprites) {
+			sprite->Draw(uvCheckerGH);
+		}
 
 		///
 		/// ↑ ここまでスプライトの描画コマンド
@@ -294,7 +306,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// スプライト共通処理開放
 	delete spriteCommon;
 	// スプライト開放
-	delete sprite;
+	// Spriteの更新処理
+	for (Sprite* sprite : sprites) {
+		delete sprite;
+	}
 
 	// ImGuiの終了処理
 	ImguiWrapper::Finalize();

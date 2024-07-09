@@ -27,12 +27,27 @@ public:
 
 	// 初期化
 	void Initialize(SpriteCommon* spriteCommon);
-
 	// 更新
 	void Update();
-
 	// 描画
 	void Draw(uint32_t textureHandle);
+
+	///
+	///	アクセッサ
+	/// 
+
+	// 座標
+	const Float2 GetPosition() const { return position_; }
+	void SetPosition(const Float2& position) { this->position_ = position; }
+	// 回転
+	float GetRotation() const { return rotation; }
+	void SetRotation(float rotation) { this->rotation = rotation; }
+	// 色
+	const Float4& GetColor() const { return materialData_->color; }
+	void SetColor(const Float4& color) { materialData_->color = color; }
+	// サイズ
+	const Float2& GetSize() const { return size; }
+	void SetSize(const Float2& size) { this->size = size; }
 
 private:
 	SpriteCommon* spriteCommon = nullptr;
@@ -53,5 +68,12 @@ private:
 
 	// Transform
 	Transform transform_;
+
+	// 座標
+	Float2 position_ = { 0.0f, 0.0f };
+	// 回転
+	float rotation = 0.0f;
+	// サイズ
+	Float2 size = { 640.0f, 360.0f };
 };
 

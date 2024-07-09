@@ -61,7 +61,7 @@ void Sprite::Update()
 {
 	// 頂点リソースにデータを書き込む
 	// 左下
-	vertexData_[0].position = { 0.0f, 360.0f, 0.0f, 1.0f };
+	vertexData_[0].position = { 0.0f, 1.0f, 0.0f, 1.0f };
 	vertexData_[0].texcoord = { 0.0f, 1.0f };
 	vertexData_[0].normal = { 0.0f, 0.0f, -1.0f };
 	// 左上
@@ -69,11 +69,11 @@ void Sprite::Update()
 	vertexData_[1].texcoord = { 0.0f, 0.0f };
 	vertexData_[1].normal = { 0.0f, 0.0f, -1.0f };
 	// 右下
-	vertexData_[2].position = { 640.0f, 360.0f, 0.0f, 1.0f };
+	vertexData_[2].position = { 1.0f, 1.0f, 0.0f, 1.0f };
 	vertexData_[2].texcoord = { 1.0f, 1.0f };
 	vertexData_[2].normal = { 0.0f, 0.0f, -1.0f };
 	// 右上
-	vertexData_[3].position = { 640.0f, 0.0f, 0.0f, 1.0f };
+	vertexData_[3].position = { 1.0f, 0.0f, 0.0f, 1.0f };
 	vertexData_[3].texcoord = { 1.0f, 0.0f };
 	vertexData_[3].normal = { 0.0f, 0.0f, -1.0f };
 
@@ -82,6 +82,12 @@ void Sprite::Update()
 	indexData_[3] = 1; indexData_[4] = 3; indexData_[5] = 2;
 
 
+	// 座標を反映
+	transform_.translate = { position_.x, position_.y, 0.0f };
+	// 回転を反映
+	transform_.rotate = { 0.0f, 0.0f, rotation };
+	// サイズを反映
+	transform_.scale = { size.x, size.y, 1.0f };
 
 	// Transform情報を作る
 	Matrix worldMatrix = transform_.MakeAffineMatrix();
