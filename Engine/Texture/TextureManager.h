@@ -18,6 +18,11 @@ public:
 	static void SetDescriptorTable(UINT rootParamIndex, ID3D12GraphicsCommandList* commandList, uint32_t textureHandle);
 
 	DescriptorHeap srvHeap_;
+
+	TextureManager() = default;
+	~TextureManager() = default;
+	TextureManager(TextureManager&) = delete;
+	TextureManager& operator=(TextureManager&) = delete;
 private:
 	// TextureデータをCPUで読む
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);

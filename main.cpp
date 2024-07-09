@@ -142,6 +142,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// Textureを読み込む
 	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
+	uint32_t monsterBallGH = TextureManager::Load("resources/Images/monsterBall.png", dxBase->GetDevice());
+	uint32_t checkerBoardGH = TextureManager::Load("resources/Images/checkerBoard.png", dxBase->GetDevice());
+	uint32_t whiteGH = TextureManager::Load("resources/Images/white.png", dxBase->GetDevice());
 
 	// UVTransform用の変数を用意
 	Transform uvTransformSprite{
@@ -282,10 +285,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		spriteCommon->PreDraw();
 
 		// Spriteの描画処理
-		// Spriteの更新処理
-		for (Sprite* sprite : sprites) {
-			sprite->Draw(uvCheckerGH);
-		}
+		sprites[0]->Draw(uvCheckerGH);
+		sprites[1]->Draw(monsterBallGH);
+		sprites[2]->Draw(checkerBoardGH);
+		sprites[3]->Draw(whiteGH);
+		sprites[4]->Draw(uvCheckerGH);
 
 		///
 		/// ↑ ここまでスプライトの描画コマンド
