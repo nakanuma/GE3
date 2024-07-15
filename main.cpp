@@ -81,6 +81,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// モデル読み込み
 	ModelManager::ModelData planeModel = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
+	ModelManager::ModelData axisModel = ModelManager::LoadObjFile("resources/Models", "axis.obj", dxBase->GetDevice());
 
 	// 平面オブジェクトの生成
 	Object3D plane;
@@ -92,10 +93,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
 
 	// 2つ目の平面オブジェクトの生成
-	Object3D plane2;
-	plane2.model_ = &planeModel;
-	plane2.transform_.translate = { 1.6f, -1.0f, 0.0f, };
-	plane2.transform_.rotate = { 0.0f, 3.1f, 0.0f };
+	Object3D axis;
+	axis.model_ = &axisModel;
+	axis.transform_.translate = { 1.6f, -1.0f, 0.0f, };
+	axis.transform_.rotate = { 0.0f, 0.0f, 0.0f };
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -168,8 +169,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		plane.UpdateMatrix();
 		plane.transform_.rotate.y += 0.01f;
 
-		plane2.UpdateMatrix();
-		plane2.transform_.rotate.z += 0.01f;
+		axis.UpdateMatrix();
+		axis.transform_.rotate.z += 0.01f;
 
 		// Spriteの更新処理
 		sprite->Update();
@@ -243,7 +244,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		// 平面オブジェクトの描画
 		plane.Draw();
-		plane2.Draw();
+		axis.Draw();
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
