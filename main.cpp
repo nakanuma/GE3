@@ -93,7 +93,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// モデルを指定
 	plane.model_ = &planeModel;
 	// 初期回転角を設定
-	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
+	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f }; 
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
