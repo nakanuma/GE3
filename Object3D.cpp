@@ -13,6 +13,11 @@ Object3D::Object3D()
 	materialCB_.data_->enableLighting = true;
 	// 単位行列で初期化
 	materialCB_.data_->uvTransform = Matrix::Identity();
+
+	// 平行光源のデフォルト値を書き込む
+	directionalLightCB_.data_->color = { 1.0f,1.0f,1.0f,1.0f };
+	directionalLightCB_.data_->direction = { 0.0f, -1.0f, 0.0f };
+	directionalLightCB_.data_->intensity = 1.0f;
 }
 
 void Object3D::UpdateMatrix()
@@ -29,6 +34,9 @@ void Object3D::Draw()
 {
 	DirectXBase* dxBase = DirectXBase::GetInstance();
 
+	// 平行光源の定数バッファをセット
+	dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightCB_.resource_->GetGPUVirtualAddress());
+
 	// commandListにVBVを設定
 	dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &model_->vertexBufferView);
 	// マテリアルCBufferの場所を設定
@@ -44,6 +52,9 @@ void Object3D::Draw()
 void Object3D::Draw(const int TextureHandle)
 {
 	DirectXBase* dxBase = DirectXBase::GetInstance();
+
+	// 平行光源の定数バッファをセット
+	dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightCB_.resource_->GetGPUVirtualAddress());
 
 	// commandListにVBVを設定
 	dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &model_->vertexBufferView);

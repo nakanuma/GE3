@@ -19,6 +19,12 @@ public:
 		Matrix World;
 	};
 
+	struct DirectionalLight {
+		Float4 color; // ライトの色
+		Float3 direction; // ライトの向き
+		float intensity; // 輝度
+	};
+
 	Object3D();
 
 	// マトリックス情報の更新
@@ -40,5 +46,8 @@ public:
 
 	// トランスフォーム情報
 	Transform transform_;
+
+	// 平行光源の定数バッファ
+	ConstBuffer<DirectionalLight> directionalLightCB_;
 };
 

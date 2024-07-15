@@ -21,12 +21,6 @@
 #include "SpriteCommon.h"
 #include "Sprite.h"
 
-struct DirectionalLight {
-	Float4 color; // ライトの色
-	Float3 direction; // ライトの向き
-	float intensity; // 輝度
-};
-
 enum BlendMode {
 	kBlendModeNormal,
 	kBlendModeNone,
@@ -121,17 +115,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// ↓ ここから光源の設定
 	/// 
 
-	// 平行光源のResourceを作成
-	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource = CreateBufferResource(dxBase->GetDevice(), sizeof(DirectionalLight));
-	// データを書き込む
-	DirectionalLight* directionalLightData = nullptr;
-	// 書き込むためのアドレスを取得
-	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
-	// デフォルト値を書き込む
-	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData->direction = { 0.0f, -1.0f, 0.0f };
-	directionalLightData->intensity = 1.0f;
-
 	///
 	/// ↑ ここまで光源の設定
 	/// 
@@ -206,22 +189,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("rotate", &plane.transform_.rotate.x, 0.01f);
 		ImGui::DragFloat3("scale", &plane.transform_.scale.x, 0.01f);
 		ImGui::ColorEdit4("color", &plane.materialCB_.data_->color.x);
-		ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
-		if (ImGui::BeginCombo("Blend", BlendModeNames[selectedBlendMode])) {
-			for (int n = 0; n < 6; n++) {
-				const bool isSelected = (selectedBlendMode == n);
-				if (ImGui::Selectable(BlendModeNames[n], isSelected))
-					selectedBlendMode = static_cast<BlendMode>(n);
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-		
-		ImGui::NewLine();
-		ImGui::Text("Push [W] / [S] : up / down");
-		ImGui::Text("Pressed [A] : move left");
-		ImGui::Text("Released [D] : move right");
+		ImGui::DragFloat("directionalLight", &plane.directionalLightCB_.data_->intensity, 0.01f);
 
 		ImGui::End();
 
@@ -232,7 +200,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// 
 
 		// 平行光源の情報の定数バッファのセット
-		dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+		/*dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());*/
 		// カメラの定数バッファを設定
 		Camera::TransferConstantBuffer();
 
@@ -262,7 +230,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 		// 平面オブジェクトの描画
-		/*plane.Draw();*/
+		plane.Draw();
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
