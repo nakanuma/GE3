@@ -69,7 +69,7 @@
     <ClInclude Include="Engine\3D\Object3D.h" />
     <ClInclude Include="Engine\3D\OutlinedObject.h" />
     <ClInclude Include="Engine\2D\Sprite.h" />
-    <ClInclude Include="Engine\3D\SpriteCommon.h" />
+    <ClInclude Include="Engine\2D\SpriteCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">

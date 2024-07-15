@@ -233,7 +233,7 @@
     <ClInclude Include="Engine\3D\OutlinedObject.h">
       <Filter>Engine\Object3D</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3D\SpriteCommon.h">
+    <ClInclude Include="Engine\2D\SpriteCommon.h">
       <Filter>Engine\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2D\Sprite.h">
