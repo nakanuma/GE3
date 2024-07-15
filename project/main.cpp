@@ -198,12 +198,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// ImGui
 		ImGui::Begin("Settings");
-		ImGui::DragFloat3("translate", &plane.transform_.translate.x, 0.01f);
-		ImGui::DragFloat3("rotate", &plane.transform_.rotate.x, 0.01f);
-		ImGui::DragFloat3("scale", &plane.transform_.scale.x, 0.01f);
-		ImGui::ColorEdit4("color", &plane.materialCB_.data_->color.x);
-		ImGui::DragFloat("directionalLight", &plane.directionalLightCB_.data_->intensity, 0.01f);
-
+		ImGui::DragFloat3("CameraTranslate", &camera.transform.translate.x, 0.01f);
+		ImGui::SliderAngle("CameraRotateX", &camera.transform.rotate.x);
+		ImGui::SliderAngle("CameraRotateY", &camera.transform.rotate.y);
+		ImGui::SliderAngle("CameraRotateZ", &camera.transform.rotate.z);
 		ImGui::End();
 
 		//////////////////////////////////////////////////////
