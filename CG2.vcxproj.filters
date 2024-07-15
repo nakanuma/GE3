@@ -132,19 +132,19 @@
     <ClCompile Include="Engine\Model\ModelManager.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Object3D.cpp">
+    <ClCompile Include="Engine\3D\Object3D.cpp">
       <Filter>Engine\Object3D</Filter>
     </ClCompile>
-    <ClCompile Include="OutlinedObject.cpp">
+    <ClCompile Include="Engine\3D\OutlinedObject.cpp">
       <Filter>Engine\Object3D</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteCommon.cpp">
+    <ClCompile Include="Engine\2D\SpriteCommon.cpp">
       <Filter>Engine\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
+    <ClCompile Include="Engine\2D\Sprite.cpp">
       <Filter>Engine\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
+    <ClCompile Include="Engine\Input\Input.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,22 +224,22 @@
     <ClInclude Include="Engine\Model\ModelManager.h">
       <Filter>Engine\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Object3D.h">
+    <ClInclude Include="Engine\3D\Object3D.h">
       <Filter>Engine\Object3D</Filter>
     </ClInclude>
-    <ClInclude Include="ConstBuffer.h">
+    <ClInclude Include="Engine\DirectX\ConstBuffer.h">
       <Filter>Engine\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="OutlinedObject.h">
+    <ClInclude Include="Engine\3D\OutlinedObject.h">
       <Filter>Engine\Object3D</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteCommon.h">
+    <ClInclude Include="Engine\3D\SpriteCommon.h">
       <Filter>Engine\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
+    <ClInclude Include="Engine\2D\Sprite.h">
       <Filter>Engine\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
+    <ClInclude Include="Engine\Input\Input.h">
       <Filter>Engine\Input</Filter>
     </ClInclude>
   </ItemGroup>

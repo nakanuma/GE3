@@ -24,7 +24,7 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Engine\Wrapper\ImguiWrapper.cpp" />
     <ClCompile Include="Engine\Debugger\Logger.cpp" />
-    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Math\Matrix.cpp" />
     <ClCompile Include="Engine\Math\Matrix3x3.cpp" />
@@ -33,13 +33,13 @@
     <ClCompile Include="Engine\Util\StringUtil.cpp" />
     <ClCompile Include="Engine\Texture\TextureManager.cpp" />
     <ClCompile Include="Engine\Math\Transform.cpp" />
-    <ClCompile Include="Object3D.cpp" />
-    <ClCompile Include="OutlinedObject.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="SpriteCommon.cpp" />
+    <ClCompile Include="Engine\3D\Object3D.cpp" />
+    <ClCompile Include="Engine\3D\OutlinedObject.cpp" />
+    <ClCompile Include="Engine\2D\Sprite.cpp" />
+    <ClCompile Include="Engine\2D\SpriteCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConstBuffer.h" />
+    <ClInclude Include="Engine\DirectX\ConstBuffer.h" />
     <ClInclude Include="Engine\3D\Camera.h" />
     <ClInclude Include="Engine\DirectX\DescriptorHeap.h" />
     <ClInclude Include="Engine\DirectX\DirectXBase.h" />
@@ -65,11 +65,11 @@
     <ClInclude Include="Engine\Util\StringUtil.h" />
     <ClInclude Include="Engine\Texture\TextureManager.h" />
     <ClInclude Include="Engine\Math\Transform.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Object3D.h" />
-    <ClInclude Include="OutlinedObject.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="SpriteCommon.h" />
+    <ClInclude Include="Engine\Input\Input.h" />
+    <ClInclude Include="Engine\3D\Object3D.h" />
+    <ClInclude Include="Engine\3D\OutlinedObject.h" />
+    <ClInclude Include="Engine\2D\Sprite.h" />
+    <ClInclude Include="Engine\3D\SpriteCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">
@@ -161,6 +161,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2D;$(ProjectDir)engine\3D;$(ProjectDir)engine\Input;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -190,6 +191,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\2D;$(ProjectDir)engine\3D;$(ProjectDir)engine\Input;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
