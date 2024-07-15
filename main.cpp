@@ -1,7 +1,7 @@
 #include <Windows.h>   
 #include <cstdint>
 #include <assert.h>
- 
+
 // MyClass 
 #include "MyWindow.h"
 #include "Logger.h"
@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// COMの初期化
 	CoInitializeEx(0, COINIT_MULTITHREADED);
-	 
+
 	// ゲームウィンドウの生成
 	window = new Window;
 	window->Create(L"CG2WindowClass", 1280, 720);
@@ -86,8 +86,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Object3D plane;
 	// モデルを指定
 	plane.model_ = &planeModel;
+	// 初期位置を設定
+	plane.transform_.translate = { -1.6f, -1.0f, 0.0f, };
 	// 初期回転角を設定
-	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f }; 
+	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
+
+	// 2つ目の平面オブジェクトの生成
+	Object3D plane2;
+	plane2.model_ = &planeModel;
+	plane2.transform_.translate = { 1.6f, -1.0f, 0.0f, };
+	plane2.transform_.rotate = { 0.0f, 3.1f, 0.0f };
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -158,6 +166,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 平面オブジェクトの行列更新
 		plane.UpdateMatrix();
+		plane.transform_.rotate.y += 0.01f;
+
+		plane2.UpdateMatrix();
+		plane2.transform_.rotate.z += 0.01f;
 
 		// Spriteの更新処理
 		sprite->Update();
@@ -231,6 +243,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		// 平面オブジェクトの描画
 		plane.Draw();
+		plane2.Draw();
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
