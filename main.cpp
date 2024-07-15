@@ -87,7 +87,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Object3D plane;
 	// モデルを指定
 	plane.model_ = &planeModel;
-	// 初期位置を設定
+	// 初期位置を設定 
 	plane.transform_.translate = { -1.6f, -1.0f, 0.0f, };
 	// 初期回転角を設定
 	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
