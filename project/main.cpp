@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <assert.h>
 #include <random>
+#include <numbers>
 
 // MyClass 
 #include "MyWindow.h"
@@ -37,7 +38,7 @@ Particle MakeNewParticle(std::mt19937& randomEngine) {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	Particle particle;
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-	particle.transform.rotate = { 0.0f, 3.1f, 0.0f };
+	particle.transform.rotate = { 0.0f, 3.14f, 0.0f };
 	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
 	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
 
@@ -175,7 +176,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 
 
 	// カメラのインスタンスを生成
-	Camera camera{ {0.0f, 0.0f, -10.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };
+	/*Camera camera{ {0.0f, 0.0f, -10.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };*/
+	Camera camera{ {0.0f, 13.0f, -4.0f}, {1.26f, 0.0f, 0.0f}, 0.45f };
 	Camera::Set(&camera);
 
 	// UVTransform用の変数を用意
@@ -231,8 +233,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix projectionMatrix = Camera::GetCurrent()->MakePerspectiveFovMatrix();
 			Matrix viewProjectionMatrix = viewMatrix * projectionMatrix;
 			Matrix worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
-			particles[index].transform.translate += particles[index].velocity * kDeltaTime;
-			particles[index].currentTime += kDeltaTime; // 経過時間を足す
+			//particles[index].transform.translate += particles[index].velocity * kDeltaTime;
+			//particles[index].currentTime += kDeltaTime; // 経過時間を足す
 			instancingBuffer.data_[index].WVP = worldViewProjectionMatrix;
 			instancingBuffer.data_[index].World = worldMatrix;
 			instancingBuffer.data_[index].color = particles[index].color; // パーティクルの色をそのままコピー
@@ -246,6 +248,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// ImGui
 		ImGui::Begin("Settings");
+		ImGui::DragFloat3("translate", &camera.transform.translate.x, 0.01f);
+		ImGui::DragFloat3("rotate", &camera.transform.rotate.x, 0.01f);
 		ImGui::End();
 
 		//////////////////////////////////////////////////////
