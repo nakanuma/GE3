@@ -26,6 +26,12 @@ public:
 		float intensity; // 輝度
 	};
 
+	struct ParticleForGPU {
+		Matrix WVP;
+		Matrix World;
+		Float4 color;
+	};
+
 	Object3D();
 
 	// マトリックス情報の更新
@@ -36,7 +42,7 @@ public:
 
 	void Draw(const int TextureHandle);
 
-	void DrawInstancing(StructuredBuffer<TransformationMatrix>& structuredBuffer);
+	void DrawInstancing(StructuredBuffer<ParticleForGPU>& structuredBuffer);
 
 	// マテリアルの定数バッファ
 	ConstBuffer<Material>materialCB_;
