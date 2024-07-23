@@ -67,6 +67,9 @@
     <Filter Include="Application">
       <UniqueIdentifier>{d73934f3-6a39-4779-812d-0979f5cab9e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Particle">
+      <UniqueIdentifier>{0be81856-4b7e-448f-bc24-cd585ace68d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -149,6 +152,9 @@
     </ClCompile>
     <ClCompile Include="SRVManager.cpp">
       <Filter>Engine\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleManager.cpp">
+      <Filter>Engine\Particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="StructuredBuffer.h">
       <Filter>Engine\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleManager.h">
+      <Filter>Engine\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

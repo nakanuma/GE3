@@ -25,6 +25,7 @@
 #include "Sprite.h"
 #include "SRVManager.h"
 #include "StructuredBuffer.h"
+#include "ParticleManager.h"
 
 struct Particle {
 	Transform transform;
@@ -138,6 +139,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ImGuiの初期化
 	ImguiWrapper::Initialize(dxBase->GetDevice(), dxBase->GetSwapChainDesc().BufferCount, dxBase->GetRtvDesc().Format, srvManager->descriptorHeap.heap_.Get());
 #pragma endregion
+
+	// ParticleManagerの生成と初期化
+	ParticleManager* particleManager = nullptr;
+	particleManager = new ParticleManager;
+	particleManager->Initialize(dxBase, srvManager);
 
 	///
 	///	↓ ここから3Dオブジェクトの設定
@@ -414,6 +420,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 各種開放処理
 	/// 
 
+	// ParticleManagerの開放
+	delete particleManager;
 	// スプライト共通処理開放
 	delete spriteCommon;
 	// SRVManager開放

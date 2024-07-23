@@ -37,6 +37,7 @@
     <ClCompile Include="Engine\3D\OutlinedObject.cpp" />
     <ClCompile Include="Engine\2D\Sprite.cpp" />
     <ClCompile Include="Engine\2D\SpriteCommon.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="SRVManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +72,7 @@
     <ClInclude Include="Engine\3D\OutlinedObject.h" />
     <ClInclude Include="Engine\2D\Sprite.h" />
     <ClInclude Include="Engine\2D\SpriteCommon.h" />
+    <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="SRVManager.h" />
     <ClInclude Include="StructuredBuffer.h" />
   </ItemGroup>
