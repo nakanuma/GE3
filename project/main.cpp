@@ -73,6 +73,12 @@ std::list<Particle> Emit(const Emitter& emitter, std::mt19937& randomEngine) {
 	return particles;
 }
 
+// Field
+struct AccelerationField {
+	Float3 acceleration; //!< 加速度
+	AABB area; //!< 範囲
+};
+
 enum BlendMode {
 	kBlendModeNormal,
 	kBlendModeNone,
@@ -178,6 +184,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Updateを行うかどうか
 	bool isParticleUpdate = true;
 
+	// Emitter
 	Emitter emitter{};
 	emitter.count = 3;
 	emitter.frequency = 0.5f; // 0.5秒ごとに発生
@@ -185,6 +192,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	emitter.transform.translate = { 0.0f, 0.0f, 0.0f };
 	emitter.transform.rotate = { 0.0f, 0.0f, 0.0f };
 	emitter.transform.scale = { 1.0f, 1.0f, 1.0f };
+
+	// Field
+	AccelerationField accelerationField;
+	accelerationField.acceleration = { 15.0f, 0.0f, 0.0f };
+	accelerationField.area.min = { -1.0f, -1.0f, -1.0f };
+	accelerationField.area.max = { 1.0f, 1.0f, 1.0f };
 
 	// パーティクルのリスト
 	std::list<Particle> particles;
@@ -297,14 +310,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				instancingBuffer.data_[numInstance].color = particleIterator->color; // パーティクルの色をそのままコピー
 			}
 
-			// 移動とa値の更新
+			// Fieldの範囲内のParticleには加速度を適用する
 			if (isParticleUpdate) {
-				particleIterator->transform.translate += particleIterator->velocity * kDeltaTime;
-				particleIterator->currentTime += kDeltaTime; // 経過時間を足す
-
-				float alpha = 1.0f - (particleIterator->currentTime / particleIterator->lifeTime); // 経過時間に応じたAlpha値を算出
-				instancingBuffer.data_[numInstance].color.w = alpha; // GPUに送る
+				if (IsCollision(accelerationField.area, particleIterator->transform.translate)) {
+					particleIterator->velocity += accelerationField.acceleration * kDeltaTime;
+				}
 			}
+
+			particleIterator->transform.translate += particleIterator->velocity * kDeltaTime;
+			particleIterator->currentTime += kDeltaTime; // 経過時間を足す
+
+			float alpha = 1.0f - (particleIterator->currentTime / particleIterator->lifeTime); // 経過時間に応じたAlpha値を算出
+			instancingBuffer.data_[numInstance].color.w = alpha; // GPUに送る
 
 			++numInstance; // 生きているParticleの数を1つカウントする
 
