@@ -248,6 +248,9 @@
     <ClInclude Include="SRVManager.h">
       <Filter>Engine\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>Engine\DirectX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shaders\Object3d.VS.hlsl">

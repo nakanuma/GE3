@@ -64,6 +64,8 @@ public:
 
 		// RootSignature生成
 		CreateRootSignature();
+		// RootSignature生成(Particle用)
+		CreateRootSignatureParticle();
 
 		// InputLayoutの設定
 		SetInputLayout();
@@ -106,6 +108,8 @@ public:
 	void InitializeDXC();
 	// RootSignature生成
 	void CreateRootSignature();
+	// RootSignature生成(Particle用)
+	void CreateRootSignatureParticle();
 	// InputLayoutの設定
 	void SetInputLayout();
 	// BlendStateの設定
@@ -160,6 +164,11 @@ public:
 	ID3D12PipelineState* GetPipelineStateBlendModeMultiply() { return graphicsPipelineStateBlendModeMultiply_.Get(); };
 	ID3D12PipelineState* GetPipelineStateBlendModeScreen() { return graphicsPipelineStateBlendModeScreen_.Get(); };
 
+	// Particle用ルートシグネチャを取得
+	ID3D12RootSignature* GetRootSignatureParticle() { return rootSignatureParticle_.Get(); }
+	// Particle用PSOを取得
+	ID3D12PipelineState* GetPipelineStateParticle() { return graphicsPipelineStateParticle_.Get(); };
+
 private:
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
 	Microsoft::WRL::ComPtr<IDXGIAdapter4> useAdapter_;
@@ -183,6 +192,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob_;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignatureParticle_;
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[3];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 
@@ -202,9 +212,12 @@ private:
 	D3D12_RASTERIZER_DESC rasterizerDesc_;
 	IDxcBlob* vertexShaderBlob_;
 	IDxcBlob* pixelShaderBlob_;
+	IDxcBlob* vertexShaderBlobParticle_;
+	IDxcBlob* pixelShaderBlobParticle_;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateOutline_;
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateNoCulling_;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineStateParticle_;
 	D3D12_VIEWPORT viewport_;
 	D3D12_RECT scissorRect_;
 	Microsoft::WRL::ComPtr <ID3D12Resource> depthStencilResource_;
