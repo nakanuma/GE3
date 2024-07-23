@@ -40,6 +40,8 @@ public:
 	void SetModel(const std::string name, ModelManager::ModelData model);
 	void Emit(const std::string name, const Float3& position, uint32_t count);
 
+	// パーティクルグループコンテナ
+	std::unordered_map<std::string, std::unique_ptr<ParticleGroup>> particleGroups;
 private:
 	DirectXBase* dxBase = nullptr;
 	SRVManager* srvManager = nullptr;
@@ -47,9 +49,6 @@ private:
 	// 乱数生成器の初期化
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
-
-	// パーティクルグループコンテナ
-	std::unordered_map<std::string, std::unique_ptr<ParticleGroup>> particleGroups;
 
 	// Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
