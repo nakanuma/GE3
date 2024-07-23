@@ -3,7 +3,7 @@
 
 void TextureManager::Initialize(ID3D12Device* device, SRVManager* srvManager)
 {
-	GetInstance().srvHeap_.Create(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	/*GetInstance().srvHeap_.Create(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);*/
 	GetInstance().srvManager = srvManager;
 }
 
@@ -48,8 +48,7 @@ int TextureManager::Load(const std::string& filePath, ID3D12Device* device)
 	textureData.srvHandleGPU = GetInstance().srvManager->GetGPUDescriptorHandle(textureData.srvIndex);
 
 	// SRVの生成
-	device->CreateShaderResourceView(targetResource.Get(), &srvDesc, GetInstance().srvHeap_.GetCPUHandle(GetInstance().srvManager->GetIndex()));
-
+	device->CreateShaderResourceView(targetResource.Get(), &srvDesc, GetInstance().srvManager->GetCPUDescriptorHandle(GetInstance().srvManager->GetIndex()));
 	// 実際に返すのはインクリメントする前の値なので1引いて返す
 	return GetInstance().srvManager->Allocate();
 }
@@ -63,7 +62,7 @@ TextureManager& TextureManager::GetInstance()
 
 void TextureManager::SetDescriptorTable(UINT rootParamIndex, ID3D12GraphicsCommandList* commandList, uint32_t textureHandle)
 {
-	commandList->SetGraphicsRootDescriptorTable(rootParamIndex, GetInstance().srvHeap_.GetGPUHandle(textureHandle));
+	commandList->SetGraphicsRootDescriptorTable(rootParamIndex, GetInstance().srvManager->descriptorHeap.GetGPUHandle(textureHandle));
 }
 
 const DirectX::TexMetadata& TextureManager::GetMetaData(uint32_t textureHandle)

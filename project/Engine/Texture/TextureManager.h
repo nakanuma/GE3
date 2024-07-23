@@ -30,7 +30,12 @@ public:
 
 	static const DirectX::TexMetadata& GetMetaData(uint32_t textureHandle);
 
-	DescriptorHeap srvHeap_;
+	// メタデータの取得
+	const DirectX::TexMetadata& GetMetaData(const std::string& filePath) { return textureDatas[filePath].metadata; }
+	// SRVインデックスの取得
+	uint32_t GetSRVIndex(const std::string& filePath) { return textureDatas[filePath].srvIndex; }
+	// GPUハンドルの取得
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVHandleGPU(const std::string& filePath){return textureDatas[filePath].srvHandleGPU;}
 
 	TextureManager() = default;
 	~TextureManager() = default;
