@@ -38,7 +38,7 @@ Particle MakeNewParticle(std::mt19937& randomEngine) {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	Particle particle;
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-	particle.transform.rotate = { 0.0f, 3.14f, 0.0f };
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
 	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
 	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
 
@@ -146,6 +146,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine(seedGenerator());
 
+	// 反対側に回す回転行列
+	Matrix backToFrontMatrix = Matrix::RotationY(std::numbers::pi_v<float>);
+	// billboard行列
+	Matrix billboardMatrix;
+	// billboardを適用するかどうか
+	bool useBillBoard = true;
+	// Updateを行うかどうか
+	bool isParticleUpdate = false;
+
 	Particle particles[10];
 	for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
 		particles[index] = MakeNewParticle(randomEngine);
@@ -177,7 +186,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// カメラのインスタンスを生成
 	/*Camera camera{ {0.0f, 0.0f, -10.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };*/
-	Camera camera{ {0.0f, 13.0f, -4.0f}, {1.26f, 0.0f, 0.0f}, 0.45f };
+	Camera camera{ {0.0f, 23.0f, 10.0f}, {std::numbers::pi_v<float> / 3.0f, std::numbers::pi_v<float>, 0.0f}, 0.45f };
 	Camera::Set(&camera);
 
 	// UVTransform用の変数を用意
@@ -222,6 +231,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 平面オブジェクトの行列更新
 		plane.UpdateMatrix();
 
+		Matrix cameraMatrix = Camera::GetCurrent()->MakeViewMatrix();
+		if (useBillBoard) {
+			billboardMatrix = backToFrontMatrix * cameraMatrix;
+			billboardMatrix.r[3][0] = 0.0f;
+			billboardMatrix.r[3][1] = 0.0f;
+			billboardMatrix.r[3][2] = 0.0f;
+		} else {
+			billboardMatrix = Matrix::Identity();
+		}
+
 		// パーティクルの更新
 		uint32_t numInstance = 0; // 描画すべきインスタンス数
 		for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
@@ -232,24 +251,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix viewMatrix = Camera::GetCurrent()->MakeViewMatrix();
 			Matrix projectionMatrix = Camera::GetCurrent()->MakePerspectiveFovMatrix();
 			Matrix viewProjectionMatrix = viewMatrix * projectionMatrix;
-			Matrix worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
-			//particles[index].transform.translate += particles[index].velocity * kDeltaTime;
-			//particles[index].currentTime += kDeltaTime; // 経過時間を足す
+			/*Matrix worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;*/
+
+			// パーティクルのビルボード行列を適用
+			Matrix worldViewProjectionMatrix = worldMatrix * billboardMatrix * viewProjectionMatrix;
+
 			instancingBuffer.data_[index].WVP = worldViewProjectionMatrix;
 			instancingBuffer.data_[index].World = worldMatrix;
 			instancingBuffer.data_[index].color = particles[index].color; // パーティクルの色をそのままコピー
 
 			++numInstance; // 生きているParticleの数を1つカウントする
 
-			float alpha = 1.0f - (particles[index].currentTime / particles[index].lifeTime); // 経過時間に応じたAlpha値を算出
-			instancingBuffer.data_[index].color.w = alpha; // GPUに送る
+			// 移動とa値の更新
+			if (isParticleUpdate) {
+				particles[index].transform.translate += particles[index].velocity * kDeltaTime;
+				particles[index].currentTime += kDeltaTime; // 経過時間を足す
+
+				float alpha = 1.0f - (particles[index].currentTime / particles[index].lifeTime); // 経過時間に応じたAlpha値を算出
+				instancingBuffer.data_[index].color.w = alpha; // GPUに送る
+			}
 		}
 
 
 		// ImGui
 		ImGui::Begin("Settings");
-		ImGui::DragFloat3("translate", &camera.transform.translate.x, 0.01f);
-		ImGui::DragFloat3("rotate", &camera.transform.rotate.x, 0.01f);
+		ImGui::DragFloat3("camera.translate", &camera.transform.translate.x, 0.01f);
+		ImGui::DragFloat3("camea.rotate", &camera.transform.rotate.x, 0.01f);
+		ImGui::Checkbox("update", &isParticleUpdate);
+		ImGui::Checkbox("useBillboard", &useBillBoard);
 		ImGui::End();
 
 		//////////////////////////////////////////////////////
