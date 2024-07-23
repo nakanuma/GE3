@@ -5,11 +5,22 @@
 #include "Logger.h"
 #include "DescriptorHeap.h"
 #include <array>
+#include "SRVManager.h"
+#include <unordered_map>
 
 class TextureManager final
 {
 public:
-	static void Initialize(ID3D12Device* device);
+	struct TextureData {
+		DirectX::TexMetadata metadata;
+		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+		uint32_t srvIndex;
+		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
+		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
+	};
+
+public:
+	static void Initialize(ID3D12Device* device, SRVManager* srvManager);
 
 	static int Load(const std::string& filePath, ID3D12Device* device);
 
@@ -34,10 +45,14 @@ private:
 	static void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
 
 	static const uint32_t kMaxTextureValue_ = 128;
-	uint32_t index_ = 1;
 
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, kMaxTextureValue_> texResources;
 
 	std::array<DirectX::TexMetadata, kMaxTextureValue_> texMetadata;
+
+	// SRVManager
+	SRVManager* srvManager = nullptr;
+	// テクスチャデータ
+	std::unordered_map<std::string, TextureData> textureDatas;
 };
 

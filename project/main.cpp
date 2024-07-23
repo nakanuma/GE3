@@ -76,7 +76,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	spriteCommon->Initialize(dxBase);
 
 	// TextureManagerの初期化
-	TextureManager::Initialize(dxBase->GetDevice());
+	TextureManager::Initialize(dxBase->GetDevice(), srvManager);
 
 	// ImGuiの初期化
 	ImguiWrapper::Initialize(dxBase->GetDevice(), dxBase->GetSwapChainDesc().BufferCount, dxBase->GetRtvDesc().Format, TextureManager::GetInstance().srvHeap_.heap_.Get());

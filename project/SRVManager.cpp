@@ -1,7 +1,16 @@
 #include "SRVManager.h"
 #include <cassert>
+#include "StringUtil.h"
+#include "Logger.h"
 
 const uint32_t SRVManager::kMaxSRVCount = 128;
+
+SRVManager& SRVManager::GetInstance()
+{
+	static SRVManager instance;
+
+	return instance;
+}
 
 void SRVManager::Initialize(DirectXBase* dxBase)
 {
@@ -57,6 +66,15 @@ D3D12_GPU_DESCRIPTOR_HANDLE SRVManager::GetGPUDescriptorHandle(uint32_t index)
 {
 	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap.GetGPUHandle(index);
 	return handleGPU;
+}
+
+bool SRVManager::CanAllocate()
+{
+	if (useIndex >= kMaxSRVCount) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 uint32_t SRVManager::Allocate()
