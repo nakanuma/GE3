@@ -28,6 +28,8 @@ struct Particle {
 	Transform transform;
 	Float3 velocity;
 	Float4 color;
+	float lifeTime;
+	float currentTime;
 };
 
 // パーティクルの生成関数
@@ -42,6 +44,11 @@ Particle MakeNewParticle(std::mt19937& randomEngine) {
 	// 色をランダムに初期化
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 	particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
+
+	// 生存可能時間と経過時間を初期化
+	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
+	particle.lifeTime = distTime(randomEngine);
+	particle.currentTime = 0;
 
 	return particle;
 }
@@ -124,7 +131,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	StructuredBuffer<Object3D::ParticleForGPU> instancingBuffer(10);
 
 	// 単位行列を書き込んでおく
-	for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
+	for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
 		instancingBuffer.data_[index].WVP = Matrix::Identity();
 		instancingBuffer.data_[index].World = Matrix::Identity();
 		instancingBuffer.data_[index].color = Float4(1.0f, 1.0f, 1.0f, 1.0f); // とりあえず白を書き込む
@@ -138,7 +145,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	std::mt19937 randomEngine(seedGenerator());
 
 	Particle particles[10];
-	for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
+	for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
 		particles[index] = MakeNewParticle(randomEngine);
 	}
 
@@ -212,18 +219,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		plane.UpdateMatrix();
 
 		// パーティクルの更新
-		for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
+		uint32_t numInstance = 0; // 描画すべきインスタンス数
+		for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
+			if (particles[index].lifeTime <= particles[index].currentTime) { // 生存期間を過ぎていたら更新せず描画対象にしｔない
+				continue;
+			}
 			Matrix worldMatrix = particles[index].transform.MakeAffineMatrix();
 			Matrix viewMatrix = Camera::GetCurrent()->MakeViewMatrix();
 			Matrix projectionMatrix = Camera::GetCurrent()->MakePerspectiveFovMatrix();
 			Matrix viewProjectionMatrix = viewMatrix * projectionMatrix;
 			Matrix worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+			particles[index].transform.translate += particles[index].velocity * kDeltaTime;
+			particles[index].currentTime += kDeltaTime; // 経過時間を足す
 			instancingBuffer.data_[index].WVP = worldViewProjectionMatrix;
 			instancingBuffer.data_[index].World = worldMatrix;
 			instancingBuffer.data_[index].color = particles[index].color; // パーティクルの色をそのままコピー
 
-			// 速度を反映
-			particles[index].transform.translate += particles[index].velocity * kDeltaTime;
+			++numInstance; // 生きているParticleの数を1つカウントする
 		}
 
 
@@ -269,7 +281,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		// 平面オブジェクトの描画
-		plane.DrawInstancing(instancingBuffer);
+		plane.DrawInstancing(instancingBuffer, numInstance);
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
