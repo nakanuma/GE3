@@ -6,7 +6,7 @@
 class SRVManager
 {
 public:
-	static SRVManager& GetInstance();
+	static SRVManager* GetInstance();
 
 	// 初期化
 	void Initialize(DirectXBase* dxBase);
@@ -22,6 +22,7 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 	const uint32_t GetIndex() { return useIndex; }
+	void IncrementIndex() { useIndex++; }
 
 	bool CanAllocate();
 

@@ -1,5 +1,6 @@
 #include "Object3D.h"
 #include "Camera.h"
+#include "SRVManager.h"
 
 Object3D::Object3D()
 {
@@ -66,4 +67,24 @@ void Object3D::Draw(const int TextureHandle)
 	TextureManager::SetDescriptorTable(2, dxBase->GetCommandList(), TextureHandle); // 指定したテクスチャを使用する
 	// 描画を行う（DrawCall/ドローコール）
 	dxBase->GetCommandList()->DrawInstanced(UINT(model_->vertices.size()), 1, 0, 0);
+}
+
+void Object3D::DrawInstancing(StructuredBuffer<TransformationMatrix>& structuredBuffer)
+{
+	DirectXBase* dxBase = DirectXBase::GetInstance();
+
+	// パーティクル用ルートシグネチャを設定
+	dxBase->GetCommandList()->SetGraphicsRootSignature(dxBase->GetRootSignatureParticle());
+	// パーティクル用PSOを設定
+	dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateParticle());
+	// commandListにVBVを設定
+	dxBase->GetCommandList()->IASetVertexBuffers(0, 1, &model_->vertexBufferView);
+	// マテリアルCBufferの場所を設定
+	dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialCB_.resource_->GetGPUVirtualAddress());
+	// instancing用のDataを読むためにStructuredBufferのSRVを設定する
+	dxBase->GetCommandList()->SetGraphicsRootDescriptorTable(1, SRVManager::GetInstance()->descriptorHeap.GetGPUHandle(structuredBuffer.heapIndex_));
+	// SRVのDescriptorTableの先頭を設定（Textureの設定）
+	TextureManager::SetDescriptorTable(2, dxBase->GetCommandList(), model_->material.textureHandle); // モデルデータに格納されたテクスチャを使用する
+	// 描画を行う（DrawCall/ドローコール）
+	dxBase->GetCommandList()->DrawInstanced(UINT(model_->vertices.size()), structuredBuffer.numInstance_, 0, 0);
 }

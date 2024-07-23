@@ -3,6 +3,7 @@
 #include "ModelManager.h"
 #include "TextureManager.h"
 #include "ConstBuffer.h"
+#include "StructuredBuffer.h"
 
 class Object3D
 {
@@ -34,6 +35,8 @@ public:
 	void Draw();
 
 	void Draw(const int TextureHandle);
+
+	void DrawInstancing(StructuredBuffer<TransformationMatrix>& structuredBuffer);
 
 	// マテリアルの定数バッファ
 	ConstBuffer<Material>materialCB_;

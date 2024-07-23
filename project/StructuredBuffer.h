@@ -3,6 +3,7 @@
 #include "DirectXBase.h"
 #include "DescriptorHeap.h"
 #include "TextureManager.h"
+#include "SRVManager.h"
 
 template<class Type>class StructuredBuffer {
 public:
@@ -43,8 +44,7 @@ public:
 
 template<class Type>
 inline void StructuredBuffer<Type>::CreateSRV()
-{
-	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
+{D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
 	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
 	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
@@ -52,8 +52,9 @@ inline void StructuredBuffer<Type>::CreateSRV()
 	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	instancingSrvDesc.Buffer.NumElements = numInstance_;
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(Type);
-	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = TextureManager::GetInstance().srvHeap_.GetCPUHandle(TextureManager::GetIndex());
-	heapIndex_ = TextureManager::GetIndex(); // heapのIndexを記録
-	TextureManager::IncrementIndex(); // indexをインクリメント
+	/*D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = SRVManager::GetInstance().descriptorHeap.GetCPUHandle(SRVManager::GetInstance().GetIndex());*/
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = SRVManager::GetInstance()->descriptorHeap.GetCPUHandle(SRVManager::GetInstance()->GetIndex());
+	heapIndex_ = SRVManager::GetInstance()->GetIndex(); // heapのIndexを記録
+	SRVManager::GetInstance()->IncrementIndex(); // indexをインクリメント
 	DirectXBase::GetInstance()->GetDevice()->CreateShaderResourceView(resource_.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
 }

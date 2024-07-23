@@ -5,11 +5,11 @@
 
 const uint32_t SRVManager::kMaxSRVCount = 128;
 
-SRVManager& SRVManager::GetInstance()
+
+SRVManager* SRVManager::GetInstance()
 {
 	static SRVManager instance;
-
-	return instance;
+	return &instance;
 }
 
 void SRVManager::Initialize(DirectXBase* dxBase)

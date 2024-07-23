@@ -21,6 +21,7 @@
 #include "SpriteCommon.h"
 #include "Sprite.h"
 #include "SRVManager.h"
+#include "StructuredBuffer.h"
 
 enum BlendMode {
 	kBlendModeNormal,
@@ -63,7 +64,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dxBase->Initialize();
 
 	// SRVマネージャの初期化
-	srvManager = new SRVManager;
+	srvManager = SRVManager::GetInstance();
 	srvManager->Initialize(dxBase);
 
 #pragma region 汎用機能初期化
@@ -85,6 +86,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///
 	///	↓ ここから3Dオブジェクトの設定
 	/// 
+
+	// モデル読み込み
+	ModelManager::ModelData planeModel = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
+
+	// 平面オブジェクトの生成
+	Object3D plane;
+	// モデルを指定
+	plane.model_ = &planeModel;
+	// 初期回転角を設定
+	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
+
+	// StructuredBufferの作成
+	StructuredBuffer<Object3D::TransformationMatrix> instancingBuffer(10);
+
+	// 単位行列を書き込んでおく
+	for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
+		instancingBuffer.data_[index].WVP = Matrix::Identity();
+		instancingBuffer.data_[index].World = Matrix::Identity();
+	}
+
+	Transform transforms[10];
+	for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
+		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
+		transforms[index].rotate = { 0.0f, 3.1f, 0.0f };
+		transforms[index].translate = { index * 0.1f, index * 0.1f, index * 0.1f };
+	}
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -152,6 +179,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//uvTransformMatrix = uvTransformMatrix * Matrix::Translation(uvTransformSprite.translate);
 		//materialDataSprite->uvTransform = uvTransformMatrix;
 
+		// 平面オブジェクトの行列更新
+		plane.UpdateMatrix();
+
+		for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
+			Matrix worldMatrix = transforms[index].MakeAffineMatrix();
+			Matrix viewMatrix = Camera::GetCurrent()->MakeViewMatrix();
+			Matrix projectionMatrix = Camera::GetCurrent()->MakePerspectiveFovMatrix();
+			Matrix viewProjectionMatrix = viewMatrix * projectionMatrix;
+			Matrix worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+			instancingBuffer.data_[index].WVP = worldViewProjectionMatrix;
+			instancingBuffer.data_[index].World = worldMatrix;
+		}
+
+
 		// ImGui
 		ImGui::Begin("Settings");
 		ImGui::End();
@@ -192,6 +233,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateBlendModeScreen());
 			break;
 		}
+
+		// 平面オブジェクトの描画
+		plane.DrawInstancing(instancingBuffer);
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
