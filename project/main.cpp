@@ -20,6 +20,7 @@
 #include "Input.h"
 #include "SpriteCommon.h"
 #include "Sprite.h"
+#include "SRVManager.h"
 
 enum BlendMode {
 	kBlendModeNormal,
@@ -42,8 +43,10 @@ const char* BlendModeNames[6] = {
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker::GetInstance();
+	// 基盤機能
 	Window* window = nullptr;
 	DirectXBase* dxBase = nullptr;
+	SRVManager* srvManager = nullptr;
 	// 汎用機能
 	Input* input = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
@@ -58,6 +61,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// DirectX初期化処理
 	dxBase = DirectXBase::GetInstance();
 	dxBase->Initialize();
+
+	// SRVマネージャの初期化
+	srvManager = new SRVManager;
+	srvManager->Initialize(dxBase);
 
 #pragma region 汎用機能初期化
 	// 入力デバイスの生成と初期化
@@ -277,8 +284,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// スプライト共通処理開放
 	delete spriteCommon;
 	// スプライト開放
+	
 	// Spriteの更新処理
 	delete sprite;
+
+	// SRVManager開放
+	delete srvManager;
 
 	// ImGuiの終了処理
 	ImguiWrapper::Finalize();

@@ -37,6 +37,7 @@
     <ClCompile Include="Engine\3D\OutlinedObject.cpp" />
     <ClCompile Include="Engine\2D\Sprite.cpp" />
     <ClCompile Include="Engine\2D\SpriteCommon.cpp" />
+    <ClCompile Include="SRVManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\DirectX\ConstBuffer.h" />
@@ -70,6 +71,7 @@
     <ClInclude Include="Engine\3D\OutlinedObject.h" />
     <ClInclude Include="Engine\2D\Sprite.h" />
     <ClInclude Include="Engine\2D\SpriteCommon.h" />
+    <ClInclude Include="SRVManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\Shaders\Object3d.PS.hlsl">

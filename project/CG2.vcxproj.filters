@@ -147,6 +147,9 @@
     <ClCompile Include="Engine\Input\Input.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
+    <ClCompile Include="SRVManager.cpp">
+      <Filter>Engine\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Util\StringUtil.h">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Input\Input.h">
       <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="SRVManager.h">
+      <Filter>Engine\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
