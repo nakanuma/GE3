@@ -168,8 +168,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// Δtを定義
-	/*const float kDeltaTime = 1.0f / 60.0f;*/
-	const float kDeltaTime = 1.0f / 240.0f;
+	const float kDeltaTime = 1.0f / 60.0f;
+	/*const float kDeltaTime = 1.0f / 240.0f;*/
 
 	// 乱数生成器の初期化
 	std::random_device seedGenerator;
