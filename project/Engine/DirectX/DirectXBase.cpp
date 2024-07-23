@@ -560,7 +560,7 @@ void DirectXBase::CreatePipelineStateObject()
 
 	// パーティクル用PSOを作成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateParticleDesc = graphicsPipelineStateDefault;
-	graphicsPipelineStateParticleDesc.BlendState = blendDescAdd_;
+	/*graphicsPipelineStateParticleDesc.BlendState = blendDescAdd_;*/
 	graphicsPipelineStateParticleDesc.pRootSignature = rootSignatureParticle_.Get(); // RootSignature
 	graphicsPipelineStateParticleDesc.VS = { vertexShaderBlobParticle_->GetBufferPointer(), vertexShaderBlobParticle_->GetBufferSize() }; // VertexShader
 	graphicsPipelineStateParticleDesc.PS = { pixelShaderBlobParticle_->GetBufferPointer(), pixelShaderBlobParticle_->GetBufferSize() }; // PixelShader

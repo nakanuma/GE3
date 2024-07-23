@@ -35,13 +35,16 @@ struct Particle {
 };
 
 // パーティクルの生成関数
-Particle MakeNewParticle(std::mt19937& randomEngine) {
+Particle MakeNewParticle(std::mt19937& randomEngine, const Float3& translate) {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	Particle particle;
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
 	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
 	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
 	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+
+	Float3 randomTranslate{ distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	particle.transform.translate = translate + randomTranslate;
 
 	// 色をランダムに初期化
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
@@ -65,7 +68,7 @@ struct Emitter {
 std::list<Particle> Emit(const Emitter& emitter, std::mt19937& randomEngine) {
 	std::list<Particle> particles;
 	for (uint32_t count = 0; count < emitter.count; ++count) {
-		particles.push_back(MakeNewParticle(randomEngine));
+		particles.push_back(MakeNewParticle(randomEngine, emitter.transform.translate));
 	}
 	return particles;
 }
@@ -173,12 +176,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// billboardを適用するかどうか
 	bool useBillBoard = true;
 	// Updateを行うかどうか
-	bool isParticleUpdate = false;
+	bool isParticleUpdate = true;
 
 	Emitter emitter{};
 	emitter.count = 3;
 	emitter.frequency = 0.5f; // 0.5秒ごとに発生
 	emitter.frequencyTime = 0.0f; // 発生頻度用の時刻、0で初期化
+	emitter.transform.translate = { 0.0f, 0.0f, 0.0f };
+	emitter.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	emitter.transform.scale = { 1.0f, 1.0f, 1.0f };
 
 	// パーティクルのリスト
 	std::list<Particle> particles;
@@ -315,12 +321,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ImGui
 		ImGui::Begin("Settings");
 		ImGui::DragFloat3("camera.translate", &camera.transform.translate.x, 0.01f);
-		ImGui::DragFloat3("camea.rotate", &camera.transform.rotate.x, 0.01f);
+		ImGui::DragFloat3("camera.rotate", &camera.transform.rotate.x, 0.01f);
 		ImGui::Checkbox("update", &isParticleUpdate);
 		ImGui::Checkbox("useBillboard", &useBillBoard);
 		if (ImGui::Button("Add Particle")) {
 			particles.splice(particles.end(), Emit(emitter, randomEngine));
 		}
+		ImGui::DragFloat3("EmitterTranslate", &emitter.transform.translate.x, 0.01f, -100.0f, 100.0f);
 		ImGui::End();
 
 		//////////////////////////////////////////////////////
