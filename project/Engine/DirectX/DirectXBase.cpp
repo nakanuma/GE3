@@ -560,6 +560,7 @@ void DirectXBase::CreatePipelineStateObject()
 
 	// パーティクル用PSOを作成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateParticleDesc = graphicsPipelineStateDefault;
+	graphicsPipelineStateParticleDesc.BlendState = blendDescAdd_;
 	graphicsPipelineStateParticleDesc.pRootSignature = rootSignatureParticle_.Get(); // RootSignature
 	graphicsPipelineStateParticleDesc.VS = { vertexShaderBlobParticle_->GetBufferPointer(), vertexShaderBlobParticle_->GetBufferSize() }; // VertexShader
 	graphicsPipelineStateParticleDesc.PS = { pixelShaderBlobParticle_->GetBufferPointer(), pixelShaderBlobParticle_->GetBufferSize() }; // PixelShader
@@ -605,8 +606,8 @@ void DirectXBase::CreateDepthBuffer()
 	// DepthStencilStateの設定
 	// Depthの機能を有効化する
 	depthStencilDesc_.DepthEnable = true;
-	// 書き込みします
-	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	// Depthの書き込みを行わない
+	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	// 比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }

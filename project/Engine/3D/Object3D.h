@@ -42,7 +42,7 @@ public:
 
 	void Draw(const int TextureHandle);
 
-	void DrawInstancing(StructuredBuffer<ParticleForGPU>& structuredBuffer, uint32_t numInstance);
+	void DrawInstancing(StructuredBuffer<ParticleForGPU>& structuredBuffer, uint32_t numInstance, const uint32_t TextureHandle);
 
 	// マテリアルの定数バッファ
 	ConstBuffer<Material>materialCB_;

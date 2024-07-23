@@ -138,7 +138,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// Δtを定義
-	const float kDeltaTime = 1.0f / 60.0f;
+	/*const float kDeltaTime = 1.0f / 60.0f;*/
+	const float kDeltaTime = 1.0f / 240.0f;
 
 	// 乱数生成器の初期化
 	std::random_device seedGenerator;
@@ -159,6 +160,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// Textureを読み込む
 	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
+	uint32_t circleGH = TextureManager::Load("resources/Images/circle.png", dxBase->GetDevice());
 
 	///
 	///	↑ ここまでスプライトの設定
@@ -184,7 +186,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 
 	// 選択されたブレンドモードを保存する変数
-	static BlendMode selectedBlendMode = kBlendModeNormal;
+	static BlendMode selectedBlendMode = kBlendModeAdd;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
@@ -284,7 +286,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		// 平面オブジェクトの描画
-		plane.DrawInstancing(instancingBuffer, numInstance);
+		plane.DrawInstancing(instancingBuffer, numInstance, circleGH);
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
