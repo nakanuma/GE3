@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <random>
 #include <numbers>
+#include <list>
 
 // MyClass 
 #include "MyWindow.h"
@@ -52,6 +53,21 @@ Particle MakeNewParticle(std::mt19937& randomEngine) {
 	particle.currentTime = 0;
 
 	return particle;
+}
+
+struct Emitter {
+	Transform transform; //!< エミッタのTransform
+	uint32_t count; //!< 発生数
+	float frequency; //!< 発生頻度
+	float frequencyTime; // !< 頻度用時刻
+};
+
+std::list<Particle> Emit(const Emitter& emitter, std::mt19937& randomEngine) {
+	std::list<Particle> particles;
+	for (uint32_t count = 0; count < emitter.count; ++count) {
+		particles.push_back(MakeNewParticle(randomEngine));
+	}
+	return particles;
 }
 
 enum BlendMode {
@@ -128,8 +144,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 初期回転角を設定
 	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
 
+
+
+	/*パーティクル設定*/
+
 	// StructuredBufferの作成
-	StructuredBuffer<Object3D::ParticleForGPU> instancingBuffer(10);
+	StructuredBuffer<Object3D::ParticleForGPU> instancingBuffer(100); // 最大インスタンス数を設定
 
 	// 単位行列を書き込んでおく
 	for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
@@ -155,10 +175,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Updateを行うかどうか
 	bool isParticleUpdate = false;
 
-	Particle particles[10];
-	for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
-		particles[index] = MakeNewParticle(randomEngine);
-	}
+	Emitter emitter{};
+	emitter.count = 3;
+	emitter.frequency = 0.5f; // 0.5秒ごとに発生
+	emitter.frequencyTime = 0.0f; // 発生頻度用の時刻、0で初期化
+
+	// パーティクルのリスト
+	std::list<Particle> particles;
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -243,11 +266,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// パーティクルの更新
 		uint32_t numInstance = 0; // 描画すべきインスタンス数
-		for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
-			if (particles[index].lifeTime <= particles[index].currentTime) { // 生存期間を過ぎていたら更新せず描画対象にしｔない
+		for (std::list<Particle>::iterator particleIterator = particles.begin();
+			particleIterator != particles.end();) {
+			if ((*particleIterator).lifeTime <= (*particleIterator).currentTime) {
+				particleIterator = particles.erase(particleIterator); // 生存期間が過ぎたParticleはlistから消す。戻り値が次のイテレーターとなる
 				continue;
 			}
-			Matrix worldMatrix = particles[index].transform.MakeAffineMatrix();
+			Matrix worldMatrix = particleIterator->transform.MakeAffineMatrix();
 			Matrix viewMatrix = Camera::GetCurrent()->MakeViewMatrix();
 			Matrix projectionMatrix = Camera::GetCurrent()->MakePerspectiveFovMatrix();
 			Matrix viewProjectionMatrix = viewMatrix * projectionMatrix;
@@ -256,22 +281,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// パーティクルのビルボード行列を適用
 			Matrix worldViewProjectionMatrix = worldMatrix * billboardMatrix * viewProjectionMatrix;
 
-			instancingBuffer.data_[index].WVP = worldViewProjectionMatrix;
-			instancingBuffer.data_[index].World = worldMatrix;
-			instancingBuffer.data_[index].color = particles[index].color; // パーティクルの色をそのままコピー
+			instancingBuffer.data_[numInstance].WVP = worldViewProjectionMatrix;
+			instancingBuffer.data_[numInstance].World = worldMatrix;
+			instancingBuffer.data_[numInstance].color = particleIterator->color; // パーティクルの色をそのままコピー
 
-			++numInstance; // 生きているParticleの数を1つカウントする
+			if (numInstance < instancingBuffer.numMaxInstance_) { // パーティクルのインスタンス数がバッファのサイズを超えないようにする
+				instancingBuffer.data_[numInstance].WVP = worldViewProjectionMatrix;
+				instancingBuffer.data_[numInstance].World = worldMatrix;
+				instancingBuffer.data_[numInstance].color = particleIterator->color; // パーティクルの色をそのままコピー
+			}
 
 			// 移動とa値の更新
 			if (isParticleUpdate) {
-				particles[index].transform.translate += particles[index].velocity * kDeltaTime;
-				particles[index].currentTime += kDeltaTime; // 経過時間を足す
+				particleIterator->transform.translate += particleIterator->velocity * kDeltaTime;
+				particleIterator->currentTime += kDeltaTime; // 経過時間を足す
 
-				float alpha = 1.0f - (particles[index].currentTime / particles[index].lifeTime); // 経過時間に応じたAlpha値を算出
-				instancingBuffer.data_[index].color.w = alpha; // GPUに送る
+				float alpha = 1.0f - (particleIterator->currentTime / particleIterator->lifeTime); // 経過時間に応じたAlpha値を算出
+				instancingBuffer.data_[numInstance].color.w = alpha; // GPUに送る
 			}
+
+			++numInstance; // 生きているParticleの数を1つカウントする
+
+			++particleIterator; // 次のイテレータに進める
 		}
 
+		// Emitterの更新を行い、経過時間によってParticleを発生させる
+		emitter.frequencyTime += kDeltaTime; // 時刻を進める
+		if (emitter.frequency <= emitter.frequencyTime) { // 発生時刻より大きいなら発生
+			particles.splice(particles.end(), Emit(emitter, randomEngine)); // 発生処理
+			emitter.frequencyTime -= emitter.frequency; // 余計に過ぎた時間も加味して頻度計算する
+		}
 
 		// ImGui
 		ImGui::Begin("Settings");
@@ -279,6 +318,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("camea.rotate", &camera.transform.rotate.x, 0.01f);
 		ImGui::Checkbox("update", &isParticleUpdate);
 		ImGui::Checkbox("useBillboard", &useBillBoard);
+		if (ImGui::Button("Add Particle")) {
+			particles.splice(particles.end(), Emit(emitter, randomEngine));
+		}
 		ImGui::End();
 
 		//////////////////////////////////////////////////////
