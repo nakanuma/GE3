@@ -1,6 +1,7 @@
 #include <Windows.h>    
 #include <cstdint>
 #include <assert.h>
+#include <random>
 
 // MyClass 
 #include "MyWindow.h"
@@ -27,6 +28,18 @@ struct Particle {
 	Transform transform;
 	Float3 velocity;
 };
+
+// パーティクルの生成関数
+Particle MakeNewParticle(std::mt19937& randomEngine) {
+	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	Particle particle;
+	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
+	particle.transform.rotate = { 0.0f, 3.1f, 0.0f };
+	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+
+	return particle;
+}
 
 enum BlendMode {
 	kBlendModeNormal,
@@ -114,14 +127,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Δtを定義
 	const float kDeltaTime = 1.0f / 60.0f;
 
+	// 乱数生成器の初期化
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine(seedGenerator());
+
 	Particle particles[10];
 	for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
-		particles[index].transform.scale = { 1.0f, 1.0f, 1.0f };
-		particles[index].transform.rotate = { 0.0f, 3.1f, 0.0f };
-		particles[index].transform.translate = { index * 0.1f, index * 0.1f, index * 0.1f };
-
-		// 速度を上向きに設定
-		particles[index].velocity = { 0.0f, 1.0f, 0.0f };
+		particles[index] = MakeNewParticle(randomEngine);
 	}
 
 	///
