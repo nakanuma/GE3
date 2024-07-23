@@ -28,10 +28,10 @@
 #include "ParticleEmitter.h"
 
 // Field
-struct AccelerationField {
-	Float3 acceleration; //!< 加速度
-	AABB area; //!< 範囲
-};
+//struct AccelerationField {
+//	Float3 acceleration; //!< 加速度
+//	AABB area; //!< 範囲
+//};
 
 enum BlendMode {
 	kBlendModeNormal,
@@ -93,6 +93,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImguiWrapper::Initialize(dxBase->GetDevice(), dxBase->GetSwapChainDesc().BufferCount, dxBase->GetRtvDesc().Format, srvManager->descriptorHeap.heap_.Get());
 #pragma endregion
 
+	///
+	/// ↓ここからパーティクル関連
+	/// 
+
 	// ParticleManagerの生成と初期化
 	ParticleManager* particleManager = nullptr;
 	particleManager = new ParticleManager;
@@ -101,6 +105,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ParticleEmitterの生成
 	ParticleEmitter* particleEmitter = nullptr;
 	particleEmitter = new ParticleEmitter(*particleManager);
+
+	///
+	/// ↑ここまでパーティクル関連
+	/// 
 
 	///
 	///	↓ ここから3Dオブジェクトの設定
@@ -117,19 +125,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
 
 
+	///
+	/// ↓ここからパーティクル関連
+	/// 
+
 	// particleManagerにパーティクルグループを作成
 	particleManager->CreateParticleGroup("particle");
 	particleManager->SetModel("particle", planeModel);
 
+	///
+	/// ↑ここまでパーティクル関連
+	/// 
 
 	// Field
-	AccelerationField accelerationField;
+	/*AccelerationField accelerationField;
 	accelerationField.acceleration = { 15.0f, 0.0f, 0.0f };
 	accelerationField.area.min = { -1.0f, -1.0f, -1.0f };
-	accelerationField.area.max = { 1.0f, 1.0f, 1.0f };
+	accelerationField.area.max = { 1.0f, 1.0f, 1.0f };*/
 
-	// パーティクルのリスト
-	/*std::list<Particle> particles;*/
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -193,6 +206,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//////////////////////////////////////////////////////
 
+		///
+		/// ↓ここからパーティクル関連
+		/// 
+
 		// particleManagerの更新
 		particleManager->Update();
 		// particleEmitterの更新と発生
@@ -201,6 +218,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 平面オブジェクトの行列更新
 		plane.UpdateMatrix();
+
+		///
+		/// ↑ここまでパーティクル関連
+		/// 
 
 		//////////////////////////////////////////////////////
 
@@ -239,7 +260,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
+		///
+		/// ↓ここからパーティクル関連
+		/// 
+
 		particleManager->Draw(circleGH);
+
+		///
+		/// ↑ここからパーティクル関連
+		/// 
 
 		// 平面オブジェクトの描画
 		/*plane.DrawInstancing(instancingBuffer, numInstance, circleGH);*/
@@ -271,10 +300,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// 各種開放処理
 	/// 
 
+	///
+	/// ↓ここからパーティクル関連
+	/// 
+
 	// ParticleEmitterの開放
 	delete particleEmitter;
 	// ParticleManagerの開放
 	delete particleManager;
+
+	///
+	/// ↑ここまでパーティクル関連
+	/// 
+
 	// スプライト共通処理開放
 	delete spriteCommon;
 	// SRVManager開放
