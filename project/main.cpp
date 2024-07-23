@@ -23,6 +23,11 @@
 #include "SRVManager.h"
 #include "StructuredBuffer.h"
 
+struct Particle {
+	Transform transform;
+	Float3 velocity;
+};
+
 enum BlendMode {
 	kBlendModeNormal,
 	kBlendModeNone,
@@ -106,11 +111,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		instancingBuffer.data_[index].World = Matrix::Identity();
 	}
 
-	Transform transforms[10];
+	// Δtを定義
+	const float kDeltaTime = 1.0f / 60.0f;
+
+	Particle particles[10];
 	for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
-		transforms[index].scale = { 1.0f, 1.0f, 1.0f };
-		transforms[index].rotate = { 0.0f, 3.1f, 0.0f };
-		transforms[index].translate = { index * 0.1f, index * 0.1f, index * 0.1f };
+		particles[index].transform.scale = { 1.0f, 1.0f, 1.0f };
+		particles[index].transform.rotate = { 0.0f, 3.1f, 0.0f };
+		particles[index].transform.translate = { index * 0.1f, index * 0.1f, index * 0.1f };
+
+		// 速度を上向きに設定
+		particles[index].velocity = { 0.0f, 1.0f, 0.0f };
 	}
 
 	///
@@ -182,14 +193,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 平面オブジェクトの行列更新
 		plane.UpdateMatrix();
 
+		// パーティクルの更新
 		for (uint32_t index = 0; index < instancingBuffer.numInstance_; ++index) {
-			Matrix worldMatrix = transforms[index].MakeAffineMatrix();
+			Matrix worldMatrix = particles[index].transform.MakeAffineMatrix();
 			Matrix viewMatrix = Camera::GetCurrent()->MakeViewMatrix();
 			Matrix projectionMatrix = Camera::GetCurrent()->MakePerspectiveFovMatrix();
 			Matrix viewProjectionMatrix = viewMatrix * projectionMatrix;
 			Matrix worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 			instancingBuffer.data_[index].WVP = worldViewProjectionMatrix;
 			instancingBuffer.data_[index].World = worldMatrix;
+
+			// 速度を反映
+			particles[index].transform.translate += particles[index].velocity * kDeltaTime;
 		}
 
 
