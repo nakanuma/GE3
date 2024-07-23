@@ -156,6 +156,9 @@
     <ClCompile Include="ParticleManager.cpp">
       <Filter>Engine\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Engine\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Util\StringUtil.h">
@@ -258,6 +261,9 @@
       <Filter>Engine\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="ParticleManager.h">
+      <Filter>Engine\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
       <Filter>Engine\Particle</Filter>
     </ClInclude>
   </ItemGroup>
