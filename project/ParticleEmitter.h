@@ -7,7 +7,7 @@ class ParticleEmitter
 public:
 	ParticleEmitter(ParticleManager& manager);
 
-	void Update(std::string name);
+	void Update(std::string name, bool isEmit);
 	void Emit(std::string name);
 private:
 	ParticleManager* particleManager = nullptr;

@@ -18,11 +18,13 @@ ParticleEmitter::ParticleEmitter(ParticleManager& manager)
 	transform.scale = { 1.0f, 1.0f, 1.0f };
 }
 
-void ParticleEmitter::Update(std::string name)
+void ParticleEmitter::Update(std::string name, bool isEmit)
 {
 	frequencyTime += kDeltaTime; // 時刻を進める
 	if (frequency <= frequencyTime) { // 発生時刻より大きいなら発生
-		Emit(name); // 発生させる
+		if (isEmit) {
+			Emit(name); // 発生させる
+		}
 		frequencyTime -= frequency; // 余計に過ぎた時間も加味して頻度計算する
 	}
 }

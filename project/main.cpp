@@ -173,7 +173,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// particleManagerの更新
 		particleManager->Update();
 		// particleEmitterの更新と発生
-		particleEmitter->Update("particle");
+		particleEmitter->Update("particle", true);
 		/*particleEmitter->Emit("particle");*/
 
 		//////////////////////////////////////////////////////
