@@ -113,12 +113,12 @@ void ParticleManager::Update()
 	}
 }
 
-void ParticleManager::Draw(uint32_t textureHandle)
+void ParticleManager::Draw()
 {
 	for (auto& [name, groupPtr] : particleGroups) {
 		auto& group = *groupPtr;
 		uint32_t numInstance = static_cast<uint32_t>(group.particles.size());
-		group.object.DrawInstancing(group.instancingBuffer, numInstance, textureHandle);
+		group.object.DrawInstancing(group.instancingBuffer, numInstance, group.textureHandle);
 	}
 }
 
@@ -153,4 +153,13 @@ void ParticleManager::Emit(const std::string name, const Float3& position, uint3
 		// 新たなパーティクルをパーティクルグループに追加
 		group.particles.push_back(particle);
 	}
+}
+
+void ParticleManager::SetTexture(const std::string name, uint32_t textureHandle)
+{
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end()); // 登録済みのパーティクルグループかチェック
+
+	// モデルをロードし、ParticleGroupにセット
+	it->second->textureHandle = textureHandle;
 }

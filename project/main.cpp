@@ -27,12 +27,6 @@
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
 
-// Field
-//struct AccelerationField {
-//	Float3 acceleration; //!< 加速度
-//	AABB area; //!< 範囲
-//};
-
 enum BlendMode {
 	kBlendModeNormal,
 	kBlendModeNone,
@@ -109,15 +103,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// モデル読み込み
 	ModelManager::ModelData planeModel = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
 
+	// Textureを読み込む
+	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
+	uint32_t circleGH = TextureManager::Load("resources/Images/circle.png", dxBase->GetDevice());
+
 	// particleManagerにパーティクルグループを作成
 	particleManager->CreateParticleGroup("particle");
 	particleManager->SetModel("particle", &planeModel);
-
-	// Field
-	/*AccelerationField accelerationField;
-	accelerationField.acceleration = { 15.0f, 0.0f, 0.0f };
-	accelerationField.area.min = { -1.0f, -1.0f, -1.0f };
-	accelerationField.area.max = { 1.0f, 1.0f, 1.0f };*/
+	particleManager->SetTexture("particle", circleGH);
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -126,10 +119,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///
 	///	↓ ここからスプライトの設定
 	/// 
-
-	// Textureを読み込む
-	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
-	uint32_t circleGH = TextureManager::Load("resources/Images/circle.png", dxBase->GetDevice());
 
 	///
 	///	↑ ここまでスプライトの設定
@@ -230,7 +219,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::End();
 
-		particleManager->Draw(circleGH);
+		particleManager->Draw();
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド

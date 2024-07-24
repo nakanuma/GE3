@@ -21,6 +21,7 @@ public:
 
 	struct ParticleGroup {
 		Object3D object;
+		uint32_t textureHandle;
 		std::list<Particle> particles;
 		StructuredBuffer<Object3D::ParticleForGPU> instancingBuffer;
 
@@ -38,10 +39,11 @@ public:
 
 	void Initialize(DirectXBase* dxBase, SRVManager* srvManager);
 	void Update();
-	void Draw(uint32_t textureHandle);
+	void Draw();
 
 	void CreateParticleGroup(const std::string name);
 	void SetModel(const std::string name, ModelManager::ModelData* model);
+	void SetTexture(const std::string name, uint32_t textureHandle);
 	void Emit(const std::string name, const Float3& position, uint32_t count);
 
 	// パーティクルグループコンテナ
