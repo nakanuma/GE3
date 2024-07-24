@@ -226,9 +226,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::Begin("window");
 
-		if (ImGui::Button("Add Particle")) {
-			particleEmitter->Emit("particle");
-		}
+
 
 		ImGui::End();
 

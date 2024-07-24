@@ -27,6 +27,12 @@ public:
 		ParticleGroup() : instancingBuffer(100){}
 	};
 
+	// Field
+	struct AccelerationField {
+		Float3 acceleration; //!< 加速度
+		AABB area; //!< 範囲
+	};
+
 public:
 	ParticleManager* GetInstance();
 
@@ -54,5 +60,8 @@ private:
 	Matrix backToFrontMatrix;
 	// billboard行列
 	Matrix billboardMatrix;
+
+	// Field
+	AccelerationField accelerationField;
 };
 
