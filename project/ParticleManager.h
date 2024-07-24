@@ -35,7 +35,7 @@ public:
 	void Draw(uint32_t textureHandle);
 
 	void CreateParticleGroup(const std::string name);
-	void SetModel(const std::string name, ModelManager::ModelData model);
+	void SetModel(const std::string name, ModelManager::ModelData* model);
 	void Emit(const std::string name, const Float3& position, uint32_t count);
 
 	// パーティクルグループコンテナ

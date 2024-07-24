@@ -45,6 +45,15 @@ void ParticleManager::CreateParticleGroup(const std::string name)
     particleGroups[name] = std::move(newGroup);
 }
 
+void ParticleManager::SetModel(const std::string name, ModelManager::ModelData* model)
+{
+    auto it = particleGroups.find(name);
+    assert(it != particleGroups.end()); // 登録済みのパーティクルグループかチェック
+
+    // モデルをロードし、ParticleGroupにセット
+    it->second->object.model_ = model;
+}
+
 void ParticleManager::Update()
 {
     // ビュー行列とプロジェクション行列をカメラから取得
@@ -135,13 +144,4 @@ void ParticleManager::Emit(const std::string name, const Float3& position, uint3
         // 新たなパーティクルをパーティクルグループに追加
         group.particles.push_back(particle);
     }
-}
-
-void ParticleManager::SetModel(const std::string name, ModelManager::ModelData model)
-{
-    auto it = particleGroups.find(name);
-    assert(it != particleGroups.end()); // 登録済みのパーティクルグループかチェック
-
-    // モデルをロードし、ParticleGroupにセット
-    it->second->object.model_ = &model;
 }

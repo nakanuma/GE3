@@ -131,7 +131,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// particleManagerにパーティクルグループを作成
 	particleManager->CreateParticleGroup("particle");
-	particleManager->SetModel("particle", planeModel);
+	particleManager->SetModel("particle", &planeModel);
 
 	///
 	/// ↑ここまでパーティクル関連
