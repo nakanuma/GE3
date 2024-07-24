@@ -117,12 +117,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// モデル読み込み
 	ModelManager::ModelData planeModel = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
 
-	// 平面オブジェクトの生成
-	Object3D plane;
-	// モデルを指定
-	plane.model_ = &planeModel;
-	// 初期回転角を設定
-	plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
+	//// 平面オブジェクトの生成
+	//Object3D plane;
+	//// モデルを指定
+	//plane.model_ = &planeModel;
+	//// 初期回転角を設定
+	//plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
 
 
 	///
@@ -214,10 +214,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		particleManager->Update();
 		// particleEmitterの更新と発生
 		particleEmitter->Update("particle");
-		particleEmitter->Emit("particle");
+		/*particleEmitter->Emit("particle");*/
 
 		// 平面オブジェクトの行列更新
-		plane.UpdateMatrix();
+		/*plane.UpdateMatrix();*/
 
 		///
 		/// ↑ここまでパーティクル関連
@@ -259,6 +259,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateBlendModeScreen());
 			break;
 		}
+
+		ImGui::Begin("window");
+
+		if (ImGui::Button("Add Particle")) {
+			particleEmitter->Emit("particle");
+		}
+
+		ImGui::End();
 
 		///
 		/// ↓ここからパーティクル関連

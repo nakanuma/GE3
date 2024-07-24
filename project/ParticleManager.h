@@ -25,8 +25,6 @@ public:
 		StructuredBuffer<Object3D::ParticleForGPU> instancingBuffer;
 
 		ParticleGroup() : instancingBuffer(100){}
-
-		void InitializeInstancingBuffer();
 	};
 
 public:

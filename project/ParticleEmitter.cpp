@@ -6,7 +6,7 @@ ParticleEmitter::ParticleEmitter(ParticleManager& manager)
 
 	// パーティクルグループをコピー
 	for (auto& pair : manager.particleGroups) {
-		particleGroups[pair.first] = std::move(pair.second);
+		this->particleGroups[pair.first] = std::move(pair.second);
 	}
 
 	// emitterの初期値を設定

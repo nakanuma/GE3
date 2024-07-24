@@ -21,6 +21,18 @@ void ParticleManager::Initialize(DirectXBase* dxBase, SRVManager* srvManager)
 
     // 反対側に回す回転行列
     backToFrontMatrix = Matrix::RotationY(std::numbers::pi_v<float>);
+
+    // 全てのパーティクルグループのObjectを初期化
+    for (auto& [name, groupPtr] : particleGroups) {
+        auto& group = *groupPtr;
+        group.object.transform_.rotate = { 0.0f, 3.1f, 0.0f };
+        // 単位行列を書き込んでおく
+        for (uint32_t index = 0; index < group.instancingBuffer.numMaxInstance_; ++index) {
+            group.instancingBuffer.data_[index].WVP = Matrix::Identity();
+            group.instancingBuffer.data_[index].World = Matrix::Identity();
+            group.instancingBuffer.data_[index].color = Float4(1.0f, 1.0f, 1.0f, 1.0f); // とりあえず白を書き込む
+        }
+    }
 }
 
 void ParticleManager::CreateParticleGroup(const std::string name)
@@ -48,6 +60,9 @@ void ParticleManager::Update()
     // 全てのパーティクルグループについて処理する
     for (auto& [name, groupPtr] : particleGroups) {
         auto& group = *groupPtr;
+
+        group.object.UpdateMatrix();
+
         uint32_t numInstance = 0; // 描画すべきインスタンス数
 
         for (auto particleIterator = group.particles.begin(); particleIterator != group.particles.end();) {
@@ -129,14 +144,4 @@ void ParticleManager::SetModel(const std::string name, ModelManager::ModelData m
 
     // モデルをロードし、ParticleGroupにセット
     it->second->object.model_ = &model;
-}
-
-void ParticleManager::ParticleGroup::InitializeInstancingBuffer()
-{
-    // 単位行列を書き込んでおく
-    for (uint32_t index = 0; index < instancingBuffer.numMaxInstance_; ++index) {
-        instancingBuffer.data_[index].WVP = Matrix::Identity();
-        instancingBuffer.data_[index].World = Matrix::Identity();
-        instancingBuffer.data_[index].color = Float4(1.0f, 1.0f, 1.0f, 1.0f); // とりあえず白を書き込む
-    }
 }
