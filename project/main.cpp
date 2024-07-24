@@ -93,10 +93,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImguiWrapper::Initialize(dxBase->GetDevice(), dxBase->GetSwapChainDesc().BufferCount, dxBase->GetRtvDesc().Format, srvManager->descriptorHeap.heap_.Get());
 #pragma endregion
 
-	///
-	/// ↓ここからパーティクル関連
-	/// 
-
 	// ParticleManagerの生成と初期化
 	ParticleManager* particleManager = nullptr;
 	particleManager = new ParticleManager;
@@ -107,42 +103,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	particleEmitter = new ParticleEmitter(*particleManager);
 
 	///
-	/// ↑ここまでパーティクル関連
-	/// 
-
-	///
 	///	↓ ここから3Dオブジェクトの設定
 	/// 
 
 	// モデル読み込み
 	ModelManager::ModelData planeModel = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
 
-	//// 平面オブジェクトの生成
-	//Object3D plane;
-	//// モデルを指定
-	//plane.model_ = &planeModel;
-	//// 初期回転角を設定
-	//plane.transform_.rotate = { 0.0f, 3.1f, 0.0f };
-
-
-	///
-	/// ↓ここからパーティクル関連
-	/// 
-
 	// particleManagerにパーティクルグループを作成
 	particleManager->CreateParticleGroup("particle");
 	particleManager->SetModel("particle", &planeModel);
-
-	///
-	/// ↑ここまでパーティクル関連
-	/// 
 
 	// Field
 	/*AccelerationField accelerationField;
 	accelerationField.acceleration = { 15.0f, 0.0f, 0.0f };
 	accelerationField.area.min = { -1.0f, -1.0f, -1.0f };
 	accelerationField.area.max = { 1.0f, 1.0f, 1.0f };*/
-
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -206,22 +181,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//////////////////////////////////////////////////////
 
-		///
-		/// ↓ここからパーティクル関連
-		/// 
-
 		// particleManagerの更新
 		particleManager->Update();
 		// particleEmitterの更新と発生
 		particleEmitter->Update("particle");
 		/*particleEmitter->Emit("particle");*/
-
-		// 平面オブジェクトの行列更新
-		/*plane.UpdateMatrix();*/
-
-		///
-		/// ↑ここまでパーティクル関連
-		/// 
 
 		//////////////////////////////////////////////////////
 
@@ -268,18 +232,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::End();
 
-		///
-		/// ↓ここからパーティクル関連
-		/// 
-
 		particleManager->Draw(circleGH);
-
-		///
-		/// ↑ここからパーティクル関連
-		/// 
-
-		// 平面オブジェクトの描画
-		/*plane.DrawInstancing(instancingBuffer, numInstance, circleGH);*/
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
@@ -323,8 +276,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スプライト共通処理開放
 	delete spriteCommon;
-	// SRVManager開放
-	delete srvManager;
 
 	// ImGuiの終了処理
 	ImguiWrapper::Finalize();
