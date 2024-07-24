@@ -96,6 +96,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ParticleEmitter* particleEmitter = nullptr;
 	particleEmitter = new ParticleEmitter(*particleManager);
 
+	ParticleEmitter* particleEmitter2 = nullptr;
+	particleEmitter2 = new ParticleEmitter(*particleManager);
+
 	///
 	///	↓ ここから3Dオブジェクトの設定
 	/// 
@@ -111,6 +114,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	particleManager->CreateParticleGroup("particle");
 	particleManager->SetModel("particle", &planeModel);
 	particleManager->SetTexture("particle", circleGH);
+
+	particleManager->CreateParticleGroup("particle2");
+	particleManager->SetModel("particle2", &planeModel);
+	particleManager->SetTexture("particle2", uvCheckerGH);
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -174,7 +181,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		particleManager->Update();
 		// particleEmitterの更新と発生
 		particleEmitter->Update("particle", true);
-		/*particleEmitter->Emit("particle");*/
+		particleEmitter2->Update("particle2", false);
 
 		//////////////////////////////////////////////////////
 
@@ -215,7 +222,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::Begin("window");
 
-
+		if (ImGui::Button("Add Particle")) {
+			particleEmitter2->Emit("particle2");
+		}
 
 		ImGui::End();
 
