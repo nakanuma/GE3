@@ -419,6 +419,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スプライト共通処理開放
 	delete spriteCommon;
+	// XAudio2開放
+	xAudio2.Reset();
+	// 音声データ開放
+	SoundUnLoad(&soundData1);
 
 	// ImGuiの終了処理
 	ImguiWrapper::Finalize();
