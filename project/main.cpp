@@ -111,6 +111,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///	↓ ここからスプライトの設定
 	/// 
 
+	// スプライトの生成と初期化
+	Sprite* sprite = new Sprite();
+	sprite->Initialize(spriteCommon, uvCheckerGH);
+
+	Float2 spritePosition = { 100.0f, 100.0f };
+	sprite->SetPosition(spritePosition);
+
 	///
 	///	↑ ここまでスプライトの設定
 	/// 
@@ -201,7 +208,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
+		sprite->Update();
+
+		ImGui::SetNextWindowSize(ImVec2(500.0f, 100.0f));
 		ImGui::Begin("window");
+
+		ImGui::DragFloat2("position", &spritePosition.x, 1.0f, 0.0f, 0.0f, "% .1f");
+		sprite->SetPosition(spritePosition);
 
 		ImGui::End();
 
@@ -215,6 +228,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// Spriteの描画準備。全ての描画に共通のグラフィックスコマンドを積む
 		spriteCommon->PreDraw();
+
+		sprite->Draw();
 
 		///
 		/// ↑ ここまでスプライトの描画コマンド
@@ -242,6 +257,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スプライト共通処理開放
 	delete spriteCommon;
+	delete sprite;
 
 	// ImGuiの終了処理
 	ImguiWrapper::Finalize();
