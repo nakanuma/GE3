@@ -92,13 +92,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	particleManager = new ParticleManager;
 	particleManager->Initialize(dxBase, srvManager);
 
-	// ParticleEmitterの生成
-	ParticleEmitter* particleEmitter = nullptr;
-	particleEmitter = new ParticleEmitter(*particleManager);
-
-	ParticleEmitter* particleEmitter2 = nullptr;
-	particleEmitter2 = new ParticleEmitter(*particleManager);
-
 	///
 	///	↓ ここから3Dオブジェクトの設定
 	/// 
@@ -109,15 +102,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// Textureを読み込む
 	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
 	uint32_t circleGH = TextureManager::Load("resources/Images/circle.png", dxBase->GetDevice());
-
-	// particleManagerにパーティクルグループを作成
-	particleManager->CreateParticleGroup("particle");
-	particleManager->SetModel("particle", &planeModel);
-	particleManager->SetTexture("particle", circleGH);
-
-	particleManager->CreateParticleGroup("particle2");
-	particleManager->SetModel("particle2", &planeModel);
-	particleManager->SetTexture("particle2", uvCheckerGH);
 
 	///
 	///	↑ ここまで3Dオブジェクトの設定
@@ -179,9 +163,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// particleManagerの更新
 		particleManager->Update();
-		// particleEmitterの更新と発生
-		particleEmitter->Update("particle", true);
-		particleEmitter2->Update("particle2", false);
 
 		//////////////////////////////////////////////////////
 
@@ -222,13 +203,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::Begin("window");
 
-		if (ImGui::Button("Add Particle")) {
-			particleEmitter2->Emit("particle2");
-		}
-
 		ImGui::End();
-
-		particleManager->Draw();
 
 		///
 		/// ↑ ここまで3Dオブジェクトの描画コマンド
@@ -260,11 +235,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///
 	/// ↓ここからパーティクル関連
 	/// 
-
-	// ParticleEmitterの開放
-	delete particleEmitter;
-	// ParticleManagerの開放
-	delete particleManager;
 
 	///
 	/// ↑ここまでパーティクル関連
