@@ -56,5 +56,6 @@ private:
 	SoundManager* soundManager = nullptr;
 
 	// その他
+	Camera* camera = nullptr;
 };
 

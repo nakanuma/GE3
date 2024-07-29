@@ -10,7 +10,6 @@ class Camera
 {
 public:
 	Camera(Float3 translate, Float3 rotate = Float3(0.0f, 0.0f, 0.0f), float fov = PIf / 2.0f);
-
 	static void TransferConstantBuffer();
 
 	// カメラの情報を保持

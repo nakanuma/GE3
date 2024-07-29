@@ -71,6 +71,10 @@ void MyGame::Initialize()
 	/// ↓ ここからその他設定
 	///
 	
+	// カメラのインスタンスを生成
+	camera = new Camera({ 0.0f, 0.0f, -10.0f }, { 0.0f, 0.0f, 0.0f }, 0.45f);
+	Camera::Set(camera); // 現在のカメラをセット
+
 	///
 	/// ↑ ここまでその他設定
 	/// 
@@ -78,6 +82,9 @@ void MyGame::Initialize()
 
 void MyGame::Finalize()
 {
+	// カメラの開放
+	delete camera;
+
 	// スプライト共通処理開放
 	delete spriteCommon;
 	// SoundManager開放

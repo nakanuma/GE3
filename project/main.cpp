@@ -7,10 +7,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲームの初期化
 	game.Initialize();
 
-	// カメラのインスタンスを生成
-	Camera camera{ {0.0f, 0.0f, -10.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };
-	Camera::Set(&camera);
-
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
 		// 毎フレーム更新
