@@ -73,6 +73,9 @@
     <Filter Include="Engine\Sound">
       <UniqueIdentifier>{dd682bdf-70b8-444e-b622-755540554196}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{172f9321-32c3-44d2-8bf8-e07779b22309}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -164,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>Engine\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="MyGame.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="SoundManager.h">
       <Filter>Engine\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="MyGame.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
