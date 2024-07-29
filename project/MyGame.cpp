@@ -100,45 +100,52 @@ void MyGame::Update()
 {
 	// 入力の更新
 	input->Update();
-
 	// フレーム開始処理
 	dxBase->BeginFrame();
+	// パーティクルマネージャの更新
+	particleManager->Update();
+
+
+
+}
+
+void MyGame::Draw()
+{
 	// 描画前処理
 	dxBase->PreDraw();
-
 	// 描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { srvManager->descriptorHeap.heap_.Get() };
 	dxBase->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
-
 	// ImGuiのフレーム開始処理
 	ImguiWrapper::NewFrame();
-
-	// particleManagerの更新
-	particleManager->Update();
-
-	// 平行光源の情報の定数バッファのセット
-	/*dxBase->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());*/
 	// カメラの定数バッファを設定
 	Camera::TransferConstantBuffer();
 
-	ImGui::Begin("window");
-
-	ImGui::End();
-
 	///
-	/// ↑ ここまで3Dオブジェクトの描画コマンド
+	///	↓ ここから3Dオブジェクトの描画コマンド
 	/// 
 
+
+
 	///
-	/// ↓ ここからスプライトの描画コマンド
+	///	↑ ここまで3Dオブジェクトの描画コマンド
 	/// 
 
 	// Spriteの描画準備。全ての描画に共通のグラフィックスコマンドを積む
 	spriteCommon->PreDraw();
 
 	///
+	/// ↓ ここからスプライトの描画コマンド
+	/// 
+
+
+
+	///
 	/// ↑ ここまでスプライトの描画コマンド
 	/// 
+
+	ImGui::Begin("window");
+	ImGui::End();
 
 	// ImGuiの内部コマンドを生成する
 	ImguiWrapper::Render(dxBase->GetCommandList());
@@ -146,9 +153,4 @@ void MyGame::Update()
 	dxBase->PostDraw();
 	// フレーム終了処理
 	dxBase->EndFrame();
-}
-
-void MyGame::Draw()
-{
-
 }

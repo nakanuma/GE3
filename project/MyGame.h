@@ -44,6 +44,9 @@ public:
 	// 描画
 	void Draw();
 
+	// 終了フラグのチェック
+	bool IsEndRequest() { return endRequest_; }
+
 private:
 	// 基盤機能
 	Window* window = nullptr;
@@ -57,5 +60,9 @@ private:
 
 	// その他
 	Camera* camera = nullptr;
+
+private:
+	// ゲーム終了フラグ
+	bool endRequest_ = false;
 };
 
