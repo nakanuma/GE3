@@ -28,24 +28,6 @@
 #include "ParticleEmitter.h"
 #include "SoundManager.h"
 
-enum BlendMode {
-	kBlendModeNormal,
-	kBlendModeNone,
-	kBlendModeAdd,
-	kBlendModeSubtract,
-	kBlendModeMultiply,
-	kBlendModeScreen
-};
-
-const char* BlendModeNames[6] = {
-	"kBlendModeNormal",
-	"kBlendModeNone",
-	"kBlendModeAdd",
-	"kBlendModeSubtract",
-	"kBlendModeMultiply",
-	"kBlendModeScreen"
-};
-
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker::GetInstance();
@@ -98,9 +80,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	soundManager = new SoundManager;
 	soundManager->Initialize();
 
-	// 音声読み込み
-	SoundManager::SoundData soundData1 = soundManager->LoadWave("Engine/Sound/yay.wav");
-
 	///
 	///	↓ ここから3Dオブジェクトの設定
 	/// 
@@ -136,16 +115,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/*Camera camera{ {0.0f, 0.0f, -10.0f}, {0.0f, 0.0f, 0.0f}, 0.45f };*/
 	Camera camera{ {0.0f, 23.0f, 10.0f}, {std::numbers::pi_v<float> / 3.0f, std::numbers::pi_v<float>, 0.0f}, 0.45f };
 	Camera::Set(&camera);
-
-	// UVTransform用の変数を用意
-	Transform uvTransformSprite{
-		{1.0f, 1.0f, 1.0f},
-		{0.0f, 0.0f, 0.0f},
-		{0.0f, 0.0f, 0.0f}
-	};
-
-	// 選択されたブレンドモードを保存する変数
-	static BlendMode selectedBlendMode = kBlendModeAdd;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (!Window::ProcessMessage()) {
@@ -188,35 +157,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓ ここから3Dオブジェクトの描画コマンド
 		/// 
 
-		// 選択されたブレンドモードに変更
-		switch (selectedBlendMode) {
-		case kBlendModeNormal:
-			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineState());
-			break;
-		case kBlendModeNone:
-			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateBlendModeNone());
-			break;
-		case kBlendModeAdd:
-			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateBlendModeAdd());
-			break;
-		case kBlendModeSubtract:
-			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateBlendModeSubtract());
-			break;
-		case kBlendModeMultiply:
-			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateBlendModeMultiply());
-			break;
-		case kBlendModeScreen:
-			dxBase->GetCommandList()->SetPipelineState(dxBase->GetPipelineStateBlendModeScreen());
-			break;
-		}
-
-
 		ImGui::Begin("window");
-
-		// ボタンが押されたときに音声を再生
-		if (ImGui::Button("PlaySound")) {
-			soundManager->PlayWave(soundData1);
-		}
 
 		ImGui::End();
 
@@ -257,8 +198,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スプライト共通処理開放
 	delete spriteCommon;
-	// 音声データ開放
-	soundManager->Unload(&soundData1);
 	// SoundManager開放
 	delete soundManager;
 
