@@ -25,6 +25,7 @@
     <ClCompile Include="Engine\Wrapper\ImguiWrapper.cpp" />
     <ClCompile Include="Engine\Debugger\Logger.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
+    <ClCompile Include="Framework.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Math\Matrix.cpp" />
     <ClCompile Include="Engine\Math\Matrix3x3.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="Engine\3D\OutlinedObject.h" />
     <ClInclude Include="Engine\2D\Sprite.h" />
     <ClInclude Include="Engine\2D\SpriteCommon.h" />
+    <ClInclude Include="Framework.h" />
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ParticleManager.h" />

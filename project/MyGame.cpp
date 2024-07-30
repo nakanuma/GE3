@@ -2,111 +2,48 @@
 
 void MyGame::Initialize()
 {
-	// リークチェッカー
-	D3DResourceLeakChecker::GetInstance();
-	// COMの初期化
-	CoInitializeEx(0, COINIT_MULTITHREADED);
-
-	// ゲームウィンドウの生成
-	window = new Window;
-	window->Create(L"CG2WindowClass", 1280, 720);
-
-	// DirectX初期化処理
-	dxBase = DirectXBase::GetInstance();
-	dxBase->Initialize();
-
-	// SRVマネージャの初期化
-	srvManager = SRVManager::GetInstance();
-	srvManager->Initialize(dxBase);
-
-#pragma region 汎用機能初期化
-	// 入力デバイスの生成と初期化
-	input = new Input();
-	input->Initialize(window);
-
-	// スプライト共通部の初期化
-	spriteCommon = new SpriteCommon;
-	spriteCommon->Initialize(dxBase);
-
-	// TextureManagerの初期化
-	TextureManager::Initialize(dxBase->GetDevice(), srvManager);
-
-	// ImGuiの初期化
-	ImguiWrapper::Initialize(dxBase->GetDevice(), dxBase->GetSwapChainDesc().BufferCount, dxBase->GetRtvDesc().Format, srvManager->descriptorHeap.heap_.Get());
-
-	// ParticleManagerの生成と初期化
-	particleManager = new ParticleManager;
-	particleManager->Initialize(dxBase, srvManager);
-
-	// SoundManagerの生成と初期化
-	soundManager = new SoundManager;
-	soundManager->Initialize();
-#pragma endregion
-
 	///
-	///	↓ ここから3Dオブジェクトの設定
-	/// 
-
-	///
-	///	↑ ここまで3Dオブジェクトの設定
-	/// 
-
-	///
-	///	↓ ここからスプライトの設定
-	/// 
-
-	///
-	///	↑ ここまでスプライトの設定
-	/// 
-
-	///
-	/// ↓ ここから光源の設定
-	/// 
-
-	///
-	/// ↑ ここまで光源の設定
+	/// 基底クラスの初期化処理
 	/// 
 	
+	Framework::Initialize();
+
 	///
-	/// ↓ ここからその他設定
+	/// ゲーム固有の初期化
 	///
-	
+
 	// カメラのインスタンスを生成
 	camera = new Camera({ 0.0f, 0.0f, -10.0f }, { 0.0f, 0.0f, 0.0f }, 0.45f);
 	Camera::Set(camera); // 現在のカメラをセット
-
-	///
-	/// ↑ ここまでその他設定
-	/// 
 }
 
 void MyGame::Finalize()
 {
+	///
+	/// ゲーム固有の終了処理
+	///
+
 	// カメラの開放
 	delete camera;
 
-	// スプライト共通処理開放
-	delete spriteCommon;
-	// SoundManager開放
-	delete soundManager;
-
-	// ImGuiの終了処理
-	ImguiWrapper::Finalize();
-	// COMの終了処理
-	CoUninitialize();
+	///
+	/// 基底クラスの終了処理
+	/// 
+	
+	Framework::Finalize();
 }
 
 void MyGame::Update()
 {
-	// 入力の更新
-	input->Update();
-	// フレーム開始処理
-	dxBase->BeginFrame();
-	// パーティクルマネージャの更新
-	particleManager->Update();
+	///
+	/// 基底クラスの更新処理
+	/// 
+	
+	Framework::Update();
 
-
-
+	///
+	/// ゲーム固有の更新処理
+	///
 }
 
 void MyGame::Draw()

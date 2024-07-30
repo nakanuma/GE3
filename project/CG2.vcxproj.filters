@@ -171,6 +171,9 @@
     <ClCompile Include="MyGame.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Framework.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Util\StringUtil.h">
@@ -282,6 +285,9 @@
       <Filter>Engine\Sound</Filter>
     </ClInclude>
     <ClInclude Include="MyGame.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework.h">
       <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
