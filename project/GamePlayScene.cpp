@@ -2,16 +2,30 @@
 #include "ImguiWrapper.h"
 #include "DirectXBase.h"
 #include "SRVManager.h"
+#include "SpriteCommon.h"
 
 void GamePlayScene::Initialize()
 {
 	// カメラのインスタンスを生成
 	camera = new Camera({ 0.0f, 0.0f, -10.0f }, { 0.0f, 0.0f, 0.0f }, 0.45f);
 	Camera::Set(camera); // 現在のカメラをセット
+
+	// SpriteCommonの生成と初期化
+	spriteCommon = new SpriteCommon();
+	spriteCommon->Initialize(DirectXBase::GetInstance());
+
+	///
+	///	↓
+	///	
+	
+
 }
 
 void GamePlayScene::Finalize()
 {
+	// SpriteCommon開放
+	delete spriteCommon;
+
 	// カメラの開放
 	delete camera;
 }
@@ -46,7 +60,7 @@ void GamePlayScene::Draw()
 	/// 
 
 	// Spriteの描画準備。全ての描画に共通のグラフィックスコマンドを積む
-	/*spriteCommon->PreDraw();*/
+	spriteCommon->PreDraw();
 
 	///
 	/// ↓ ここからスプライトの描画コマンド

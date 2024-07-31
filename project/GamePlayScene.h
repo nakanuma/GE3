@@ -1,5 +1,6 @@
 #pragma once
 #include "Camera.h"
+#include "SpriteCommon.h"
 
 // ゲームプレイシーン
 class GamePlayScene
@@ -19,5 +20,7 @@ public:
 
 private:
 	Camera* camera = nullptr;
+	SpriteCommon* spriteCommon = nullptr;
+	
 };
 
