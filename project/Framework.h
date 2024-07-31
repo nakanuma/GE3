@@ -62,7 +62,6 @@ protected:
 	DirectXBase* dxBase = nullptr;
 	SRVManager* srvManager = nullptr;
 	// 汎用機能
-	Input* input = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
 	ParticleManager* particleManager = nullptr;
 	SoundManager* soundManager = nullptr;

@@ -21,7 +21,6 @@ void Framework::Initialize()
 
     // 入力デバイスの生成と初期化
     Input::GetInstance()->Initialize(window);
-    input = Input::GetInstance();
 
     // スプライト共通部の初期化
     spriteCommon = new SpriteCommon;
@@ -49,6 +48,8 @@ void Framework::Finalize()
 {
     // SceneManager開放
     delete sceneManager_;
+    // ParticleManager開放
+    delete particleManager;
     // スプライト共通処理開放
     delete spriteCommon;
     // SoundManager開放
@@ -69,7 +70,7 @@ void Framework::Update()
     }
 
     // 入力の更新
-    input->Update();
+    Input::GetInstance()->Update();
     // フレーム開始処理
     dxBase->BeginFrame();
     // パーティクルマネージャの更新

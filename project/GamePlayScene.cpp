@@ -28,11 +28,12 @@ void GamePlayScene::Initialize()
 	///	
 	
 	// Texture読み込み
-	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
+	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/gamePlay.png", dxBase->GetDevice());
 
 	// スプライトの生成と初期化
 	sprite_ = new Sprite();
 	sprite_->Initialize(spriteCommon, uvCheckerGH);
+	sprite_->SetSize({ 500.0f, 500.0f });
 
 	
 	// モデル読み込み

@@ -23,6 +23,7 @@ void SceneManager::Update()
 
 		// シーン切り替え
 		scene_ = nextScene_;
+		nextScene_->Finalize();
 		nextScene_ = nullptr;
 
 		// シーンマネージャをセット

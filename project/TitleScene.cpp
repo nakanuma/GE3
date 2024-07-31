@@ -4,6 +4,7 @@
 #include "SRVManager.h"
 #include "SpriteCommon.h"
 #include "SceneManager.h"
+#include "GamePlayScene.h"
 
 void TitleScene::Initialize()
 {
@@ -40,7 +41,7 @@ void TitleScene::Initialize()
 	sprite_->SetSize({ 500.0f, 500.0f });
 
 	// モデル読み込み
-	model_ = ModelManager::LoadObjFile("resources/Models", "sphere.obj", dxBase->GetDevice());
+	model_ = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
 
 	// 3Dオブジェクトの生成とモデル指定
 	object_ = new Object3D();
@@ -73,9 +74,19 @@ void TitleScene::Update()
 
 	// 3Dオブジェクトの更新
 	object_->UpdateMatrix();
-	object_->transform_.rotate.y += 0.0001f;
+	object_->transform_.rotate.y += 0.001f;
 
-	
+	///
+	///	シーン切り替え
+	/// 
+
+	// ENTERキーを押したら
+	if (input->TriggerKey(DIK_RETURN)) {
+		// ゲームプレイシーン（次シーンを生成）
+		BaseScene* scene = new GamePlayScene();
+		// シーン切り替え依頼
+		sceneManager_->SetNextScene(scene);
+	}
 }
 
 void TitleScene::Draw()
@@ -117,13 +128,11 @@ void TitleScene::Draw()
 	/// ↑ ここまでスプライトの描画コマンド
 	/// 
 
-	/*ImGui::Begin("window");
+	ImGui::Begin("window");
 
-	if (ImGui::Button("PlaySound")) {
-		soundManager->PlayWave(soundData_);
-	}
+	ImGui::Text("Trigger ENTER key to GamePlayScene");
 
-	ImGui::End();*/
+	ImGui::End();
 
 	// ImGuiの内部コマンドを生成する
 	ImguiWrapper::Render(dxBase->GetCommandList());
