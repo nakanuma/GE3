@@ -20,5 +20,5 @@ public:
 
 private:
 	TitleScene* scene_ = nullptr;
-};
+}; 
 
