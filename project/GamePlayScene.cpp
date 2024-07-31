@@ -4,8 +4,11 @@
 #include "SRVManager.h"
 #include "SpriteCommon.h"
 
+
 void GamePlayScene::Initialize()
 {
+	DirectXBase* dxBase = DirectXBase::GetInstance();
+
 	// カメラのインスタンスを生成
 	camera = new Camera({ 0.0f, 0.0f, -10.0f }, { 0.0f, 0.0f, 0.0f }, 0.45f);
 	Camera::Set(camera); // 現在のカメラをセット
@@ -14,15 +17,38 @@ void GamePlayScene::Initialize()
 	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(DirectXBase::GetInstance());
 
+	// TextureManagerの初期化
+	TextureManager::Initialize(dxBase->GetDevice(), SRVManager::GetInstance());
+
 	///
-	///	↓
+	///	↓ ゲームシーン用
 	///	
 	
+	// Texture読み込み
+	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
 
+	// スプライトの生成と初期化
+	sprite_ = new Sprite();
+	sprite_->Initialize(spriteCommon, uvCheckerGH);
+
+	
+	// モデル読み込み
+	model_ = ModelManager::LoadObjFile("resources/Models", "sphere.obj", dxBase->GetDevice());
+
+	// 3Dオブジェクトの生成とモデル指定
+	object_ = new Object3D();
+	object_->model_ = &model_;
+	object_->transform_.rotate = { 0.0f, 3.14f, 0.0f };
 }
 
 void GamePlayScene::Finalize()
 {
+	// 3Dオブジェクト開放
+	delete object_;
+
+	// Sprite開放
+	delete sprite_;
+
 	// SpriteCommon開放
 	delete spriteCommon;
 
@@ -32,6 +58,11 @@ void GamePlayScene::Finalize()
 
 void GamePlayScene::Update()
 {
+	// スプライトの更新
+	sprite_->Update();
+
+	// 3Dオブジェクトの更新
+	object_->UpdateMatrix();
 }
 
 void GamePlayScene::Draw()
@@ -53,7 +84,8 @@ void GamePlayScene::Draw()
 	///	↓ ここから3Dオブジェクトの描画コマンド
 	/// 
 
-
+	// 3Dオブジェクト描画
+	object_->Draw();
 
 	///
 	///	↑ ここまで3Dオブジェクトの描画コマンド
@@ -66,7 +98,8 @@ void GamePlayScene::Draw()
 	/// ↓ ここからスプライトの描画コマンド
 	/// 
 
-
+	// スプライトの描画
+	sprite_->Draw();
 
 	///
 	/// ↑ ここまでスプライトの描画コマンド

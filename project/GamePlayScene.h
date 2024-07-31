@@ -1,6 +1,10 @@
 #pragma once
 #include "Camera.h"
 #include "SpriteCommon.h"
+#include "TextureManager.h"
+#include "Sprite.h"
+#include "ModelManager.h"
+#include "Object3D.h"
 
 // ゲームプレイシーン
 class GamePlayScene
@@ -21,6 +25,16 @@ public:
 private:
 	Camera* camera = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
-	
+
+	///
+	/// ↓ ゲームシーン用
+	///
+
+	// スプライト
+	Sprite* sprite_;
+
+	// モデル
+	ModelManager::ModelData model_;
+	Object3D* object_;
 };
 
