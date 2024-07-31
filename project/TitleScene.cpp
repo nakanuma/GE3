@@ -3,6 +3,7 @@
 #include "DirectXBase.h"
 #include "SRVManager.h"
 #include "SpriteCommon.h"
+#include "SceneManager.h"
 
 void TitleScene::Initialize()
 {

@@ -1,5 +1,8 @@
 #pragma once
 
+// 前方宣言
+class SceneManager;
+
 // シーン基底クラス
 class BaseScene
 {
@@ -17,5 +20,12 @@ public:
 
 	// 描画
 	virtual void Draw();
+
+	// シーンマネージャをセット
+	virtual void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
+
+public:
+	// シーンマネージャ（借りてくる）
+	SceneManager* sceneManager_ = nullptr;
 };
 
