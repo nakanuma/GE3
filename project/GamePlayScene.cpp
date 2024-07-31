@@ -3,7 +3,7 @@
 #include "DirectXBase.h"
 #include "SRVManager.h"
 #include "SpriteCommon.h"
-
+#include "SoundManager.h"
 
 void GamePlayScene::Initialize()
 {
