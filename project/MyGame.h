@@ -19,6 +19,5 @@ public:
 	void Draw() override;
 
 private:
-	TitleScene* scene_ = nullptr;
 }; 
 

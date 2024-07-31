@@ -35,13 +35,5 @@ private:
 
 	// スプライト
 	Sprite* sprite_;
-
-	// モデルデータ
-	ModelManager::ModelData model_;
-	// 3Dオブジェクト
-	Object3D* object_;
-
-	// 音声データ
-	SoundManager::SoundData soundData_;
 };
 

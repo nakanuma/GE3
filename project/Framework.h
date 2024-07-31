@@ -28,6 +28,7 @@
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
 #include "SoundManager.h"
+#include "SceneManager.h"
 
 class Framework
 {
@@ -65,6 +66,8 @@ protected:
 	SpriteCommon* spriteCommon = nullptr;
 	ParticleManager* particleManager = nullptr;
 	SoundManager* soundManager = nullptr;
+	// シーン管理
+	SceneManager* sceneManager_ = nullptr;
 
 private:
 	bool endRequest_;

@@ -33,29 +33,12 @@ void TitleScene::Initialize()
 	// スプライトの生成と初期化
 	sprite_ = new Sprite();
 	sprite_->Initialize(spriteCommon, titleGH);
-
-
-	// モデル読み込み
-	model_ = ModelManager::LoadObjFile("resources/Models", "sphere.obj", dxBase->GetDevice());
-
-	// 3Dオブジェクトの生成とモデル指定
-	object_ = new Object3D();
-	object_->model_ = &model_;
-	object_->transform_.rotate = { 0.0f, 3.14f, 0.0f };
-
-	// 音声読み込み
-	soundData_ = soundManager->LoadWave("resources/Sounds/yay.wav");
 }
 
 void TitleScene::Finalize()
 {
-	// 音声データ開放
-	soundManager->Unload(&soundData_);
 	// SoundManager開放
 	delete soundManager;
-
-	// 3Dオブジェクト開放
-	delete object_;
 
 	// Sprite開放
 	delete sprite_;
@@ -71,9 +54,6 @@ void TitleScene::Update()
 {
 	// スプライトの更新
 	sprite_->Update();
-
-	// 3Dオブジェクトの更新
-	object_->UpdateMatrix();
 }
 
 void TitleScene::Draw()
@@ -95,8 +75,6 @@ void TitleScene::Draw()
 	///	↓ ここから3Dオブジェクトの描画コマンド
 	/// 
 
-	// 3Dオブジェクト描画
-	object_->Draw();
 
 	///
 	///	↑ ここまで3Dオブジェクトの描画コマンド

@@ -12,10 +12,11 @@ void MyGame::Initialize()
 	/// ゲーム固有の初期化
 	///
 
-	// ゲームプレイシーンの生成と初期化
-	scene_ = new TitleScene();
-	scene_->Initialize();
-	
+	// 最初のシーンの生成
+	BaseScene* scene = new TitleScene();
+	scene->Initialize();
+	// シーンマネージャに最初のシーンをセット
+	sceneManager_->SetNextScene(scene);
 }
 
 void MyGame::Finalize()
@@ -23,10 +24,6 @@ void MyGame::Finalize()
 	///
 	/// ゲーム固有の終了処理
 	///
-
-	// シーンの終了と開放
-	scene_->Finalize();
-	delete scene_;
 
 	///
 	/// 基底クラスの終了処理
@@ -47,12 +44,10 @@ void MyGame::Update()
 	/// ゲーム固有の更新処理
 	///
 	
-	// シーンの更新処理
-	scene_->Update();
 }
 
 void MyGame::Draw()
 {
 	// シーンの描画処理
-	scene_->Draw();
+	sceneManager_->Draw();
 }

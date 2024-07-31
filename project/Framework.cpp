@@ -40,10 +40,15 @@ void Framework::Initialize()
     // SoundManagerの生成と初期化
     soundManager = new SoundManager;
     soundManager->Initialize();
+
+    // SceneManagerの生成
+    sceneManager_ = new SceneManager();
 }
 
 void Framework::Finalize()
 {
+    // SceneManager開放
+    delete sceneManager_;
     // スプライト共通処理開放
     delete spriteCommon;
     // SoundManager開放
@@ -69,6 +74,9 @@ void Framework::Update()
     dxBase->BeginFrame();
     // パーティクルマネージャの更新
     particleManager->Update();
+
+    // SceneManagerの更新
+    sceneManager_->Update();
 }
 
 void Framework::Run()
