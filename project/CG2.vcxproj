@@ -43,6 +43,7 @@
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SRVManager.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -85,6 +86,7 @@
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ParticleManager.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SRVManager.h" />
     <ClInclude Include="StructuredBuffer.h" />
