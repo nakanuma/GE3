@@ -24,6 +24,9 @@ void TitleScene::Initialize()
 	soundManager = new SoundManager();
 	soundManager->Initialize();
 
+	// Inputの初期化
+	input = Input::GetInstance();
+
 	///
 	///	↓ ゲームシーン用
 	///	
@@ -71,6 +74,8 @@ void TitleScene::Update()
 	// 3Dオブジェクトの更新
 	object_->UpdateMatrix();
 	object_->transform_.rotate.y += 0.0001f;
+
+	
 }
 
 void TitleScene::Draw()

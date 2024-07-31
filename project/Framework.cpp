@@ -20,8 +20,8 @@ void Framework::Initialize()
     srvManager->Initialize(dxBase);
 
     // 入力デバイスの生成と初期化
-    input = new Input();
-    input->Initialize(window);
+    Input::GetInstance()->Initialize(window);
+    input = Input::GetInstance();
 
     // スプライト共通部の初期化
     spriteCommon = new SpriteCommon;

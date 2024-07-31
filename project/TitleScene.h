@@ -7,6 +7,7 @@
 #include "ModelManager.h"
 #include "Object3D.h"
 #include "SoundManager.h"
+#include "Input.h"
 
 // ゲームプレイシーン
 class TitleScene : public BaseScene
@@ -28,6 +29,7 @@ private:
 	Camera* camera = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
 	SoundManager* soundManager = nullptr;
+	Input* input = nullptr;
 
 	///
 	/// ↓ ゲームシーン用
