@@ -4,7 +4,7 @@
 #include "SRVManager.h"
 #include "SpriteCommon.h"
 #include "SceneManager.h"
-#include "GamePlayScene.h"
+//#include "GamePlayScene.h"
 
 void TitleScene::Initialize()
 {
@@ -82,10 +82,13 @@ void TitleScene::Update()
 
 	// ENTERキーを押したら
 	if (input->TriggerKey(DIK_RETURN)) {
-		// ゲームプレイシーン（次シーンを生成）
-		BaseScene* scene = new GamePlayScene();
-		// シーン切り替え依頼
-		SceneManager::GetInstance()->SetNextScene(scene);
+		//// ゲームプレイシーン（次シーンを生成）
+		//BaseScene* scene = new GamePlayScene();
+		//// シーン切り替え依頼
+		//SceneManager::GetInstance()->SetNextScene(scene);
+
+		// シーン切り替え
+		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 	}
 }
 

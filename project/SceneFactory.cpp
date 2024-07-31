@@ -9,8 +9,10 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 
     if (sceneName == "TITLE") {
         newScene = new TitleScene();
+        newScene->Initialize();
     } else if (sceneName == "GAMEPLAY") {
         newScene = new GamePlayScene();
+        newScene->Initialize();
     }
 
     return newScene;

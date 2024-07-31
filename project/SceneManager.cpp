@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include <cassert>
 
 SceneManager* SceneManager::GetInstance()
 {
@@ -11,6 +12,15 @@ SceneManager::~SceneManager()
 	// 最後のシーンの終了と開放
 	scene_->Finalize();
 	delete scene_;
+}
+
+void SceneManager::ChangeScene(const std::string& sceneName)
+{
+	assert(sceneFactory_);
+	assert(nextScene_ == nullptr);
+
+	// 次シーンを生成
+	nextScene_ = sceneFactory_->CreateScene(sceneName);
 }
 
 void SceneManager::Update()

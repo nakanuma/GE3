@@ -43,6 +43,8 @@ void Framework::Initialize()
 
 void Framework::Finalize()
 {
+    // シーンファクトリ開放
+    delete sceneFactory_;
     // ParticleManager開放
     delete particleManager;
     // スプライト共通処理開放

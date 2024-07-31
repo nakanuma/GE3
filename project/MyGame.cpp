@@ -1,4 +1,5 @@
 #include "MyGame.h"
+#include "SceneFactory.h"
 
 void MyGame::Initialize()
 {
@@ -12,11 +13,17 @@ void MyGame::Initialize()
 	/// ゲーム固有の初期化
 	///
 
-	// 最初のシーンの生成
-	BaseScene* scene = new TitleScene();
-	scene->Initialize();
+	//// 最初のシーンの生成
+	//BaseScene* scene = new TitleScene();
+	//scene->Initialize();
+	//// シーンマネージャに最初のシーンをセット
+	//SceneManager::GetInstance()->SetNextScene(scene);
+
+	// シーンファクトリーを生成し、マネージャにセット
+	sceneFactory_ = new SceneFactory();
+	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
 	// シーンマネージャに最初のシーンをセット
-	SceneManager::GetInstance()->SetNextScene(scene);
+	SceneManager::GetInstance()->ChangeScene("TITLE");
 }
 
 void MyGame::Finalize()
