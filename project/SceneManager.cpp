@@ -1,5 +1,11 @@
 #include "SceneManager.h"
 
+SceneManager* SceneManager::GetInstance()
+{
+	static SceneManager instance;
+	return &instance;
+}
+
 SceneManager::~SceneManager()
 {
 	// 最後のシーンの終了と開放

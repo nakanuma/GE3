@@ -41,13 +41,11 @@ void Framework::Initialize()
     soundManager->Initialize();
 
     // SceneManagerの生成
-    sceneManager_ = new SceneManager();
+    sceneManager_ = SceneManager::GetInstance();
 }
 
 void Framework::Finalize()
 {
-    // SceneManager開放
-    delete sceneManager_;
     // ParticleManager開放
     delete particleManager;
     // スプライト共通処理開放

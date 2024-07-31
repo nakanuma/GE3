@@ -5,6 +5,8 @@
 class SceneManager
 {
 public:
+	static SceneManager* GetInstance();
+
 	~SceneManager();
 
 	// 次シーン予約
