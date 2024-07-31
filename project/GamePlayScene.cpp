@@ -74,6 +74,7 @@ void GamePlayScene::Update()
 
 	// 3Dオブジェクトの更新
 	object_->UpdateMatrix();
+	object_->transform_.rotate.y += 0.001f;
 }
 
 void GamePlayScene::Draw()
