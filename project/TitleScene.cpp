@@ -28,11 +28,11 @@ void TitleScene::Initialize()
 	///	
 
 	// Texture読み込み
-	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
+	uint32_t titleGH = TextureManager::Load("resources/Images/title.png", dxBase->GetDevice());
 
 	// スプライトの生成と初期化
 	sprite_ = new Sprite();
-	sprite_->Initialize(spriteCommon, uvCheckerGH);
+	sprite_->Initialize(spriteCommon, titleGH);
 
 
 	// モデル読み込み
@@ -116,13 +116,13 @@ void TitleScene::Draw()
 	/// ↑ ここまでスプライトの描画コマンド
 	/// 
 
-	ImGui::Begin("window");
+	/*ImGui::Begin("window");
 
 	if (ImGui::Button("PlaySound")) {
 		soundManager->PlayWave(soundData_);
 	}
 
-	ImGui::End();
+	ImGui::End();*/
 
 	// ImGuiの内部コマンドを生成する
 	ImguiWrapper::Render(dxBase->GetCommandList());

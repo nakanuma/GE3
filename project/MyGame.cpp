@@ -13,7 +13,7 @@ void MyGame::Initialize()
 	///
 
 	// ゲームプレイシーンの生成と初期化
-	scene_ = new GamePlayScene();
+	scene_ = new TitleScene();
 	scene_->Initialize();
 	
 }

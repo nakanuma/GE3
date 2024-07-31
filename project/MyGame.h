@@ -1,5 +1,6 @@
 #pragma once
 #include "Framework.h"
+#include "TitleScene.h"
 #include "GamePlayScene.h"
 
 class MyGame : public Framework
@@ -18,6 +19,6 @@ public:
 	void Draw() override;
 
 private:
-	GamePlayScene* scene_ = nullptr;
+	TitleScene* scene_ = nullptr;
 };
 

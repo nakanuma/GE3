@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseScene.cpp" />
     <ClCompile Include="Engine\3D\Camera.cpp" />
     <ClCompile Include="Engine\DirectX\DescriptorHeap.cpp" />
     <ClCompile Include="Engine\DirectX\DirectXBase.cpp" />
@@ -47,6 +48,7 @@
     <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseScene.h" />
     <ClInclude Include="Engine\DirectX\ConstBuffer.h" />
     <ClInclude Include="Engine\3D\Camera.h" />
     <ClInclude Include="Engine\DirectX\DescriptorHeap.h" />

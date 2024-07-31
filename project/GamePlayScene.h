@@ -1,4 +1,5 @@
 #pragma once
+#include "BaseScene.h"
 #include "Camera.h"
 #include "SpriteCommon.h"
 #include "TextureManager.h"
@@ -8,20 +9,20 @@
 #include "SoundManager.h"
 
 // ゲームプレイシーン
-class GamePlayScene
+class GamePlayScene : public BaseScene
 {
 public:
 	// 初期化
-	void Initialize();
+	void Initialize() override;
 
 	// 終了
-	void Finalize();
+	void Finalize() override;
 
 	// 毎フレーム更新
-	void Update();
+	void Update() override;
 
 	// 描画
-	void Draw();
+	void Draw() override;
 
 private:
 	Camera* camera = nullptr;
