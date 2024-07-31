@@ -29,7 +29,6 @@
 #include "ParticleEmitter.h"
 #include "SoundManager.h"
 #include "SceneManager.h"
-#include "SceneFactory.h"
 
 class Framework
 {
@@ -68,8 +67,6 @@ protected:
 	SoundManager* soundManager = nullptr;
 	// シーン管理
 	SceneManager* sceneManager_ = nullptr;
-	// シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
 private:
 	bool endRequest_;
 };
