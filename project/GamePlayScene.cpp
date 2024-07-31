@@ -3,7 +3,6 @@
 #include "DirectXBase.h"
 #include "SRVManager.h"
 #include "SpriteCommon.h"
-#include "SoundManager.h"
 
 void GamePlayScene::Initialize()
 {
@@ -19,6 +18,10 @@ void GamePlayScene::Initialize()
 
 	// TextureManagerの初期化
 	TextureManager::Initialize(dxBase->GetDevice(), SRVManager::GetInstance());
+
+	// SoundManagerの初期化
+	soundManager = new SoundManager();
+	soundManager->Initialize();
 
 	///
 	///	↓ ゲームシーン用
@@ -39,10 +42,18 @@ void GamePlayScene::Initialize()
 	object_ = new Object3D();
 	object_->model_ = &model_;
 	object_->transform_.rotate = { 0.0f, 3.14f, 0.0f };
+
+	// 音声読み込み
+	soundData_ = soundManager->LoadWave("resources/Sounds/yay.wav");
 }
 
 void GamePlayScene::Finalize()
 {
+	// 音声データ開放
+	soundManager->Unload(&soundData_);
+	// SoundManager開放
+	delete soundManager;
+
 	// 3Dオブジェクト開放
 	delete object_;
 
@@ -106,6 +117,11 @@ void GamePlayScene::Draw()
 	/// 
 
 	ImGui::Begin("window");
+
+	if (ImGui::Button("PlaySound")) {
+		soundManager->PlayWave(soundData_);
+	}
+
 	ImGui::End();
 
 	// ImGuiの内部コマンドを生成する

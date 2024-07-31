@@ -37,6 +37,8 @@ public:
 	};
 
 public:
+	static SoundManager* GetInstance();
+
 	~SoundManager();
 
 	void Initialize();

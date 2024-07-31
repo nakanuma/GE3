@@ -1,6 +1,12 @@
 #include "SoundManager.h"
 #include <cassert>
 
+SoundManager* SoundManager::GetInstance()
+{
+	static SoundManager instance;
+	return &instance;
+}
+
 SoundManager::~SoundManager()
 {
 	xAudio2.Reset();
