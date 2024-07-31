@@ -32,9 +32,6 @@ void SceneManager::Update()
 		nextScene_->Finalize();
 		nextScene_ = nullptr;
 
-		// シーンマネージャをセット
-		scene_->SetSceneManager(this);
-
 		// 次シーンを初期化する
 		scene_->Initialize();
 	}

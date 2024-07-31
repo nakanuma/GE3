@@ -16,7 +16,7 @@ void MyGame::Initialize()
 	BaseScene* scene = new TitleScene();
 	scene->Initialize();
 	// シーンマネージャに最初のシーンをセット
-	sceneManager_->SetNextScene(scene);
+	SceneManager::GetInstance()->SetNextScene(scene);
 }
 
 void MyGame::Finalize()
@@ -49,5 +49,5 @@ void MyGame::Update()
 void MyGame::Draw()
 {
 	// シーンの描画処理
-	sceneManager_->Draw();
+	SceneManager::GetInstance()->Draw();
 }

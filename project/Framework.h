@@ -65,8 +65,6 @@ protected:
 	SpriteCommon* spriteCommon = nullptr;
 	ParticleManager* particleManager = nullptr;
 	SoundManager* soundManager = nullptr;
-	// シーン管理
-	SceneManager* sceneManager_ = nullptr;
 private:
 	bool endRequest_;
 };

@@ -39,9 +39,6 @@ void Framework::Initialize()
     // SoundManagerの生成と初期化
     soundManager = new SoundManager;
     soundManager->Initialize();
-
-    // SceneManagerの生成
-    sceneManager_ = SceneManager::GetInstance();
 }
 
 void Framework::Finalize()
@@ -75,7 +72,7 @@ void Framework::Update()
     particleManager->Update();
 
     // SceneManagerの更新
-    sceneManager_->Update();
+    SceneManager::GetInstance()->Update();
 }
 
 void Framework::Run()

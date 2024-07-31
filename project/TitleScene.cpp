@@ -85,7 +85,7 @@ void TitleScene::Update()
 		// ゲームプレイシーン（次シーンを生成）
 		BaseScene* scene = new GamePlayScene();
 		// シーン切り替え依頼
-		sceneManager_->SetNextScene(scene);
+		SceneManager::GetInstance()->SetNextScene(scene);
 	}
 }
 

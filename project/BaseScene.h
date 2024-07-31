@@ -21,11 +21,6 @@ public:
 	// 描画
 	virtual void Draw();
 
-	// シーンマネージャをセット
-	virtual void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
-
 public:
-	// シーンマネージャ（借りてくる）
-	SceneManager* sceneManager_ = nullptr;
 };
 
