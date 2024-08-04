@@ -35,17 +35,32 @@ private:
 
 	// スプライト
 	Sprite* sprite_;
-	// スプライト用変数
-	Float2 spritePosition = { 0.0f, 0.0f };
-	Float2 spriteSize = { 512.0f, 512.0f };
-	float spriteRotate = 0.0f;
 
 	// モデルデータ
-	ModelManager::ModelData model_;
+	ModelManager::ModelData planeModel_;
+	ModelManager::ModelData sphereModel_;
+	ModelManager::ModelData teapotModel_;
+	ModelManager::ModelData bunnyModel_;
+	ModelManager::ModelData multiMeshModel_;
+	ModelManager::ModelData suzanneModel_;
 	// 3Dオブジェクト
 	Object3D* object_;
 
 	// 音声データ
 	SoundManager::SoundData soundData_;
+
+
+	///
+	///	操作用変数
+	/// 
+	
+	// スプライト用変数
+	Float2 spritePosition = { 0.0f, 0.0f };
+	Float2 spriteSize = { 512.0f, 512.0f };
+	float spriteRotate = 0.0f;
+
+	// オブジェクト用変数
+	const char* items[6] = { "plane", "sphere", "Teapot", "Bunny", "MultiMesh", "Suzanne" };
+	int  model_current = 0;
 };
 

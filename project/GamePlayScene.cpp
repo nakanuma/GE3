@@ -36,11 +36,16 @@ void GamePlayScene::Initialize()
 	sprite_->SetSize({ 500.0f, 500.0f });
 
 	// モデル読み込み
-	model_ = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
+	planeModel_ = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
+	sphereModel_ = ModelManager::LoadObjFile("resources/Models", "sphere.obj", dxBase->GetDevice());
+	teapotModel_ = ModelManager::LoadObjFile("resources/Models", "teapot.obj", dxBase->GetDevice());
+	bunnyModel_ = ModelManager::LoadObjFile("resources/Models", "bunny.obj", dxBase->GetDevice());
+	multiMeshModel_ = ModelManager::LoadObjFile("resources/Models", "multiMesh.obj", dxBase->GetDevice());
+	suzanneModel_ = ModelManager::LoadObjFile("resources/Models", "suzanne.obj", dxBase->GetDevice());
 
 	// 3Dオブジェクトの生成とモデル指定
 	object_ = new Object3D();
-	object_->model_ = &model_;
+	object_->model_ = &planeModel_;
 	object_->transform_.rotate = { 0.0f, 3.14f, 0.0f };
 
 	// 音声読み込み
@@ -120,6 +125,31 @@ void GamePlayScene::Draw()
 
 	// オブジェクト
 	if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
+		// モデル選択メニュー
+		if (ImGui::Combo("Select Model", &model_current, items, IM_ARRAYSIZE(items))) {
+			// 選択が変更されたときの処理
+			switch (model_current) {
+			case 0:
+				object_->model_ = &planeModel_;
+				break;
+			case 1:
+				object_->model_ = &sphereModel_;
+				break;
+			case 2:
+				object_->model_ = &teapotModel_;
+				break;
+			case 3:
+				object_->model_ = &bunnyModel_;
+				break;
+			case 4:
+				object_->model_ = &multiMeshModel_;
+				break;
+			case 5:
+				object_->model_ = &suzanneModel_;
+				break;
+			}
+		}
+
 		ImGui::DragFloat3("object.translate", &object_->transform_.translate.x, 0.01f);
 		ImGui::DragFloat3("object.rotate", &object_->transform_.rotate.x, 0.01f);
 		ImGui::DragFloat3("object.scale", &object_->transform_.scale.x, 0.01f);
