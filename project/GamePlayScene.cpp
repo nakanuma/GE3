@@ -26,18 +26,17 @@ void GamePlayScene::Initialize()
 	///
 	///	↓ ゲームシーン用
 	///	
-	
+
 	// Texture読み込み
-	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/gamePlay.png", dxBase->GetDevice());
+	uint32_t uvCheckerGH = TextureManager::Load("resources/Images/uvChecker.png", dxBase->GetDevice());
 
 	// スプライトの生成と初期化
 	sprite_ = new Sprite();
 	sprite_->Initialize(spriteCommon, uvCheckerGH);
 	sprite_->SetSize({ 500.0f, 500.0f });
 
-	
 	// モデル読み込み
-	model_ = ModelManager::LoadObjFile("resources/Models", "sphere.obj", dxBase->GetDevice());
+	model_ = ModelManager::LoadObjFile("resources/Models", "plane.obj", dxBase->GetDevice());
 
 	// 3Dオブジェクトの生成とモデル指定
 	object_ = new Object3D();
@@ -75,7 +74,6 @@ void GamePlayScene::Update()
 
 	// 3Dオブジェクトの更新
 	object_->UpdateMatrix();
-	object_->transform_.rotate.y += 0.001f;
 }
 
 void GamePlayScene::Draw()
@@ -120,8 +118,21 @@ void GamePlayScene::Draw()
 
 	ImGui::Begin("window");
 
-	if (ImGui::Button("PlaySound")) {
-		soundManager->PlayWave(soundData_);
+	// オブジェクト
+	if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::DragFloat3("object.translate", &object_->transform_.translate.x, 0.01f);
+		ImGui::DragFloat3("object.rotate", &object_->transform_.rotate.x, 0.01f);
+		ImGui::DragFloat3("object.scale", &object_->transform_.scale.x, 0.01f);
+	}
+
+	// スプライト
+	if (ImGui::CollapsingHeader("Sprite", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::DragFloat2("sprite.position", &spritePosition.x, 1.0f);
+		sprite_->SetPosition(spritePosition);
+		ImGui::DragFloat2("sprite.size", &spriteSize.x, 1.0f);
+		sprite_->SetSize(spriteSize);
+		ImGui::SliderAngle("sprite.rotate", &spriteRotate);
+		sprite_->SetRotation(spriteRotate);
 	}
 
 	ImGui::End();

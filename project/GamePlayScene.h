@@ -35,6 +35,10 @@ private:
 
 	// スプライト
 	Sprite* sprite_;
+	// スプライト用変数
+	Float2 spritePosition = { 0.0f, 0.0f };
+	Float2 spriteSize = { 512.0f, 512.0f };
+	float spriteRotate = 0.0f;
 
 	// モデルデータ
 	ModelManager::ModelData model_;
