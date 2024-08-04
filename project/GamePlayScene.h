@@ -38,11 +38,6 @@ private:
 
 	// モデルデータ
 	ModelManager::ModelData planeModel_;
-	ModelManager::ModelData sphereModel_;
-	ModelManager::ModelData teapotModel_;
-	ModelManager::ModelData bunnyModel_;
-	ModelManager::ModelData multiMeshModel_;
-	ModelManager::ModelData suzanneModel_;
 	// 3Dオブジェクト
 	Object3D* object_;
 
@@ -58,9 +53,5 @@ private:
 	Float2 spritePosition = { 0.0f, 0.0f };
 	Float2 spriteSize = { 512.0f, 512.0f };
 	float spriteRotate = 0.0f;
-
-	// オブジェクト用変数
-	const char* items[6] = { "plane", "sphere", "Teapot", "Bunny", "MultiMesh", "Suzanne" };
-	int  model_current = 0;
 };
 
